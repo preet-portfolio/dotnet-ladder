@@ -16,15 +16,18 @@ namespace Ladder.DI.Planning;
 /// <item><c>KeyedService.AnyKey</c> registrations answer any non-null key for a single service but never appear in
 /// enumerations, and an <c>AnyKey</c> enumeration lists every keyed registration but not the <c>AnyKey</c> ones.</item>
 /// </list>
+/// Instance identity is <see cref="InstanceKey"/> (service, slot), exactly as Microsoft keys its call sites, quirks
+/// included: see the remarks on <see cref="TryEnumerable"/>.
 /// Plans are built under one lock. That is only paid the first time each service is asked for; after that the
 /// container serves it from its accessor cache without coming here.
 /// </summary>
 internal sealed class Planner : IServiceProviderIsKeyedService
 {
+    private const int DefaultSlot = 0;
+
     private readonly ServiceDescriptor[] _descriptors;
     private readonly Dictionary<ServiceId, int[]> _byId;
-    private readonly Dictionary<ServiceId, Plan> _plans = [];
-    private readonly Dictionary<InstanceKey, Plan> _instances = [];
+    private readonly Dictionary<InstanceKey, Plan> _plans = [];
     private readonly Lock _sync = new();
     private int _scopeSlots;
 
@@ -61,7 +64,7 @@ internal sealed class Planner : IServiceProviderIsKeyedService
     {
         lock (_sync)
         {
-            _plans[ServiceId.Of(type)] = plan;
+            _plans[new InstanceKey(ServiceId.Of(type), DefaultSlot)] = plan;
         }
     }
 
@@ -70,9 +73,16 @@ internal sealed class Planner : IServiceProviderIsKeyedService
     /// <summary>The plan for one specific registration, as <c>ValidateOnBuild</c> checks every descriptor.</summary>
     public Plan GetPlan(int descriptorIndex)
     {
+        ServiceDescriptor descriptor = _descriptors[descriptorIndex];
+        ServiceId id = ServiceId.Of(descriptor);
+        int[] group = _byId[id];
+
+        // The registration's slot within its group: the last one is slot 0. (A descriptor object registered twice
+        // takes the slot of its first occurrence, as ServiceDescriptorCacheItem.GetSlot does.)
+        int position = Array.FindIndex(group, i => ReferenceEquals(_descriptors[i], descriptor));
         lock (_sync)
         {
-            return CreateExact(descriptorIndex, ServiceId.Of(_descriptors[descriptorIndex]), new ResolutionChain());
+            return CreateExact(descriptorIndex, id, new ResolutionChain(), group.Length - 1 - position);
         }
     }
 
@@ -108,19 +118,13 @@ internal sealed class Planner : IServiceProviderIsKeyedService
     {
         lock (_sync)
         {
-            if (_plans.TryGetValue(id, out Plan? plan))
+            if (_plans.TryGetValue(new InstanceKey(id, DefaultSlot), out Plan? plan))
             {
                 return plan;
             }
 
             chain.CheckCircularDependency(id);
-            plan = TryExact(id, chain) ?? (Plan?)TryOpenGeneric(id, chain) ?? TryEnumerable(id, chain);
-            if (plan is not null)
-            {
-                _plans[id] = plan;
-            }
-
-            return plan;
+            return TryExact(id, chain) ?? TryOpenGeneric(id, chain) ?? TryEnumerable(id, chain);
         }
     }
 
@@ -130,13 +134,13 @@ internal sealed class Planner : IServiceProviderIsKeyedService
             || (id.Key is not null && _byId.TryGetValue(new ServiceId(KeyedService.AnyKey, id.Type), out indices)))
         {
             // For an AnyKey registration the instance is keyed by the key actually asked for, so each key gets its own singleton.
-            return CreateExact(indices[^1], id, chain);
+            return CreateExact(indices[^1], id, chain, DefaultSlot);
         }
 
         return null;
     }
 
-    private ConstructorPlan? TryOpenGeneric(ServiceId id, ResolutionChain chain)
+    private Plan? TryOpenGeneric(ServiceId id, ResolutionChain chain)
     {
         if (!id.Type.IsConstructedGenericType)
         {
@@ -147,12 +151,20 @@ internal sealed class Planner : IServiceProviderIsKeyedService
         if (_byId.TryGetValue(definition, out int[]? indices)
             || (id.Key is not null && _byId.TryGetValue(new ServiceId(KeyedService.AnyKey, definition.Type), out indices)))
         {
-            return CreateOpenGeneric(indices[^1], id, chain, throwOnConstraintViolation: true);
+            return CreateOpenGeneric(indices[^1], id, chain, DefaultSlot, throwOnConstraintViolation: true);
         }
 
         return null;
     }
 
+    /// <remarks>
+    /// Slots are handed out last-to-first, exact matches before open generics, so the element that gets slot 0 is
+    /// the one a single resolution of the item would return, and they share an instance. Because the cache is keyed
+    /// by (service, slot) rather than by registration, an enumeration can also <em>decide</em> a later single
+    /// resolution: if the last open generic's constraints reject the type argument, a single resolution throws, but
+    /// after an enumeration has put the last open generic that <em>does</em> fit into slot 0, the single resolution
+    /// returns that instead. Microsoft's container behaves this way; the differential tests found it, and we match it.
+    /// </remarks>
     private EnumerablePlan? TryEnumerable(ServiceId id, ResolutionChain chain)
     {
         if (!id.Type.IsConstructedGenericType || id.Type.GetGenericTypeDefinition() != typeof(IEnumerable<>))
@@ -170,37 +182,72 @@ internal sealed class Planner : IServiceProviderIsKeyedService
 
             if (!itemType.IsConstructedGenericType && !anyKey && _byId.TryGetValue(itemId, out int[]? indices))
             {
+                int slot = indices.Length; // the last registration gets slot 0
                 foreach (int i in indices)
                 {
-                    items.Add((i, CreateExact(i, itemId, chain)));
+                    items.Add((i, CreateExact(i, itemId, chain, --slot)));
                 }
             }
             else
             {
-                // Exact matches first, then open generics, each walked last-to-first as CallSiteFactory does (it
-                // matters only for which error surfaces first when several registrations are broken).
+                int slot = 0;
+                Dictionary<ServiceId, int>? keyedSlots = null;
+
                 for (int i = _descriptors.Length - 1; i >= 0; i--)
                 {
                     ServiceDescriptor d = _descriptors[i];
                     if (KeysMatch(itemId.Key, d.ServiceKey) && d.ServiceType == itemType)
                     {
                         // An AnyKey enumeration resolves each registration under its own key, so its instances are
-                        // the ones GetKeyedService(thatKey) returns.
-                        items.Add((i, CreateExact(i, anyKey ? ServiceId.Of(d) : itemId, chain)));
+                        // the ones GetKeyedService(thatKey) returns, and each key counts its own slots.
+                        ServiceId registration = anyKey ? ServiceId.Of(d) : itemId;
+                        slot = SlotFor(registration);
+                        items.Add((i, CreateExact(i, registration, chain, slot)));
+                        Advance(registration);
                     }
                 }
 
                 for (int i = _descriptors.Length - 1; i >= 0; i--)
                 {
                     ServiceDescriptor d = _descriptors[i];
-                    if (KeysMatch(itemId.Key, d.ServiceKey) && itemType.IsConstructedGenericType && itemType.GetGenericTypeDefinition() == d.ServiceType
-                        && CreateOpenGeneric(i, anyKey ? ServiceId.Of(d) : itemId, chain, throwOnConstraintViolation: false) is { } plan)
+                    if (KeysMatch(itemId.Key, d.ServiceKey) && itemType.IsConstructedGenericType && itemType.GetGenericTypeDefinition() == d.ServiceType)
                     {
-                        items.Add((i, plan));
+                        // Under AnyKey this asks for the open definition itself, which can't be closed, so keyed
+                        // open generics never appear in an AnyKey enumeration. Microsoft's container does the same.
+                        ServiceId registration = anyKey ? ServiceId.Of(d) : itemId;
+                        slot = SlotFor(registration);
+                        if (CreateOpenGeneric(i, registration, chain, slot, throwOnConstraintViolation: false) is { } plan)
+                        {
+                            items.Add((i, plan));
+                            Advance(registration);
+                        }
                     }
                 }
 
                 items.Sort((a, b) => a.Index.CompareTo(b.Index));
+
+                int SlotFor(ServiceId registration)
+                {
+                    if (!anyKey)
+                    {
+                        return slot;
+                    }
+
+                    keyedSlots ??= [];
+                    return keyedSlots.TryAdd(registration, 0) ? 0 : keyedSlots[registration];
+                }
+
+                void Advance(ServiceId registration)
+                {
+                    if (anyKey)
+                    {
+                        keyedSlots![registration] = slot + 1;
+                    }
+                    else
+                    {
+                        slot++;
+                    }
+                }
             }
 
             // The array itself is cached as long-lived as its shortest-lived element allows: all singletons means
@@ -217,7 +264,9 @@ internal sealed class Planner : IServiceProviderIsKeyedService
                 location = CacheLocation.None;
             }
 
-            return new EnumerablePlan(id.Type, location, itemType, [.. items.Select(item => item.Plan)]) { ScopeSlot = ClaimSlot(location) };
+            var enumerable = new EnumerablePlan(id.Type, location, itemType, [.. items.Select(item => item.Plan)]) { ScopeSlot = ClaimScopeSlot(location), CacheKey = new InstanceKey(id, DefaultSlot) };
+            _plans[new InstanceKey(id, DefaultSlot)] = enumerable;
+            return enumerable;
         }
         finally
         {
@@ -237,12 +286,12 @@ internal sealed class Planner : IServiceProviderIsKeyedService
         }
     }
 
-    private Plan CreateExact(int index, ServiceId id, ResolutionChain chain)
+    private Plan CreateExact(int index, ServiceId id, ResolutionChain chain, int slot)
     {
-        var instanceKey = new InstanceKey(index, id);
-        if (_instances.TryGetValue(instanceKey, out Plan? plan))
+        var instanceKey = new InstanceKey(id, slot);
+        if (_plans.TryGetValue(instanceKey, out Plan? plan))
         {
-            return plan;
+            return plan; // whatever already holds this (service, slot), even if another registration put it there
         }
 
         ServiceDescriptor d = _descriptors[index];
@@ -254,31 +303,31 @@ internal sealed class Planner : IServiceProviderIsKeyedService
         }
         else if (!d.IsKeyedService && d.ImplementationFactory is { } factory)
         {
-            plan = new FactoryPlan(d.ServiceType, location, factory) { ScopeSlot = ClaimSlot(location) };
+            plan = new FactoryPlan(d.ServiceType, location, factory) { ScopeSlot = ClaimScopeSlot(location), CacheKey = instanceKey };
         }
         else if (d.IsKeyedService && d.KeyedImplementationFactory is { } keyedFactory)
         {
-            plan = new FactoryPlan(d.ServiceType, location, id.Key, keyedFactory) { ScopeSlot = ClaimSlot(location) };
+            plan = new FactoryPlan(d.ServiceType, location, id.Key, keyedFactory) { ScopeSlot = ClaimScopeSlot(location), CacheKey = instanceKey };
         }
         else if (ImplementationType(d) is { } implementation)
         {
-            plan = CreateConstructorPlan(location, id, implementation, chain);
+            plan = CreateConstructorPlan(location, id, implementation, chain, instanceKey);
         }
         else
         {
             throw Errors.InvalidDescriptor();
         }
 
-        _instances[instanceKey] = plan;
+        _plans[instanceKey] = plan;
         return plan;
     }
 
-    private ConstructorPlan? CreateOpenGeneric(int index, ServiceId id, ResolutionChain chain, bool throwOnConstraintViolation)
+    private Plan? CreateOpenGeneric(int index, ServiceId id, ResolutionChain chain, int slot, bool throwOnConstraintViolation)
     {
-        var instanceKey = new InstanceKey(index, id);
-        if (_instances.TryGetValue(instanceKey, out Plan? cached))
+        var instanceKey = new InstanceKey(id, slot);
+        if (_plans.TryGetValue(instanceKey, out Plan? cached))
         {
-            return (ConstructorPlan)cached;
+            return cached;
         }
 
         ServiceDescriptor d = _descriptors[index];
@@ -292,12 +341,12 @@ internal sealed class Planner : IServiceProviderIsKeyedService
             return null; // the type arguments violate the implementation's constraints
         }
 
-        ConstructorPlan plan = CreateConstructorPlan(d.Lifetime.ToLocation(), id, closed, chain);
-        _instances[instanceKey] = plan;
+        ConstructorPlan plan = CreateConstructorPlan(d.Lifetime.ToLocation(), id, closed, chain, instanceKey);
+        _plans[instanceKey] = plan;
         return plan;
     }
 
-    private ConstructorPlan CreateConstructorPlan(CacheLocation location, ServiceId id, Type implementation, ResolutionChain chain)
+    private ConstructorPlan CreateConstructorPlan(CacheLocation location, ServiceId id, Type implementation, ResolutionChain chain, InstanceKey cacheKey)
     {
         chain.Add(id, implementation);
         try
@@ -312,7 +361,7 @@ internal sealed class Planner : IServiceProviderIsKeyedService
             {
                 ParameterInfo[] parameters = constructors[0].GetParameters();
                 Plan[] arguments = parameters.Length == 0 ? [] : CreateArguments(id, implementation, chain, parameters, throwIfMissing: true)!;
-                return new ConstructorPlan(id.Type, location, constructors[0], arguments) { ScopeSlot = ClaimSlot(location) };
+                return new ConstructorPlan(id.Type, location, constructors[0], arguments) { ScopeSlot = ClaimScopeSlot(location), CacheKey = cacheKey };
             }
 
             // Longest first. Array.Sort with this comparison on GetConstructors()' order is what CallSiteFactory
@@ -347,7 +396,7 @@ internal sealed class Planner : IServiceProviderIsKeyedService
 
             return best is null
                 ? throw Errors.UnableToActivate(implementation)
-                : new ConstructorPlan(id.Type, location, best, bestArguments!) { ScopeSlot = ClaimSlot(location) };
+                : new ConstructorPlan(id.Type, location, best, bestArguments!) { ScopeSlot = ClaimScopeSlot(location), CacheKey = cacheKey };
         }
         finally
         {
@@ -451,7 +500,7 @@ internal sealed class Planner : IServiceProviderIsKeyedService
         return true;
     }
 
-    private int ClaimSlot(CacheLocation location) => location == CacheLocation.Scope ? Interlocked.Increment(ref _scopeSlots) - 1 : -1;
+    private int ClaimScopeSlot(CacheLocation location) => location == CacheLocation.Scope ? Interlocked.Increment(ref _scopeSlots) - 1 : -1;
 
     private static object? ImplementationInstance(ServiceDescriptor d) => d.IsKeyedService ? d.KeyedImplementationInstance : d.ImplementationInstance;
 

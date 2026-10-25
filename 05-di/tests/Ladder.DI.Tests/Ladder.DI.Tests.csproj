@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <!-- Test method names describe behaviour with underscores; graph node types are public generic templates that the
+         differential tests close at run time with MakeGenericType, and their unused parameters are the point. -->
+    <NoWarn>$(NoWarn);CA1707;CA1515;CA1812;CA1801;IDE0060;CA1063;CA1816;CA2201;CA1715;CA1716</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="CsCheck" />
+    <!-- The reference implementation the differential properties compare against. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Ladder.DI/Ladder.DI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

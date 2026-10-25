@@ -38,7 +38,7 @@ public sealed class ServiceContainerOptions
 public sealed class ServiceContainer : IKeyedServiceProvider, IDisposable, IAsyncDisposable
 {
     private readonly ServiceContainerOptions _options;
-    private readonly bool _validateScopes;
+    private readonly ScopeValidator? _validator;
 
     // Unkeyed lookups are the hot path, so they get a dictionary keyed by Type alone: no struct key to hash and compare.
     private readonly ConcurrentDictionary<Type, Accessor> _unkeyed = new();
@@ -57,7 +57,7 @@ public sealed class ServiceContainer : IKeyedServiceProvider, IDisposable, IAsyn
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(options);
         _options = options;
-        _validateScopes = options.ValidateScopes;
+        _validator = options.ValidateScopes ? new ScopeValidator() : null;
         _createUnkeyed = type => CreateAccessor(ServiceId.Of(type));
         _createKeyed = CreateAccessor;
         Root = new Scope(this, isRoot: true);
@@ -162,9 +162,9 @@ public sealed class ServiceContainer : IKeyedServiceProvider, IDisposable, IAsyn
 
     private object? Invoke(Accessor accessor, Scope scope)
     {
-        if (_validateScopes && accessor.Plan is { } plan)
+        if (_validator is not null && accessor.Plan is { } plan)
         {
-            ScopeValidator.ValidateResolution(plan, scope);
+            _validator.ValidateResolution(plan, scope);
         }
 
         return accessor.Resolver(scope);
@@ -178,10 +178,7 @@ public sealed class ServiceContainer : IKeyedServiceProvider, IDisposable, IAsyn
             return Accessor.Missing;
         }
 
-        if (_options.ValidateScopes)
-        {
-            ScopeValidator.Validate(plan);
-        }
+        _validator?.Validate(plan);
 
         if (plan.Location == CacheLocation.Root)
         {
@@ -212,10 +209,7 @@ public sealed class ServiceContainer : IKeyedServiceProvider, IDisposable, IAsyn
             try
             {
                 Plan plan = Planner.GetPlan(i);
-                if (_options.ValidateScopes)
-                {
-                    ScopeValidator.Validate(plan);
-                }
+                _validator?.Validate(plan);
             }
             catch (Exception e)
             {

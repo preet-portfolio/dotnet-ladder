@@ -30,10 +30,10 @@ internal readonly struct ServiceId(object? key, Type type) : IEquatable<ServiceI
 }
 
 /// <summary>
-/// The identity of one instance-producing registration: which descriptor, closed over which service type, under
-/// which key. Two resolutions share a singleton or scoped instance exactly when they reach the same InstanceKey.
-/// Microsoft's container gets the same effect with per-identifier "slots" (the last registration is slot 0, so
-/// <c>GetService&lt;T&gt;()</c> and the last element of <c>IEnumerable&lt;T&gt;</c> are the same object); keying on
-/// the descriptor's position is the same rule stated directly.
+/// The identity of a plan, and so of the singleton or scoped instance it produces: the service asked for, plus a slot
+/// that counts registrations of it from the last one (slot 0) backwards. A single resolution is slot 0, so
+/// <c>GetService&lt;T&gt;()</c> and the last element of <c>IEnumerable&lt;T&gt;</c> are the same object. This is
+/// Microsoft's <c>ServiceCacheKey</c>. Keying by registration instead looks equivalent but isn't; see
+/// <c>Planner.TryEnumerable</c>.
 /// </summary>
-internal readonly record struct InstanceKey(int DescriptorIndex, ServiceId Service);
+internal readonly record struct InstanceKey(ServiceId Service, int Slot);

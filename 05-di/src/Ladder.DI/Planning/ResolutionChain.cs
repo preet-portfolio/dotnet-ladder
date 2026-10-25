@@ -27,19 +27,19 @@ internal sealed class ResolutionChain
     private string Describe(ServiceId repeated)
     {
         var message = new StringBuilder()
-            .Append("A circular dependency was detected for the service of type '").Append(repeated.Type).Append("'.")
+            .Append("A circular dependency was detected for the service of type '").Append(TypeNames.Display(repeated.Type)).Append("'.")
             .AppendLine();
         foreach (var (id, (_, implementation)) in _chain.OrderBy(entry => entry.Value.Order))
         {
-            message.Append(id.Type);
+            message.Append(TypeNames.Display(id.Type));
             if (implementation is not null && implementation != id.Type)
             {
-                message.Append('(').Append(implementation).Append(')');
+                message.Append('(').Append(TypeNames.Display(implementation)).Append(')');
             }
 
             message.Append(" -> ");
         }
 
-        return message.Append(repeated.Type).ToString();
+        return message.Append(TypeNames.Display(repeated.Type)).ToString();
     }
 }

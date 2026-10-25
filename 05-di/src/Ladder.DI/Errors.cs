@@ -46,7 +46,7 @@ internal static class Errors
         new($"Cannot resolve scoped service '{service}' from root provider.");
 
     public static InvalidOperationException AsyncDisposableOnly(Type type) =>
-        new($"'{type}' type only implements IAsyncDisposable. Use DisposeAsync to dispose the container.");
+        new($"'{TypeNames.Display(type)}' type only implements IAsyncDisposable. Use DisposeAsync to dispose the container.");
 
     [DoesNotReturn]
     public static void ThrowAnyKeyForSingleService() =>

@@ -49,10 +49,12 @@ internal abstract class Plan(Type serviceType, CacheLocation location)
     /// </summary>
     public Func<Scope, object?>? CompiledBody;
 
-    /// <summary>For scope validation: the first scoped service in this plan's tree, computed once.</summary>
-    public Type? FirstScopedService;
-
-    public bool ScopeChecked;
+    /// <summary>
+    /// The plan's cache identity as Microsoft's <c>ResultCache.Key</c> defines it: (service, slot) for what the planner
+    /// caches (set by the planner), but (unkeyed service type, 0) for constants and the scope itself, which is the
+    /// default here. Only scope validation uses it.
+    /// </summary>
+    public InstanceKey CacheKey { get; init; } = new(ServiceId.Of(serviceType), 0);
 
     /// <summary>
     /// Whether the produced object might need disposing. For a constructor this is known statically from the
