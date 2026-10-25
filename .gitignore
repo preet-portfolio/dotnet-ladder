@@ -1,0 +1,11 @@
+bin/
+obj/
+**/judge/vendor/
+**/judge/corpus/
+BenchmarkDotNet.Artifacts/
+StrykerOutput/
+*.nettrace
+.DS_Store
+.remember/
+.claude/
+/site/

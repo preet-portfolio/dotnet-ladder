@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      deep:
+        description: Also run benchmarks (with disassembly) and Stryker
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  project:
+    name: ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [01-json]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet tool restore
+      - run: dotnet build Ladder.slnx -c Release
+      - run: dotnet test --solution Ladder.slnx -c Release --no-build
+      - name: External judge
+        run: ${{ matrix.project }}/judge/run-judge.sh
+      - name: Benchmarks
+        if: inputs.deep
+        run: dotnet run -c Release --project ${{ matrix.project }}/bench/*.Bench -- --filter '*' --disasm
+      - name: Mutation testing
+        if: inputs.deep
+        working-directory: ${{ matrix.project }}
+        run: dotnet dotnet-stryker -f stryker-config.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-${{ matrix.project }}
+          path: |
+            ${{ matrix.project }}/judge/results/
+            ${{ matrix.project }}/evidence/
+            **/BenchmarkDotNet.Artifacts/results/
+            ${{ matrix.project }}/StrykerOutput/**/reports/

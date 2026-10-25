@@ -1,0 +1,20 @@
+{
+  "stryker-config": {
+    "project": "Ladder.Json.csproj",
+    "test-projects": [
+      "tests/Ladder.Json.Tests/Ladder.Json.Tests.csproj"
+    ],
+    "reporters": [
+      "html",
+      "markdown",
+      "json",
+      "progress"
+    ],
+    "thresholds": {
+      "high": 90,
+      "low": 75,
+      "break": 0
+    },
+    "test-runner": "mtp"
+  }
+}

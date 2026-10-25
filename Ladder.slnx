@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/01-json/">
+    <Project Path="01-json/bench/Ladder.Json.Bench/Ladder.Json.Bench.csproj" />
+    <Project Path="01-json/judge/Ladder.Json.Judge/Ladder.Json.Judge.csproj" />
+    <Project Path="01-json/src/Ladder.Json/Ladder.Json.csproj" />
+    <Project Path="01-json/tests/Ladder.Json.Tests/Ladder.Json.Tests.csproj" />
+  </Folder>
+</Solution>
