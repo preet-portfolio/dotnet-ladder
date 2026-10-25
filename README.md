@@ -7,7 +7,7 @@ Live progress: https://dotnet-ladder.vercel.app
 | # | Project | Spec | External judge | Status |
 |---|---|---|---|---|
 | 01 | [JSON parser](01-json/) | RFC 8259 | JSONTestSuite + System.Text.Json | Done |
-| 02 | Redis-compatible server | RESP | Valkey test suite, `valkey-cli`, `valkey-benchmark` | Next |
+| 02 | Redis-compatible server | RESP | Valkey test suite, `valkey-cli`, `valkey-benchmark` | In progress |
 | 03 | HTTP/1.1 server | RFC 9112 | curl + RFC edge cases; load test vs Kestrel | Planned |
 | 04 | WebSocket server | RFC 6455 | Autobahn TestSuite | Planned |
 | 05 | DI container | M.E.DependencyInjection | `Specification.Tests` | Planned |

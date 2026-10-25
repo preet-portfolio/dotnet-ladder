@@ -16,8 +16,20 @@ Provenance of the corpus files, as given by nativejson-benchmark:
 
 Reference implementation: System.Text.Json from https://github.com/dotnet/runtime (MIT), the copy that ships with the .NET 10 SDK.
 
+## 02 · Redis-compatible server
+
+| What | Used for | Source | Pinned | License |
+|---|---|---|---|---|
+| Valkey 9.1.2 test suite (`tests/`) | External judge: the Tcl suite in external-server mode | https://github.com/valkey-io/valkey | tag `9.1.2`, commit `7f1dffedff6de73058b2c2a389422b6ecd56c8fb` | BSD-3-Clause |
+| Valkey 9.1.2 server, `valkey-cli`, `valkey-benchmark` | Reference implementation, load generator, mass-insert client | Homebrew `valkey` 9.1.2 | version 9.1.2 | BSD-3-Clause |
+| GeoNames `cities15000` | Real dataset for the differential load test: every city with population > 15,000 | https://download.geonames.org/export/dump/cities15000.zip | GeoNames updates daily, so `judge/run-judge.sh` records the SHA-256 of the snapshot it used in `judge/results/` | CC BY 4.0 |
+
 ### How to cite
 
 > Seriot, N. *JSONTestSuite: a comprehensive test suite for RFC 8259 compliant JSON parsers.* https://github.com/nst/JSONTestSuite (commit 1ef36fa).
 >
 > Yip, M. *nativejson-benchmark.* https://github.com/miloyip/nativejson-benchmark (commit 478d572).
+>
+> Valkey contributors. *Valkey 9.1.2.* https://github.com/valkey-io/valkey (tag 9.1.2).
+>
+> GeoNames. *cities15000*, https://www.geonames.org/, licensed under CC BY 4.0.
