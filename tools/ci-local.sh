@@ -3,7 +3,7 @@
 set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$root"
-projects=(01-json)
+projects=(01-json 02-resp)
 
 command -v actionlint >/dev/null && actionlint .github/workflows/ci.yml
 dotnet tool restore

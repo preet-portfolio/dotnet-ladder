@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsAotCompatible>true</IsAotCompatible>
+    <RootNamespace>Ladder.Resp</RootNamespace>
+    <!-- "Integer" and "Int" are RESP reply and Valkey encoding names, kept on purpose. -->
+    <NoWarn>$(NoWarn);CA1720</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Ladder.Resp.Tests" />
+    <InternalsVisibleTo Include="Ladder.Resp.Bench" />
+  </ItemGroup>
+</Project>

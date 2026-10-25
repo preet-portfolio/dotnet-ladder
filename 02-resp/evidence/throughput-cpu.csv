@@ -1,0 +1,7 @@
+server,run,cpu_seconds,wall_seconds,requests
+valkey,1,1.61,1.64,2000000
+valkey,2,1.60,1.64,2000000
+valkey,3,1.61,1.65,2000000
+ladder,1,7.25,1.49,2000000
+ladder,2,6.46,1.24,2000000
+ladder,3,6.36,1.22,2000000

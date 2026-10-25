@@ -1,0 +1,1 @@
+machine: Apple M1, 8 cores; valkey-server v=9.1.2; 10.0.402

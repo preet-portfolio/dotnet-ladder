@@ -20,12 +20,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project: [01-json]
+        project: [01-json, 02-resp]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+      - name: Build Valkey 9.1.2 from the pinned commit (02-resp judge)
+        if: matrix.project == '02-resp'
+        run: |
+          sudo apt-get update && sudo apt-get install -y tcl
+          sha=7f1dffedff6de73058b2c2a389422b6ecd56c8fb
+          curl -fsSL "https://codeload.github.com/valkey-io/valkey/tar.gz/$sha" | tar -xz -C "$RUNNER_TEMP"
+          make -C "$RUNNER_TEMP/valkey-$sha" -j"$(nproc)" >/dev/null
+          echo "$RUNNER_TEMP/valkey-$sha/src" >> "$GITHUB_PATH"
       - run: dotnet tool restore
       - run: dotnet build Ladder.slnx -c Release
       - run: dotnet test --solution Ladder.slnx -c Release --no-build

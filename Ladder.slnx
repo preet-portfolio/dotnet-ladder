@@ -5,4 +5,10 @@
     <Project Path="01-json/src/Ladder.Json/Ladder.Json.csproj" />
     <Project Path="01-json/tests/Ladder.Json.Tests/Ladder.Json.Tests.csproj" />
   </Folder>
+  <Folder Name="/02-resp/">
+    <Project Path="02-resp/bench/Ladder.Resp.Bench/Ladder.Resp.Bench.csproj" />
+    <Project Path="02-resp/server/Ladder.Resp.Server/Ladder.Resp.Server.csproj" />
+    <Project Path="02-resp/src/Ladder.Resp/Ladder.Resp.csproj" />
+    <Project Path="02-resp/tests/Ladder.Resp.Tests/Ladder.Resp.Tests.csproj" />
+  </Folder>
 </Solution>

@@ -87,29 +87,39 @@ def inline_md(text):
 
 
 def copy_raw(project):
-    """Copies the evidence files the page links to; .md becomes .txt so browsers display it instead of downloading."""
+    """Copies every evidence file, the judge's results and the README; .md becomes .txt so browsers display it."""
     dest = os.path.join(OUT, project)
     os.makedirs(dest, exist_ok=True)
     links = []
-    sources = [
-        ("Judge output (raw)", os.path.join(project, "judge", "results", "jsontestsuite.txt")),
-        ("Divergences from System.Text.Json", os.path.join(project, "evidence", "divergences.md")),
-        ("Benchmark tables (raw)", os.path.join(project, "evidence", "benchmarks.md")),
-        ("dotnet-counters write-up", os.path.join(project, "evidence", "counters.md")),
-        ("dotnet-counters samples (CSV)", os.path.join(project, "evidence", "counters.csv")),
-        ("Stryker summary", os.path.join(project, "evidence", "stryker.md")),
-        ("README", os.path.join(project, "README.md")),
-    ]
-    for label, rel in sources:
+    paths = [os.path.join(project, "README.md")]
+    for folder in (os.path.join(project, "judge", "results"), os.path.join(project, "evidence")):
+        full = os.path.join(ROOT, folder)
+        if os.path.isdir(full):
+            paths += [os.path.join(folder, f) for f in sorted(os.listdir(full)) if not f.startswith(".")]
+    for rel in paths:
         src = os.path.join(ROOT, rel)
-        if not os.path.exists(src):
+        if not os.path.isfile(src):
             continue
         name = os.path.basename(rel)
         if name.endswith(".md"):
             name = name[:-3] + ".txt"
         shutil.copyfile(src, os.path.join(dest, name))
-        links.append((label, f"{project}/{name}"))
+        folder = "judge" if f"{os.sep}judge{os.sep}" in rel else "evidence" if f"{os.sep}evidence{os.sep}" in rel else ""
+        links.append((f"{folder}/{os.path.basename(rel)}" if folder else os.path.basename(rel), f"{project}/{name}"))
     return links
+
+
+def readme_claims(project):
+    """Rows of the README's claims table: (number, claim, result markdown, state)."""
+    text = read(os.path.join(ROOT, project, "README.md")) or ""
+    m = re.search(r"^## Claims.*?\n(.*?)(?=^## |\Z)", text, re.S | re.M)
+    rows = []
+    for line in (m.group(1).splitlines() if m else []):
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) == 3 and cells[0].isdigit():
+            state = "held" if cells[2].startswith("**Held") else "failed" if cells[2].startswith("**Failed") else "info"
+            rows.append((cells[0], cells[1], cells[2], state))
+    return rows
 
 
 def pill(state, text):
@@ -143,61 +153,91 @@ def bench_block(files):
     return "".join(parts)
 
 
-def claims(judge, bench, strk):
-    ours = [r for rows in (bench or {}).values() for r in rows if r["method"] == "Ladder_JsonTokenizer"]
-    zero = bool(ours) and all(r["allocated"] in ("-", "0 B") for r in ours)
-    ratios = [float(r["ratio"]) for r in ours if r["ratio"] not in ("", "NA")]
-    out = []
-    if ours:
-        out.append(("held" if zero else "failed", "Tokenizing allocates 0 bytes",
-                    "BenchmarkDotNet Allocated column is 0 B on all three corpus files. A unit test checks the same thing with GC.GetAllocatedBytesForCurrentThread."))
-    if judge and judge["y"] and judge["n"]:
-        ok = judge["y"][0] == judge["y"][1] and judge["n"][0] == judge["n"][1]
-        out.append(("held" if ok else "failed", "JSONTestSuite: every y_ accepted, every n_ rejected",
-                    f"y_ {judge['y'][0]}/{judge['y'][1]} accepted, n_ {judge['n'][0]}/{judge['n'][1]} rejected, no crash or stack overflow."))
-    if ratios:
-        worst = max(ratios)
-        out.append(("held" if worst <= 2 else "failed", "Throughput within 2× of Utf8JsonReader",
-                    f"Slowest ratio is {worst:.2f}× of Utf8JsonReader's time, so ours is faster on every file."))
-    return out
+def tiles(items):
+    return '<div class="tiles">' + "".join(
+        f'<div class="tile {st}"><span class="tile-value">{html.escape(v)}</span><span class="tile-label">{html.escape(k)}</span></div>'
+        for k, v, st in items) + "</div>"
 
 
-def project_detail(project):
+def json_blocks(project):
+    blocks = []
     judge = judge_summary(project)
-    bench = benchmarks(project)
-    strk = stryker(project)
-    links = copy_raw(project)
-    sections = []
-
-    claim_items = "".join(
-        f'<li class="claim">{pill(state, "Held" if state == "held" else "Failed")}'
-        f'<div><strong>{html.escape(title)}</strong><p>{html.escape(note)}</p></div></li>'
-        for state, title, note in claims(judge, bench, strk))
-    sections.append(f'<section><h3>Claims, written before the code</h3><ul class="claims">{claim_items}</ul></section>')
-
     if judge:
-        tiles = [
+        blocks.append('<section><h3>External judge: JSONTestSuite @ 1ef36fa</h3>' + tiles([
             ("y_ must accept", f"{judge['y'][0]}/{judge['y'][1]}", "held" if judge["y"][0] == judge["y"][1] else "failed"),
             ("n_ must reject", f"{judge['n'][0]}/{judge['n'][1]}", "held" if judge["n"][0] == judge["n"][1] else "failed"),
             ("i_ accepted (implementation-defined)", f"{judge['i'][0]}/{judge['i'][1]}", "info"),
             ("Tree mismatches vs System.Text.Json", str(judge["mismatches"]), "held" if judge["mismatches"] == 0 else "failed"),
-        ]
-        sections.append('<section><h3>External judge: JSONTestSuite @ 1ef36fa</h3><div class="tiles">' + "".join(
-            f'<div class="tile {s}"><span class="tile-value">{html.escape(v)}</span><span class="tile-label">{html.escape(k)}</span></div>'
-            for k, v, s in tiles) + "</div></section>")
-
+        ]) + "</section>")
+    bench = benchmarks(project)
     if bench:
-        sections.append('<section><h3>Benchmarks: Apple M1, .NET 10.0.13</h3>' + bench_block(bench) + "</section>")
+        blocks.append('<section><h3>Benchmarks: Apple M1, .NET 10.0.13</h3>' + bench_block(bench) + "</section>")
+    return blocks
 
+
+def resp_blocks(project):
+    blocks = []
+    summary = read(os.path.join(ROOT, project, "judge", "results", "summary.txt"))
+    if summary:
+        items = []
+        for f, ok, n in re.findall(r"^(unit/\S+): (\d+)/(\d+) passed", summary, re.M):
+            items.append((f, f"{ok}/{n}", "held" if ok == n else "info"))
+        total = re.search(r"passes (\d+)/(\d+) = ([\d.]+)%", summary)
+        geo = re.search(r"GeoNames differential: reference (\d+) keys.*?(IDENTICAL|\d+ differing lines)", summary)
+        if total:
+            items.insert(0, ("All 259 tests Valkey passes", f"{total.group(3)}%", "held" if float(total.group(3)) >= 90 else "failed"))
+        if geo:
+            items.append((f"GeoNames dump, {int(geo.group(1)):,} keys", "identical" if geo.group(2) == "IDENTICAL" else geo.group(2), "held" if geo.group(2) == "IDENTICAL" else "failed"))
+        fails = re.findall(r"^    FAIL     (.*)$", summary, re.M)
+        fail_list = "".join(f"<li>{html.escape(x)}</li>" for x in fails)
+        blocks.append('<section><h3>External judge: Valkey 9.1.2 test suite, run against both servers</h3>' + tiles(items)
+                      + (f'<details><summary>{len(fails)} failing tests</summary><ul class="fails">{fail_list}</ul></details>' if fails else "") + "</section>")
+    raw = os.path.join(ROOT, project, "evidence", "throughput-raw.csv")
+    cpu = os.path.join(ROOT, project, "evidence", "throughput-cpu.csv")
+    if os.path.exists(raw):
+        import statistics
+        rows = list(csv.DictReader(open(raw, encoding="utf-8")))
+        cpu_rows = list(csv.DictReader(open(cpu, encoding="utf-8"))) if os.path.exists(cpu) else []
+        bars = []
+        for test in ("SET", "GET"):
+            v = statistics.median(float(r["rps"]) for r in rows if r["server"] == "valkey" and r["test"] == test)
+            o = statistics.median(float(r["rps"]) for r in rows if r["server"] == "ladder" and r["test"] == test)
+            for label, val, cls in ((f"valkey-server {test}", v, "ref"), (f"Ours {test}", o, "ours")):
+                bars.append(f'<div class="bar-row"><span class="bar-label">{label}</span><span class="bar-track"><span class="bar {cls}" style="width:{100 * val / max(v, o):.1f}%"></span></span>'
+                            f'<span class="bar-value">{val / 1e6:.2f} M/s</span><span class="bar-ratio">{val / v:.2f}×</span><span class="bar-alloc"></span></div>')
+        cpu_note = ""
+        if cpu_rows:
+            vc = statistics.median(float(r["cpu_seconds"]) for r in cpu_rows if r["server"] == "valkey")
+            oc = statistics.median(float(r["cpu_seconds"]) for r in cpu_rows if r["server"] == "ladder")
+            cpu_note = tiles([("valkey-server CPU seconds / 2M requests", f"{vc:.2f}", "info"),
+                              ("Our CPU seconds / 2M requests", f"{oc:.2f}", "failed" if oc > 2 * vc else "info"),
+                              ("CPU cost relative to Valkey", f"{oc / vc:.1f}×", "failed" if oc > 2 * vc else "info")])
+        blocks.append('<section><h3>Throughput (valkey-benchmark, 50 clients, pipeline 16) and CPU</h3><figure class="bench">'
+                      '<div class="bar-head"><span></span><span>Median requests/sec of 3 alternating rounds</span><span>Rate</span><span>vs Valkey</span><span></span></div>'
+                      + "".join(bars) + "</figure>" + cpu_note + "</section>")
+    return blocks
+
+
+PROJECT_BLOCKS = {"01-json": json_blocks, "02-resp": resp_blocks}
+
+
+def project_detail(project):
+    sections = []
+    claim_rows = readme_claims(project)
+    if claim_rows:
+        sections.append('<section><h3>Claims, written before the code</h3><ul class="claims">' + "".join(
+            f'<li class="claim">{pill(state, {"held": "Held", "failed": "Failed"}.get(state, "Open"))}'
+            f'<div><strong>{inline_md(claim)}</strong><p>{inline_md(result)}</p></div></li>'
+            for _, claim, result, state in claim_rows) + "</ul></section>")
+    sections += PROJECT_BLOCKS.get(project, lambda _: [])(project)
+    strk = stryker(project)
     if strk and strk["score"] is not None:
-        sections.append(f'<section><h3>Mutation testing: Stryker.NET</h3><div class="tiles"><div class="tile info"><span class="tile-value">{strk["score"]:.1f}%</span><span class="tile-label">mutation score</span></div></div></section>')
-    else:
-        sections.append('<section><h3>Mutation testing: Stryker.NET</h3><p class="muted">Running. The first attempt used the wrong test runner and its 0% result was discarded.</p></section>')
-
+        score = f"{strk['score']:.1f}%"
+        sections.append(f'<section><h3>Mutation testing: Stryker.NET</h3>{tiles([("mutation score", score, "info")])}</section>')
     surprises = readme_section(project, "What surprised us")
     if surprises:
-        sections.append('<section><h3>What surprised us</h3><ul class="notes">' + "".join(f"<li>{inline_md(s)}</li>" for s in surprises) + "</ul></section>")
-
+        sections.append('<section><h3>What surprised us</h3><ul class="notes">' + "".join(f"<li>{inline_md(x)}</li>" for x in surprises) + "</ul></section>")
+    links = copy_raw(project)
     if links:
         sections.append('<section><h3>Raw evidence</h3><ul class="links">' + "".join(
             f'<li><a href="{html.escape(href)}">{html.escape(label)}</a></li>' for label, href in links) + "</ul></section>")
@@ -216,27 +256,30 @@ def build():
     with open(os.path.join(OUT, ".vercelignore"), "w", encoding="utf-8") as f:
         f.write(".env*\n.gitignore\nartifact.html\n")
     rungs = []
-    current = next((p for p in ladder if p["status"] == "in-progress"), ladder[0])
+    active = [p for p in ladder if p["status"] != "planned"]
+    # The project being worked on comes first; finished ones follow, newest first.
+    active.sort(key=lambda p: (p["status"] != "in-progress", -ladder.index(p)))
     for i, p in enumerate(ladder, 1):
-        cls = "rung " + p["status"] + (" current" if p is current else "")
+        cls = "rung " + p["status"] + (" current" if p["status"] == "in-progress" else "")
+        name = html.escape(p["name"])
+        if p["status"] != "planned":
+            name = f'<a href="#{p["id"]}">{name}</a>'
         rungs.append(
             f'<li class="{cls}"><span class="rung-no">{i:02d}</span><div class="rung-body">'
-            f'<span class="rung-name">{html.escape(p["name"])}</span>'
+            f'<span class="rung-name">{name}</span>'
             f'<span class="rung-judge">Judge: {html.escape(p["judge"])}</span></div>'
             f'{pill(p["status"], STATUS_LABEL[p["status"]])}</li>')
+    projects = []
+    for p in active:
+        no = ladder.index(p) + 1
+        projects.append(
+            f'<article class="project" id="{p["id"]}"><div class="current-head">'
+            f'<span class="eyebrow">Rung {no:02d} · {html.escape(p["spec"])} · {STATUS_LABEL[p["status"]]}</span>'
+            f'<h2>{html.escape(p["name"])}</h2><p>{html.escape(p["concept"])}</p></div>'
+            f'{project_detail(p["id"])}</article>')
     done = sum(p["status"] == "done" for p in ladder)
     stamp = datetime.datetime.now().astimezone().strftime("%d %b %Y, %H:%M %Z")
-    page = TEMPLATE.format(
-        rungs="".join(rungs),
-        done=done,
-        total=len(ladder),
-        current_no=f"{ladder.index(current) + 1:02d}",
-        current_name=html.escape(current["name"]),
-        current_concept=html.escape(current["concept"]),
-        current_spec=html.escape(current["spec"]),
-        detail=project_detail(current["id"]),
-        stamp=html.escape(stamp),
-    )
+    page = TEMPLATE.format(rungs="".join(rungs), done=done, total=len(ladder), projects="".join(projects), stamp=html.escape(stamp))
     with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
         f.write(DOCUMENT_HEAD + page + DOCUMENT_TAIL)
     with open(os.path.join(OUT, "artifact.html"), "w", encoding="utf-8") as f:
@@ -304,7 +347,13 @@ h1 {{ font: 800 clamp(30px, 5vw, 46px)/1 var(--display); font-stretch: 80%; lett
 .pill.in-progress {{ background: var(--accent); color: var(--surface); }}
 .pill.done, .pill.held {{ background: var(--good-soft); color: var(--good); }}
 .pill.failed {{ background: var(--bad-soft); color: var(--bad); }}
-main {{ display: grid; gap: 22px; min-width: 0; }}
+main {{ display: grid; gap: 40px; min-width: 0; }}
+.project {{ display: grid; gap: 18px; min-width: 0; scroll-margin-top: 16px; }}
+.project + .project {{ border-top: 2px solid var(--ink); padding-top: 28px; }}
+.rung-name a {{ color: inherit; text-decoration: none; }}
+.rung-name a:hover {{ color: var(--accent); }}
+details summary {{ cursor: pointer; color: var(--muted); font-size: 14px; }}
+.fails {{ margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 13.5px; display: grid; gap: 2px; }}
 .current-head {{ display: grid; gap: 4px; }}
 .eyebrow {{ font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }}
 h2 {{ font: 800 30px/1.1 var(--display); font-stretch: 85%; margin: 0; text-wrap: balance; }}
@@ -342,19 +391,14 @@ footer {{ font-size: 12.5px; color: var(--muted); }}
   <header>
     <div>
       <h1>Infrastructure Ladder</h1>
-      <p class="sub">Ten pieces of infrastructure rebuilt in .NET 10 from their specs. An outside test suite or reference implementation judges each one; nothing here is graded by its author.</p>
+      <p class="sub">Ten pieces of infrastructure rebuilt in .NET 10 from their specs. An outside test suite or reference implementation judges each one; nothing here is graded by its author. Source: <a href="https://github.com/preet-portfolio/dotnet-ladder">github.com/preet-portfolio/dotnet-ladder</a>.</p>
     </div>
     <div class="meta"><strong>{done}/{total}</strong>rungs complete</div>
   </header>
   <div class="layout">
     <ol class="ladder" aria-label="Projects">{rungs}</ol>
     <main>
-      <div class="current-head">
-        <span class="eyebrow">Rung {current_no} · {current_spec}</span>
-        <h2>{current_name}</h2>
-        <p>{current_concept}</p>
-      </div>
-      {detail}
+      {projects}
     </main>
   </div>
   <footer>Generated by tools/site/build.py from the repo's evidence files · {stamp}</footer>
