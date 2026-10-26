@@ -1,0 +1,143 @@
+PASS  Keyed.ClosedGenericsWithIsKeyedService
+PASS  Keyed.CombinationalRegistration
+PASS  Keyed.CreateServiceWithKeyedParameter
+PASS  Keyed.ExplicitServiceRegistrationWithIsKeyedService
+PASS  Keyed.IEnumerableWithIsKeyedServiceAlwaysReturnsTrue
+PASS  Keyed.NonKeyedServiceWithIsKeyedService
+PASS  Keyed.OpenGenericsWithIsKeyedService
+PASS  Keyed.ResolveKeyedGenericServices
+PASS  Keyed.ResolveKeyedOpenGenericService
+PASS  Keyed.ResolveKeyedScopedFromScopeServiceProvider
+PASS  Keyed.ResolveKeyedService
+PASS  Keyed.ResolveKeyedServiceSingletonFactory
+PASS  Keyed.ResolveKeyedServiceSingletonFactoryWithAnyKey
+PASS  Keyed.ResolveKeyedServiceSingletonFactoryWithAnyKeyIgnoreWrongType
+PASS  Keyed.ResolveKeyedServiceSingletonInstance
+PASS  Keyed.ResolveKeyedServiceSingletonInstanceWithAnyKey
+PASS  Keyed.ResolveKeyedServiceSingletonInstanceWithKeyInjection
+PASS  Keyed.ResolveKeyedServiceSingletonInstanceWithKeyedParameter
+PASS  Keyed.ResolveKeyedServiceSingletonType
+PASS  Keyed.ResolveKeyedServiceThrowsIfNotSupported
+PASS  Keyed.ResolveKeyedServiceTransientFactory
+PASS  Keyed.ResolveKeyedServiceTransientType
+PASS  Keyed.ResolveKeyedServiceTransientTypeWithAnyKey
+PASS  Keyed.ResolveKeyedServiceWithFromServiceKeyAttribute
+PASS  Keyed.ResolveKeyedServiceWithFromServiceKeyAttribute_NotFound
+PASS  Keyed.ResolveKeyedServiceWithFromServiceKeyAttribute_NotFound_WithUnkeyed
+PASS  Keyed.ResolveKeyedServiceWithKeyedParameter_MissingRegistrationButWithDefaults
+PASS  Keyed.ResolveKeyedServiceWithKeyedParameter_MissingRegistrationButWithUnkeyedService
+PASS  Keyed.ResolveKeyedServiceWithKeyedParameter_MissingRegistration_FirstParameter
+PASS  Keyed.ResolveKeyedServiceWithKeyedParameter_MissingRegistration_SecondParameter
+PASS  Keyed.ResolveKeyedServices
+PASS  Keyed.ResolveKeyedServicesAnyKey
+PASS  Keyed.ResolveKeyedServicesAnyKeyConsistency
+PASS  Keyed.ResolveKeyedServicesAnyKeyConsistencyWithAnyKeyRegistration
+PASS  Keyed.ResolveKeyedServicesAnyKeyOrdering
+PASS  Keyed.ResolveKeyedServicesAnyKeyWithAnyKeyRegistration
+PASS  Keyed.ResolveKeyedServicesSingletonInstanceWithAnyKey
+PASS  Keyed.ResolveKeyedSingletonFromInjectedServiceProvider
+PASS  Keyed.ResolveKeyedSingletonFromScopeServiceProvider
+PASS  Keyed.ResolveKeyedTransientFromInjectedServiceProvider
+PASS  Keyed.ResolveKeyedTransientFromScopeServiceProvider
+PASS  Keyed.ResolveNonKeyedService
+PASS  Keyed.ResolveNullKeyedService
+PASS  Keyed.ResolveRequiredKeyedServiceThrowsIfNotFound
+PASS  Keyed.ResolveUnkeyedServiceWithFromServiceKeyAttributeWithNullKey
+PASS  Keyed.ResolveWithAnyKeyQuery_Constructor(anyKeyQueryBeforeSingletonQueries: False)
+PASS  Keyed.ResolveWithAnyKeyQuery_Constructor(anyKeyQueryBeforeSingletonQueries: True)
+PASS  Keyed.ResolveWithAnyKeyQuery_Constructor_Duplicates(anyKeyQueryBeforeSingletonQueries: False)
+PASS  Keyed.ResolveWithAnyKeyQuery_Constructor_Duplicates(anyKeyQueryBeforeSingletonQueries: True)
+PASS  Keyed.ResolveWithAnyKeyQuery_InstanceProvided(anyKeyQueryBeforeSingletonQueries: False)
+PASS  Keyed.ResolveWithAnyKeyQuery_InstanceProvided(anyKeyQueryBeforeSingletonQueries: True)
+PASS  Keyed.ResolveWithAnyKeyQuery_InstanceProvided_Duplicates(anyKeyQueryBeforeSingletonQueries: False)
+PASS  Keyed.ResolveWithAnyKeyQuery_InstanceProvided_Duplicates(anyKeyQueryBeforeSingletonQueries: True)
+PASS  Keyed.SimpleServiceKeyedResolution
+PASS  Specification.AbstractClassConstrainedOpenGenericServicesCanBeResolved
+PASS  Specification.AttemptingToResolveNonexistentServiceReturnsNull
+PASS  Specification.BuiltInServicesWithIsServiceReturnsTrue
+PASS  Specification.ClosedGenericsWithIsService
+PASS  Specification.ClosedServicesPreferredOverOpenGenericServices
+PASS  Specification.ConstrainedOpenGenericServicesCanBeResolved
+PASS  Specification.ConstrainedOpenGenericServicesReturnsEmptyWithNoMatches
+PASS  Specification.CreateInstance_CapturesInnerException_OfTargetInvocationException
+PASS  Specification.CreateInstance_WithAbstractTypeAndPublicConstructor_ThrowsCorrectException
+PASS  Specification.DisposesInReverseOrderOfCreation
+PASS  Specification.DisposingScopeDisposesService
+PASS  Specification.ExplicitServiceRegisterationWithIsService
+PASS  Specification.FactoryServicesAreCreatedAsPartOfCreatingObjectGraph
+PASS  Specification.FactoryServicesCanBeCreatedByGetService
+PASS  Specification.GetServiceOrCreateInstanceRegisteredServiceSingleton
+PASS  Specification.GetServiceOrCreateInstanceRegisteredServiceTransient
+PASS  Specification.GetServiceOrCreateInstanceUnregisteredService
+PASS  Specification.IEnumerableWithIsServiceAlwaysReturnsTrue
+PASS  Specification.InterfaceConstrainedOpenGenericServicesCanBeResolved
+PASS  Specification.LastServiceReplacesPreviousServices
+PASS  Specification.MultipleServiceCanBeIEnumerableResolved
+PASS  Specification.NestedScopedServiceCanBeResolved
+PASS  Specification.NestedScopedServiceCanBeResolvedWithNoFallbackProvider
+PASS  Specification.NonSingletonService_WithInjectedProvider_ResolvesScopeProvider(lifetime: Scoped)
+PASS  Specification.NonSingletonService_WithInjectedProvider_ResolvesScopeProvider(lifetime: Transient)
+PASS  Specification.NonexistentServiceCanBeIEnumerableResolved
+PASS  Specification.OpenGenericServicesCanBeResolved
+PASS  Specification.OpenGenericsWithIsService
+PASS  Specification.OuterServiceCanHaveOtherServicesInjected
+PASS  Specification.RegistrationOrderIsPreservedWhenServicesAreIEnumerableResolved
+PASS  Specification.ResolvesDifferentInstancesForServiceWhenResolvingEnumerable(serviceType: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeOpenGenericService<>), implementation: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeOpenGenericService<>), resolve: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeOpenGenericService<IServiceProvider>), lifetime: Scoped)
+PASS  Specification.ResolvesDifferentInstancesForServiceWhenResolvingEnumerable(serviceType: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeOpenGenericService<>), implementation: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeOpenGenericService<>), resolve: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeOpenGenericService<IServiceProvider>), lifetime: Singleton)
+PASS  Specification.ResolvesDifferentInstancesForServiceWhenResolvingEnumerable(serviceType: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeService), implementation: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService), resolve: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeService), lifetime: Scoped)
+PASS  Specification.ResolvesDifferentInstancesForServiceWhenResolvingEnumerable(serviceType: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeService), implementation: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService), resolve: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeService), lifetime: Singleton)
+PASS  Specification.ResolvesMixedOpenClosedGenericsAsEnumerable
+PASS  Specification.ResolvingEnumerableContainingOpenGenericServiceUsesCorrectSlot
+PASS  Specification.SafelyDisposeNestedProviderReferences
+PASS  Specification.ScopedServiceCanBeResolved
+PASS  Specification.ScopedServices_FromCachedScopeFactory_CanBeResolvedAndDisposed
+PASS  Specification.ScopesAreFlatNotHierarchical
+PASS  Specification.SelfResolveThenDispose
+PASS  Specification.ServiceContainerPicksConstructorWithLongestMatches(serviceCollection: [ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFactoryService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.TransientFactoryService], expected: TypeWithSupersetConstructors { FactoryService = TransientFactoryService { FakeService = null, Value = 0 }, MultipleService = null, ScopedService = null, Service = null })
+PASS  Specification.ServiceContainerPicksConstructorWithLongestMatches(serviceCollection: [ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService, ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFactoryService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.TransientFactoryService], expected: TypeWithSupersetConstructors { FactoryService = TransientFactoryService { FakeService = null, Value = 0 }, MultipleService = null, ScopedService = null, Service = FakeService { Disposed = False, Value = null } })
+PASS  Specification.ServiceContainerPicksConstructorWithLongestMatches(serviceCollection: [ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService, ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeMultipleService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService, ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFactoryService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.TransientFactoryService], expected: TypeWithSupersetConstructors { FactoryService = TransientFactoryService { FakeService = null, Value = 0 }, MultipleService = FakeService { Disposed = False, Value = null }, ScopedService = null, Service = FakeService { Disposed = False, Value = null } })
+PASS  Specification.ServiceContainerPicksConstructorWithLongestMatches(serviceCollection: [ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService, ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeMultipleService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService, ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeScopedService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService, ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFactoryService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.TransientFactoryService], expected: TypeWithSupersetConstructors { FactoryService = TransientFactoryService { FakeService = null, Value = 0 }, MultipleService = FakeService { Disposed = False, Value = null }, ScopedService = FakeService { Disposed = False, Value = null }, Service = FakeService { Disposed = False, Value = null } })
+PASS  Specification.ServiceContainerPicksConstructorWithLongestMatches(serviceCollection: [ServiceType: Microsoft.Extensions.DependencyInjection.Specification.Fakes.IFakeService Lifetime: Singleton ImplementationInstance: Microsoft.Extensions.DependencyInjection.Specification.Fakes.FakeService], expected: TypeWithSupersetConstructors { FactoryService = null, MultipleService = null, ScopedService = null, Service = FakeService { Disposed = False, Value = null } })
+PASS  Specification.ServiceInstanceCanBeResolved
+PASS  Specification.ServiceProviderIsDisposable
+PASS  Specification.ServiceProviderRegistersServiceScopeFactory
+PASS  Specification.ServiceScopeFactoryIsSingleton
+PASS  Specification.ServicesRegisteredWithImplementationTypeCanBeResolved
+PASS  Specification.ServicesRegisteredWithImplementationType_ReturnDifferentInstancesPerResolution_ForTransientServices
+PASS  Specification.ServicesRegisteredWithImplementationType_ReturnSameInstancesPerResolution_ForSingletons
+PASS  Specification.SingleServiceCanBeIEnumerableResolved
+PASS  Specification.SingletonServiceCanBeResolved
+PASS  Specification.SingletonServiceCanBeResolvedFromScope
+PASS  Specification.SingletonServicesComeFromRootProvider
+PASS  Specification.TransientServiceCanBeResolvedFromProvider
+PASS  Specification.TransientServiceCanBeResolvedFromScope
+PASS  Specification.TypeActivatorAcceptsAnyNumberOfAdditionalConstructorParametersToProvide(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorAcceptsAnyNumberOfAdditionalConstructorParametersToProvide(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorCanDisambiguateConstructorsWithUniqueArguments(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorCanDisambiguateConstructorsWithUniqueArguments(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorCreateFactoryDoesNotAllowForAmbiguousConstructorMatches(paramType: typeof(int))
+PASS  Specification.TypeActivatorCreateFactoryDoesNotAllowForAmbiguousConstructorMatches(paramType: typeof(string))
+PASS  Specification.TypeActivatorCreateInstanceUsesLongestAvailableConstructor(value: "", ctor: "IFakeService, string")
+PASS  Specification.TypeActivatorCreateInstanceUsesLongestAvailableConstructor(value: 5, ctor: "IFakeService, int")
+PASS  Specification.TypeActivatorEnablesYouToCreateAnyTypeWithServicesEvenWhenNotInIocContainer(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorEnablesYouToCreateAnyTypeWithServicesEvenWhenNotInIocContainer(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorRequiresAllArgumentsCanBeAccepted(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorRequiresAllArgumentsCanBeAccepted(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorRequiresPublicConstructor(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null }, type: typeof(Microsoft.Extensions.DependencyInjection.Specification.Fakes.ClassWithPrivateCtor))
+PASS  Specification.TypeActivatorRequiresPublicConstructor(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null }, type: typeof(Microsoft.Extensions.DependencyInjection.ClassWithInternalConstructor))
+PASS  Specification.TypeActivatorRethrowsOriginalExceptionFromConstructor(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorRethrowsOriginalExceptionFromConstructor(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorThrowsOnMultipleMarkedCtors(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorThrowsOnMultipleMarkedCtors(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorThrowsWhenMarkedCtorDoesntAcceptArguments(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorThrowsWhenMarkedCtorDoesntAcceptArguments(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorUsesMarkedConstructor(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorUsesMarkedConstructor(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorWorksWithCtorWithOptionalArgs(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorWorksWithCtorWithOptionalArgs(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorWorksWithCtorWithOptionalArgs_WithStructDefaults(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorWorksWithCtorWithOptionalArgs_WithStructDefaults(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorWorksWithStaticCtor(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.TypeActivatorWorksWithStaticCtor(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.UnRegisteredServiceAsConstructorParameterThrowsException(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceDirectly(System.IServiceProvider, System.Type, System.Object[]), Target = null })
+PASS  Specification.UnRegisteredServiceAsConstructorParameterThrowsException(createFunc: CreateInstanceFunc { Method = System.Object CreateInstanceFromFactory(System.IServiceProvider, System.Type, System.Object[]), Target = null })

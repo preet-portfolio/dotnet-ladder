@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- BenchmarkDotNet generates code that trips analyzer rules meant for library code; method names are table labels. -->
+    <NoWarn>$(NoWarn);CA1515;CA1707;CA1822;CA1001</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Ladder.DI/Ladder.DI.csproj" />
+  </ItemGroup>
+</Project>

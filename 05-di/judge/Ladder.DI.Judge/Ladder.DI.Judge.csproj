@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The specification suite is compiled against xUnit v2 (its [Fact]s are xunit.core 2.9.3 attributes), which an
+    xUnit v3 project can't discover, and xUnit v2 has no Microsoft.Testing.Platform runner (global.json makes
+    `dotnet test` MTP-only). So this is a console app that subclasses the suite and runs it with xUnit v2's own
+    in-process runner library (xunit.runner.utility's AssemblyRunner), writing one verdict per test.
+    Not a test project: `dotnet test` skips it, `judge/run-judge.sh` runs it.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- xUnit needs the subclasses public; their names follow the suite's. -->
+    <NoWarn>$(NoWarn);CA1515;CA1707</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Specification.Tests" />
+    <PackageReference Include="xunit.extensibility.execution" />
+    <PackageReference Include="xunit.runner.utility" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Ladder.DI/Ladder.DI.csproj" />
+  </ItemGroup>
+</Project>
