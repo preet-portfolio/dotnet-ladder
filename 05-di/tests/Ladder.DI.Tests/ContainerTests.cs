@@ -227,6 +227,24 @@ public class ContainerTests
     }
 
     /// <summary>
+    /// An AnyKey enumeration resolves each keyed registration under its own (key, service type). For a keyed open
+    /// generic that service type is the open definition, which can't be closed, so it is silently left out, while the
+    /// same registration is found by its own key. Microsoft's container behaves this way; ours follows.
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(Containers))]
+    public void An_AnyKey_enumeration_leaves_out_keyed_open_generics(string container)
+    {
+        IServiceCollection services = new ServiceCollection().AddSingleton(new RunLog())
+            .AddKeyedTransient(typeof(IS<>), "k1", typeof(Open<>))
+            .AddKeyedTransient<IS<K1>, Leaf<K1>>("k2");
+        IServiceProvider provider = Build(container, services);
+
+        Assert.IsType<Leaf<K1>>(Assert.Single(provider.GetKeyedServices<IS<K1>>(KeyedService.AnyKey)));
+        Assert.IsType<Open<K1>>(Assert.Single(provider.GetKeyedServices<IS<K1>>("k1")));
+    }
+
+    /// <summary>
     /// Microsoft's scope validator remembers results by <c>ResultCache.Key</c>, and an instance registration's key is
     /// (unkeyed service type, 0), the same as the unkeyed registration's. Once the unkeyed scoped IS&lt;K1&gt; has been
     /// validated, a singleton that depends on a <em>keyed instance</em> of IS&lt;K1&gt; is refused as a captive

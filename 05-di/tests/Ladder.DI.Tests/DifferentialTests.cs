@@ -14,7 +14,8 @@ namespace Ladder.DI.Tests;
 /// </summary>
 public partial class DifferentialTests(ITestOutputHelper output)
 {
-    private const int Graphs = 10_000;
+    // 10,000 is the claim. LADDER_DI_GRAPHS lowers it for mutation testing, where the suite runs once per mutant.
+    private static readonly int Graphs = int.TryParse(Environment.GetEnvironmentVariable("LADDER_DI_GRAPHS"), out int n) ? n : 10_000;
 
     private static readonly Gen<bool> s_sometimes = Gen.Int[0, 3].Select(i => i == 0);
 
@@ -70,7 +71,7 @@ public partial class DifferentialTests(ITestOutputHelper output)
         ];
         foreach ((string what, int atLeast) in floors)
         {
-            Assert.True(stats.Count(what) >= atLeast, $"only {stats.Count(what)} graphs with {what}\n{stats}");
+            Assert.True(stats.Count(what) >= Math.Max(1, (long)atLeast * Graphs / 10_000), $"only {stats.Count(what)} graphs with {what}\n{stats}");
         }
     }
 
