@@ -11,4 +11,10 @@
     <Project Path="02-resp/src/Ladder.Resp/Ladder.Resp.csproj" />
     <Project Path="02-resp/tests/Ladder.Resp.Tests/Ladder.Resp.Tests.csproj" />
   </Folder>
+  <Folder Name="/05-di/">
+    <Project Path="05-di/bench/Ladder.DI.Bench/Ladder.DI.Bench.csproj" />
+    <Project Path="05-di/judge/Ladder.DI.Judge/Ladder.DI.Judge.csproj" />
+    <Project Path="05-di/src/Ladder.DI/Ladder.DI.csproj" />
+    <Project Path="05-di/tests/Ladder.DI.Tests/Ladder.DI.Tests.csproj" />
+  </Folder>
 </Solution>

@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project: [01-json, 02-resp]
+        project: [01-json, 02-resp, 05-di]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4

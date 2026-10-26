@@ -1,12 +1,12 @@
 [
   {"id": "01-json", "name": "JSON parser", "concept": "Span-based UTF-8 parsing without allocation", "spec": "RFC 8259", "judge": "JSONTestSuite + System.Text.Json", "status": "done"},
-  {"id": "02-resp", "name": "Redis-compatible server", "concept": "System.IO.Pipelines and back-pressure", "spec": "RESP3 spec", "judge": "redis-cli, redis-benchmark", "status": "in-progress"},
-  {"id": "03-http", "name": "HTTP/1.1 server", "concept": "Framing, keep-alive and request smuggling edges", "spec": "RFC 9112", "judge": "curl + RFC edge cases; bombardier vs Kestrel", "status": "planned"},
+  {"id": "02-resp", "name": "Redis-compatible server", "concept": "System.IO.Pipelines and back-pressure", "spec": "RESP3 spec", "judge": "Valkey test suite, valkey-cli, valkey-benchmark", "status": "done"},
+  {"id": "03-http", "name": "HTTP/1.1 server", "concept": "Framing, keep-alive and request smuggling edges", "spec": "RFC 9112", "judge": "curl + RFC edge cases; bombardier vs Kestrel", "status": "in-progress"},
   {"id": "04-websocket", "name": "WebSocket server", "concept": "Frame masking, fragmentation, close handshake", "spec": "RFC 6455", "judge": "Autobahn TestSuite", "status": "planned"},
-  {"id": "05-di", "name": "DI container", "concept": "Lifetimes, scopes and disposal order", "spec": "M.E.DependencyInjection contract", "judge": "DI Specification.Tests", "status": "planned"},
+  {"id": "05-di", "name": "DI container", "concept": "Lifetimes, scopes and disposal order", "spec": "M.E.DependencyInjection contract", "judge": "DI Specification.Tests + differential vs Microsoft's container", "status": "done"},
   {"id": "06-sourcegen", "name": "Source-generated mapper", "concept": "Roslyn incremental generators, trimming", "spec": "Roslyn generator API", "judge": "Verify snapshots + Native AOT run", "status": "planned"},
   {"id": "07-kv", "name": "Crash-safe KV store", "concept": "Write-ahead logging and fsync semantics", "spec": "Log-structured storage", "judge": "kill -9 harness", "status": "planned"},
-  {"id": "08-lox", "name": "Lox interpreter", "concept": "Tree-walking, then a bytecode VM", "spec": "Crafting Interpreters", "judge": "Crafting Interpreters test suite", "status": "planned"},
+  {"id": "08-lox", "name": "Lox interpreter", "concept": "Tree-walking, then a bytecode VM", "spec": "Crafting Interpreters", "judge": "Crafting Interpreters test suite", "status": "in-progress"},
   {"id": "09-sql", "name": "SQL engine", "concept": "Planning, joins and NULL semantics", "spec": "SQL subset", "judge": "sqllogictest vs sqlite3", "status": "planned"},
   {"id": "10-raft", "name": "Raft", "concept": "Consensus under partitions", "spec": "Raft paper", "judge": "Jepsen Maelstrom lin-kv", "status": "planned"}
 ]
