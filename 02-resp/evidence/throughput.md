@@ -8,8 +8,10 @@ Machine: Apple M1, 8 cores, macOS 27.2. Same session, both servers on loopback, 
 
 | Test | valkey-server | ladder-resp | ladder / valkey | p99 latency valkey | p99 latency ladder |
 |---|---:|---:|---:|---:|---:|
-| SET | 1,131,222 | 1,037,344 | **0.917** | 0.815 ms | 0.959 ms |
-| GET | 1,381,216 | 1,133,787 | **0.821** | 0.679 ms | 0.855 ms |
+| SET | 1,133,787 | 1,071,811 | **0.945** | 0.799 ms | 1.055 ms |
+| GET | 1,377,410 | 1,123,596 | **0.816** | 0.679 ms | 0.863 ms |
+
+Measured after the output back-pressure fix (the server now checks pending reply bytes before each pipelined command). The run before the fix gave 0.917 and 0.821.
 
 The claim (≥ 0.50) holds. Run-to-run noise is large for ours: across the separate runs below, SET varied from 0.78 M to 1.75 M req/s. Valkey varied by about 2%.
 

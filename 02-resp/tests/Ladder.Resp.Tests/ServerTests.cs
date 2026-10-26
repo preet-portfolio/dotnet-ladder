@@ -56,6 +56,54 @@ public class ServerTests
         Assert.Equal(expected, await ReadAsync(client, expected.Length));
     }
 
+    [Fact]
+    public async Task Request_larger_than_the_pipe_pause_threshold_completes()
+    {
+        // A 4 MB value cannot be consumed until all of it has arrived, so the input pipe must not pause at 1 MB.
+        await using var server = new RespServer(new IPEndPoint(IPAddress.Loopback, 0));
+        server.Start();
+        using var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        await client.ConnectAsync(server.LocalEndPoint, TestContext.Current.CancellationToken);
+
+        byte[] value = new byte[4 * 1024 * 1024];
+        Array.Fill(value, (byte)'v');
+        byte[] set = ParserTests.Encode([Encoding.ASCII.GetBytes("SET"), Encoding.ASCII.GetBytes("big"), value]);
+        Task send = client.SendAsync(set, SocketFlags.None, TestContext.Current.CancellationToken).AsTask();
+        Assert.Equal("+OK\r\n", await ReadAsync(client, 5));
+        await send;
+    }
+
+    [Fact]
+    public async Task Pipelined_large_replies_are_produced_only_as_fast_as_the_client_reads()
+    {
+        // 2,000 pipelined GETs of a 64 KB value would build a 128 MB reply if the server ran the whole batch
+        // before flushing. With back-pressure the unsent output stays near the pipe's pause threshold.
+        await using var server = new RespServer(new IPEndPoint(IPAddress.Loopback, 0));
+        server.Start();
+        using var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { ReceiveBufferSize = 4096 };
+        await client.ConnectAsync(server.LocalEndPoint, TestContext.Current.CancellationToken);
+
+        byte[] value = new byte[64 * 1024];
+        byte[] set = ParserTests.Encode([Encoding.ASCII.GetBytes("SET"), Encoding.ASCII.GetBytes("v"), value]);
+        await client.SendAsync(set, SocketFlags.None, TestContext.Current.CancellationToken);
+        Assert.Equal("+OK\r\n", await ReadAsync(client, 5));
+
+        byte[] get = ParserTests.Encode([Encoding.ASCII.GetBytes("GET"), Encoding.ASCII.GetBytes("v")]);
+        byte[] batch = [.. Enumerable.Repeat(get, 2000).SelectMany(b => b)];
+        long before = GC.GetTotalAllocatedBytes(precise: true);
+        await client.SendAsync(batch, SocketFlags.None, TestContext.Current.CancellationToken);
+        await Task.Delay(1000, TestContext.Current.CancellationToken); // the client reads nothing meanwhile
+        long grown = GC.GetTotalAllocatedBytes(precise: true) - before;
+        Assert.True(grown < 16 * 1024 * 1024, $"server allocated {grown:N0} bytes for replies the client has not read");
+
+        // Once the client reads, every reply arrives: stopping a batch early must not drop or reorder requests.
+        string header = $"${value.Length}\r\n";
+        int replyLength = header.Length + value.Length + 2;
+        string replies = await ReadAsync(client, replyLength * 2000);
+        Assert.Equal(replyLength * 2000, replies.Length);
+        Assert.Equal(2000, replies.Split(header).Length - 1);
+    }
+
     private static async Task<string> ReadAsync(Socket socket, int length)
     {
         var buffer = new byte[length];
