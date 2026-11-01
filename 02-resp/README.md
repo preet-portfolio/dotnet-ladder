@@ -19,9 +19,9 @@ Closed-loop tools like `valkey-benchmark` send the next request only when a repl
 
 | # | Claim | Result |
 |---|---|---|
-| 5 | At fixed rates of 25%, 50% and 75% of Valkey's closed-loop `GET` maximum on the same machine (50 connections, no pipelining), ours' **p99 latency is within 2×** of Valkey's and its **p99.9 within 3×** | Pending |
-| 6 | At each of those rates ours uses **≤ 4× Valkey's CPU per request** (the closed-loop ratio in claim 3). Prediction, not a goal: the ratio is *worse* at the lowest rate, because waking three async loops per request costs the same however idle the server is | Pending |
-| 7 | Prediction: Garnet (Microsoft Research's C# RESP server) uses **less CPU per request than ours** at every rate, so the gap to Valkey is not simply "C# versus C" | Pending |
+| 5 | At fixed rates of 25%, 50% and 75% of Valkey's closed-loop `GET` maximum on the same machine (50 connections, no pipelining), ours' **p99 latency is within 2×** of Valkey's and its **p99.9 within 3×** | **Pending for Valkey 9.1.2** (it could not be built in the session). Against the Valkey 7.2.13 stand-in: holds, p99 1.00–1.67×, p99.9 0.44–1.04×. VM stalls of 20–30 ms dominate the tails. See [`evidence/openloop.md`](evidence/openloop.md) |
+| 6 | At each of those rates ours uses **≤ 4× Valkey's CPU per request** (the closed-loop ratio in claim 3). Prediction, not a goal: the ratio is *worse* at the lowest rate, because waking three async loops per request costs the same however idle the server is | **Pending for 9.1.2.** Against 7.2.13: holds, 3.34× / 2.39× / 1.91× at 25/50/75%. The prediction held too: the ratio is worst at the lowest rate |
+| 7 | Prediction: Garnet (Microsoft Research's C# RESP server) uses **less CPU per request than ours** at every rate, so the gap to Valkey is not simply "C# versus C" | **Failed** (Garnet 2.2.5 on the same VM). Garnet and ours are within 5% of each other at every rate: 78 vs 83, 50 vs 49 and 33 vs 32 µs/request. Garnet is cheaper only at 25% |
 | 8 | Replaying a real production cache trace (Twitter, Yang et al., OSDI 2020) through ours and Valkey, with trace operations mapped to RESP commands, **every reply is byte-for-byte identical** | Pending |
 
 ### Coverage-guided fuzzing (committed before the fuzz harness was written)
@@ -52,10 +52,12 @@ Closed-loop tools like `valkey-benchmark` send the next request only when a repl
   - any request split across arbitrary buffer segments parses the same as in one piece;
   - SCAN returns every stable key under concurrent churn.
   Socket tests cover byte-at-a-time pipelining, protocol errors, a 4 MB request, and output back-pressure under 2,000 unread replies.
+- **Open-loop comparison with Valkey 7.2.13 (stand-in) and Garnet 2.2.5:** [`evidence/openloop.md`](evidence/openloop.md).
 - **Mutation testing:** [`evidence/stryker.md`](evidence/stryker.md).
 
 ## What surprised us
 
+- **Garnet costs as much CPU per request as ours.** We predicted that Microsoft Research's server would be clearly cheaper (claim 7). Under the same open-loop load, the two are within 5% of each other at every rate, and both cost 2–3× what Valkey does. Whatever drives this cost, both C# servers pay it; Garnet's engineering does not avoid it.
 - **The judge found two real bugs before it found any missing features.**
   - A `KEYS` pattern of 50,000 `*?` pairs made the glob matcher backtrack exponentially while holding the keyspace lock. That froze the whole server, so every later test timed out (`unit/expire` scored 0/65 on that run). Porting Valkey's "skip longer matches" cut-off fixed it.
   - `SETRANGE key 9223372036854775807 A` overflowed `offset + length`, threw, and dropped the client. Command handlers now catch unexpected exceptions and reply with an error instead.

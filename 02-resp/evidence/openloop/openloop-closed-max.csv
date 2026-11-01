@@ -1,0 +1,10 @@
+round,server,closed_loop_rps
+1,valkey,74460
+1,garnet,94571
+1,ladder,97988
+2,valkey,69195
+2,garnet,111815
+2,ladder,94335
+3,valkey,75169
+3,garnet,106004
+3,ladder,100051

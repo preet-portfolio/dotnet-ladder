@@ -1,0 +1,8 @@
+cpu: Intel(R) Xeon(R) Processor @ 2.10GHz, 4 vCPUs (docker guest)
+kernel: 6.18.44-fc-v185
+servers on CPUs 0,1, load generator on CPUs 2,3
+valkey: Server v=7.2.13 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=d168676aca4db8ba
+garnet: /opt/ext/garnet/garnet-server (GarnetServer 2.2.5+8d007138208ce030eb10a50c80e636b1678b83e4)
+dotnet: 10.0.402
+load: 50 connections, 100000 keys of 64 bytes, uniform random GET, 5s warm-up + 20s measured per rate, 3 rounds
+loadavg at end: 6.37 6.43 4.91 1/103 13235
