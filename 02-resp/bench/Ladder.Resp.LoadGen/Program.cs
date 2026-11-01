@@ -13,10 +13,12 @@ using HdrHistogram;
 //   open   <port> <rate> <seconds> <warmupSeconds> <conns> <keys> <csv> <label>
 //          open loop GET at a fixed rate. Request k is *scheduled* at start + k/rate and its latency runs from that
 //          scheduled time, so a server that falls behind is charged for the queueing it causes (no coordinated omission).
-//   replay <port> <commands.resp> <hashes.bin> [dumpFrom dumpCount dumpFile]
+//   replay <port> <commands.resp> <hashes.bin> [indices.txt dumpFile]
 //          sends a file of RESP commands in order, pipelined in windows, and writes the first 8 bytes of SHA-256 of
-//          every reply, so two servers' replies can be compared byte for byte without storing them.
-//   diff   <hashesA.bin> <hashesB.bin>                                   first mismatching reply index and mismatch count
+//          every reply, so two servers' replies can be compared byte for byte without storing them. With indices.txt
+//          (one reply index per line) it also writes those replies, in full, to dumpFile.
+//   diff   <hashesA.bin> <hashesB.bin> [mismatches.txt]                 mismatch count and first index; optionally
+//          writes every mismatching index (up to 100,000) to mismatches.txt
 var inv = CultureInfo.InvariantCulture;
 switch (args)
 {
@@ -30,10 +32,10 @@ switch (args)
         Open(int.Parse(port, inv), double.Parse(rate, inv), double.Parse(seconds, inv), double.Parse(warmup, inv), int.Parse(conns, inv), int.Parse(keys, inv), csv, label);
         break;
     case ["replay", var port, var commands, var hashes, ..var rest]:
-        Replay(int.Parse(port, inv), commands, hashes, rest.Length == 3 ? (long.Parse(rest[0], inv), long.Parse(rest[1], inv), rest[2]) : null);
+        Replay(int.Parse(port, inv), commands, hashes, rest.Length == 2 ? (rest[0], rest[1]) : null);
         break;
-    case ["diff", var a, var b]:
-        return Diff(a, b);
+    case ["diff", var a, var b, ..var rest]:
+        return Diff(a, b, rest.Length == 1 ? rest[0] : null);
     default:
         Console.Error.WriteLine("usage: see the comment at the top of Program.cs");
         return 2;
@@ -198,8 +200,11 @@ static void Open(int port, double rate, double seconds, double warmup, int conns
     }
 }
 
-static void Replay(int port, string commandsPath, string hashesPath, (long From, long Count, string File)? dump)
+static void Replay(int port, string commandsPath, string hashesPath, (string Indices, string File)? dump)
 {
+    HashSet<long> wanted = dump is { } w
+        ? [.. File.ReadLines(w.Indices).Where(l => l.Length > 0).Select(l => long.Parse(l, CultureInfo.InvariantCulture))]
+        : [];
     byte[] commands = File.ReadAllBytes(commandsPath);
     using Socket socket = Connect(port);
     var reader = new ReplyReader(socket);
@@ -225,7 +230,7 @@ static void Replay(int port, string commandsPath, string hashesPath, (long From,
             ReadOnlySpan<byte> reply = reader.Next();
             SHA256.HashData(reply, digest);
             hashes.Write(BinaryPrimitives.ReadUInt64BigEndian(digest));
-            if (dump is { } dd && index >= dd.From && index < dd.From + dd.Count)
+            if (wanted.Contains(index))
             {
                 dumpFile!.Write(Encoding.ASCII.GetBytes($"--- reply {index}\n"));
                 dumpFile.Write(reply);
@@ -241,8 +246,9 @@ static void Replay(int port, string commandsPath, string hashesPath, (long From,
     Console.WriteLine($"replayed {index} commands");
 }
 
-static int Diff(string a, string b)
+static int Diff(string a, string b, string? mismatchesPath)
 {
+    using StreamWriter? list = mismatchesPath is null ? null : new StreamWriter(mismatchesPath);
     byte[] x = File.ReadAllBytes(a);
     byte[] y = File.ReadAllBytes(b);
     long first = -1;
@@ -253,6 +259,11 @@ static int Diff(string a, string b)
         if (!x.AsSpan((int)(i * 8), 8).SequenceEqual(y.AsSpan((int)(i * 8), 8)))
         {
             mismatches++;
+            if (mismatches <= 100_000)
+            {
+                list?.WriteLine(i.ToString(CultureInfo.InvariantCulture));
+            }
+
             if (first < 0)
             {
                 first = i;
