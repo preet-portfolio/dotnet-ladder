@@ -219,6 +219,122 @@ public class MutationGapTests
         Assert.Equal("(a, Ladder.DI.Tests.MutationGapTests+IClosed)", new ServiceId("a", typeof(IClosed)).ToString());
     }
 
+    // --- Second round: survivors of the first round (see 05-di/evidence/stryker.md) -------------------------------
+
+    [Fact]
+    public void A_missing_required_service_asked_for_with_a_null_key_fails_like_Microsofts()
+    {
+        SameFailure(() => new ServiceCollection(), p => p.GetRequiredKeyedService<IClosed>(null));
+    }
+
+    [Theory]
+    [InlineData(ResolutionMode.Compiled)]
+    [InlineData(ResolutionMode.Interpreted)]
+    public void A_disposable_transient_made_by_a_factory_is_disposed_with_its_scope(ResolutionMode mode)
+    {
+        var services = new ServiceCollection().AddTransient(_ => new Tracker());
+        using ServiceContainer container = services.BuildLadderServiceProvider(new ServiceContainerOptions { Mode = mode });
+        var made = new List<Tracker>();
+        using (IServiceScope scope = container.CreateScope())
+        {
+            for (int i = 0; i < 3; i++) // three calls, so the compiled engine is reached on the second
+            {
+                made.Add(scope.ServiceProvider.GetRequiredService<Tracker>());
+            }
+        }
+
+        Assert.All(made, t => Assert.True(t.Disposed));
+    }
+
+    [Fact]
+    public void An_open_generic_IEnumerable_registration_is_used_like_Microsofts()
+    {
+        static IServiceCollection Services() => new ServiceCollection()
+            .AddTransient<IClosed, ClosedService>()
+            .AddTransient(typeof(IEnumerable<>), typeof(CustomEnumerable<>));
+        Assert.Equal(Microsoft(Services()).GetService<IEnumerable<IClosed>>()?.GetType(), Ours(Services()).GetService<IEnumerable<IClosed>>()?.GetType());
+    }
+
+    [Fact]
+    public void Keyed_enumerations_share_instances_with_single_resolutions_like_Microsofts()
+    {
+        // Singletons under a specific key, under another key, and under AnyKey. Which enumerated instances are the
+        // same objects as single resolutions depends on the slot each registration gets; the pattern must match.
+        static IServiceCollection Services() => new ServiceCollection()
+            .AddKeyedSingleton<IClosed, ClosedService>("a")
+            .AddKeyedSingleton<IClosed, ClosedService>("a")
+            .AddKeyedSingleton<IClosed, ClosedService>("b")
+            .AddKeyedSingleton<IClosed, ClosedService>(KeyedService.AnyKey);
+
+        static bool[] Pattern(IServiceProvider p)
+        {
+            object[] any = [.. p.GetKeyedServices<IClosed>(KeyedService.AnyKey)];
+            object[] a = [.. p.GetKeyedServices<IClosed>("a")];
+            object[] x = [.. p.GetKeyedServices<IClosed>("x")];
+            object[] singles = [p.GetRequiredKeyedService<IClosed>("a"), p.GetRequiredKeyedService<IClosed>("b"), p.GetRequiredKeyedService<IClosed>("x")];
+            object[] all = [.. any, .. a, .. x, .. singles];
+            return [.. from i in all from j in all select ReferenceEquals(i, j), .. new[] { any.Length == 3, a.Length == 2, x.Length == 1 }];
+        }
+
+        Assert.Equal(Pattern(Microsoft(Services())), Pattern(Ours(Services())));
+    }
+
+    [Fact]
+    public void Default_parameter_values_are_supplied_like_Microsofts()
+    {
+        static string Describe(IServiceProvider p)
+        {
+            var d = p.GetRequiredService<WithDefaults>();
+            return $"{d.Point.X},{d.Point.Y}|{d.Mode}|{d.Count}|{d.Name ?? "null"}";
+        }
+
+        static IServiceCollection Services() => new ServiceCollection().AddTransient<WithDefaults>();
+        Assert.Equal(Describe(Microsoft(Services())), Describe(Ours(Services())));
+    }
+
+    [Fact]
+    public void A_ServiceKey_parameter_under_AnyKey_gets_the_key_like_Microsofts()
+    {
+        static IServiceCollection Services() => new ServiceCollection().AddKeyedTransient<KeyTaker>(KeyedService.AnyKey);
+        static string Describe(IServiceProvider p) =>
+            string.Join(",", p.GetKeyedServices<KeyTaker>(KeyedService.AnyKey).Select(k => k.Key?.ToString() ?? "null"))
+            + "|" + (p.GetKeyedService<KeyTaker>("z")?.Key?.ToString() ?? "null");
+        Assert.Equal(Describe(Microsoft(Services())), Describe(Ours(Services())));
+    }
+
+    public sealed class Tracker : IDisposable
+    {
+        public bool Disposed { get; private set; }
+
+        public void Dispose() => Disposed = true;
+    }
+
+    public sealed class CustomEnumerable<T> : List<T>;
+
+    public readonly record struct Point(int X, int Y);
+
+    public enum Mode
+    {
+        First,
+        Second,
+    }
+
+    public sealed class WithDefaults(Point point = default, Mode? mode = Mode.Second, int count = 7, string? name = null)
+    {
+        public Point Point { get; } = point;
+
+        public Mode? Mode { get; } = mode;
+
+        public int Count { get; } = count;
+
+        public string? Name { get; } = name;
+    }
+
+    public sealed class KeyTaker([ServiceKey] object? key)
+    {
+        public object? Key { get; } = key;
+    }
+
     public interface IOpen<T>;
 
     public interface IClosed;

@@ -46,7 +46,7 @@ for n, (path, m) in enumerate(todo, 1):
         open(path, "w", encoding="utf-8").write(original)
     rows.append({"id": m["id"], "file": path.split("/")[-1], "line": s["line"], "stryker": m["status"],
                  "mutator": m["mutatorName"], "replacement": m["replacement"].replace("\n", " ")[:80],
-                 "judge": verdict, "seconds": round(time.time() - started)})
+                 "judge": verdict, "seconds": round(time.time() - started), "detail": (out.strip().splitlines() or [""])[-1][:60] if verdict != "JudgeTimeout" else ""})
     print(n, rows[-1]["file"], rows[-1]["line"], verdict, flush=True)
 
 with open(out_csv, "w", newline="") as f:
