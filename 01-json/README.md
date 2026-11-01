@@ -21,15 +21,15 @@
 | 2 | JSONTestSuite: 100% of `y_` accepted, 100% of `n_` rejected, no crash | **Held.** 95/95 and 188/188, including `n_structure_100000_opening_arrays` |
 | 3 | Throughput within 2× of `Utf8JsonReader` | **Held, with margin.** 0.51–0.64× of its time (ours is faster) |
 
-### Why it is faster (claims written in `01-json/README.md` before the ablation code, measured on a Linux VM)
+### Why it is faster (claims committed in 8b487de, before the ablation code; measured on a Linux VM)
 
 The README's hypothesis was that `Utf8JsonReader` is slower because it does work we don't. These claims test it.
 
 | # | Claim | Result |
 |---|---|---|
-| 4 | The hypothesis explains **at least half** the gap: a benchmark-only copy of our tokenizer that also does `Utf8JsonReader`'s extra bookkeeping — line and byte-in-line tracking (4a), saving rollback state before each token for partial buffers (4b), and checking the comment and trailing-comma options (4c) — closes **≥ 50%** of the time gap to `Utf8JsonReader` on each corpus file | Pending |
-| 5 | Prediction, not a goal: line and position tracking alone (4a) closes **< 25%** of the gap on each file | Pending |
-| 6 | On synthetic documents made of one token kind each, a per-kind cost model (ns per token, ours and STJ) predicts each corpus file's measured gap within **±25%** | Pending |
+| 4 | The hypothesis explains **at least half** the gap: a benchmark-only copy of our tokenizer that also does `Utf8JsonReader`'s extra bookkeeping — line and byte-in-line tracking (4a), saving rollback state before each token for partial buffers (4b), and checking the comment and trailing-comma options (4c) — closes **≥ 50%** of the time gap to `Utf8JsonReader` on each corpus file | **Failed.** All three together close 11.5% (canada), 34.7% (citm) and 44.2% (twitter). See [`evidence/why-faster.md`](evidence/why-faster.md) |
+| 5 | Prediction, not a goal: line and position tracking alone (4a) closes **< 25%** of the gap on each file | **Held.** 0.3%, 18.5% and 18.8% |
+| 6 | On synthetic documents made of one token kind each, a per-kind cost model (ns per token, ours and STJ) predicts each corpus file's measured gap within **±25%** | **Failed.** −61% (twitter), −74% (citm); held only on canada (−13%). The costs are not additive: the fitted STJ cost per property name is negative |
 | 7 | Hardware counters show STJ retires **≥ 1.5×** our instructions per byte | Pending (needs a PMU) |
 
 ### Coverage-guided fuzzing (committed before the fuzz harness was written)
@@ -42,6 +42,7 @@ The README's hypothesis was that `Utf8JsonReader` is slower because it does work
 
 - External judge: [`judge/results/jsontestsuite.txt`](judge/results/jsontestsuite.txt) (one line per file, ours vs System.Text.Json). Rerun with `judge/run-judge.sh`, which downloads JSONTestSuite @ `1ef36fa` and the corpus @ `478d572`.
 - Comparison with System.Text.Json: 0 tree mismatches on the 95 files both accept. Every disagreement and every `i_` result is in [`evidence/divergences.md`](evidence/divergences.md).
+- Why it is faster: [`evidence/why-faster.md`](evidence/why-faster.md) (ablation, per-kind cost model, CPU profiles; Linux VM, raw BDN rows in [`evidence/why-faster/`](evidence/why-faster/)).
 - Benchmarks (Apple M1, .NET 10.0.13): [`evidence/benchmarks.md`](evidence/benchmarks.md).
 
   | File | Ours | Utf8JsonReader | Ratio | Allocated |
@@ -58,7 +59,8 @@ The README's hypothesis was that `Utf8JsonReader` is slower because it does work
 
 - **System.Text.Json accepts invalid UTF-8 at parse time.** On 20 of the 35 `i_` files, `JsonDocument.Parse` succeeds and the error only appears later, as an `InvalidOperationException` when a string is read. `Utf8JsonReader` checks strings only for quotes, backslashes and control bytes. Ours rejects these files when it reads them.
 - **UTF-8 validation is nearly free.** `Utf8.IsValid` over a whole file takes 40–64 µs, 2–7% of a tokenize pass. We expected the validation to be the reason we'd lose to STJ. It wasn't.
-- **We're faster than `Utf8JsonReader`, and the cause hasn't been measured.** The likely reason is that STJ does work we don't: line and position tracking, support for streaming partial buffers, and comment and trailing-comma options. That is a hypothesis; no profile has confirmed it yet.
+- **The obvious explanation for our speed covers less than half of it.** We assumed STJ is slower because it does work we don't: line and position tracking, rollback state for partial buffers, and comment and trailing-comma options. Adding all three to a copy of our tokenizer closes only 11–44% of the gap (claim 4 failed). On citm the three cost more together than the sum of each alone. Most of the gap is still unexplained; [`evidence/why-faster.md`](evidence/why-faster.md) lists what would settle it.
+- **Counting tokens does not predict time.** A cost model fitted on one-kind documents is off by −61% and −74% on twitter and citm (claim 6 failed). STJ's cost depends on token order, not just token counts.
 - **STJ's timing on canada.json moved up to 20% between runs** (3,267, 3,975 and 3,782 µs in three processes), while ours stayed within 1,904–1,938 µs. All runs are kept in the evidence.
 - **dotnet-counters reported allocation that wasn't ours.** It showed 16–49 KB/s across two captures, which turned out to come from the in-process metrics listener it enables. A process-wide counter can't prove a per-call zero; BenchmarkDotNet and a unit test can.
 - **The tooling needed checking too.** Stryker's first run reported a 0% score because it used the old VSTest runner while the repo runs on Microsoft.Testing.Platform. BenchmarkDotNet's disassembler doesn't run on macOS, so CI passes `--disasm` on Linux instead.

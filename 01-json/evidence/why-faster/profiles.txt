@@ -1,0 +1,60 @@
+== soak-citm_catalog.json (dotnet-trace collect --profile dotnet-common,dotnet-sampled-thread-time, 20 s; report topN -n 12)
+Top 12 Functions (Exclusive)                                                  Inclusive           Exclusive           
+1.  Bench!Program.<<Main>$>g__CountOurs|0_1(unsigned int8[])                  97.09%              44.44%              
+2.  JsonTokenizer.ReadCommaOrClose(unsigned int8)                             34.57%              24.41%              
+3.  JsonTokenizer.ReadString()                                                10.09%              8.7%                
+4.  JsonTokenizer.ReadPropertyName(unsigned int8)                             9.66%               8.39%               
+5.  JsonTokenizer.ReadNumber()                                                6.23%               6.22%               
+6.  Thread.<PollGC>g__PollGCWorker|67_0()                                     2.46%               2.46%               
+7.  Utf8Utility.GetPointerToFirstInvalidByte(unsigned int8*,int32,int32&,i    2.11%               2.11%               
+8.  JsonTokenizer.ReadValue(unsigned int8)                                    2.09%               1.97%               
+9.  JsonTokenizer.ReadLiteral(value class System.ReadOnlySpan`1<unsigned i    0.22%               0.22%               
+10. JsonTokenizer.SkipWhitespace()                                            0.15%               0.15%               
+11. IndexOfAnyAsciiSearcher.IndexOfAny(unsigned int8&,int32,value class As    0.33%               0.12%               
+12. IndexOfAnyAsciiSearcher.IndexOfAnyCore(unsigned int8&,int32,value clas    0.21%               0.12%               
+
+== soak-stj-citm_catalog.json (dotnet-trace collect --profile dotnet-common,dotnet-sampled-thread-time, 20 s; report topN -n 12)
+Top 12 Functions (Exclusive)                                                  Inclusive           Exclusive           
+1.  Bench!Program.<<Main>$>g__CountStj|0_2(unsigned int8[])                   98.77%              48.52%              
+2.  Utf8JsonReader.ConsumeNextTokenOrRollback(unsigned int8)                  40.31%              35.07%              
+3.  Utf8JsonReader.TryGetNumber(value class System.ReadOnlySpan`1<unsigned    7.01%               6.78%               
+4.  Utf8JsonReader.ConsumeString()                                            4.72%               4.09%               
+5.  Utf8JsonReader.ConsumeValue(unsigned int8)                                9.37%               1.99%               
+6.  Thread.<PollGC>g__PollGCWorker|67_0()                                     1%                  1%                  
+7.  Utf8JsonReader.ReadSingleSegment()                                        2.02%               0.45%               
+8.  Utf8JsonReader.ConsumeNextToken(unsigned int8)                            1.06%               0.4%                
+9.  Utf8JsonReader.SkipWhiteSpace()                                           0.35%               0.35%               
+10. IndexOfAnyAsciiSearcher.IndexOfAny(unsigned int8&,int32,value class As    0.54%               0.29%               
+11. IndexOfAnyAsciiSearcher.IndexOfAnyCore(unsigned int8&,int32,value clas    0.34%               0.25%               
+12. SpanHelpers.NonPackedIndexOfValueType(!!0&,!!0,int32)                     0.19%               0.19%               
+
+== soak-twitter.json (dotnet-trace collect --profile dotnet-common,dotnet-sampled-thread-time, 20 s; report topN -n 12)
+Top 12 Functions (Exclusive)                                                  Inclusive           Exclusive           
+1.  JsonTokenizer.ReadCommaOrClose(unsigned int8)                             40.88%              36.22%              
+2.  Bench!Program.<<Main>$>g__CountOurs|0_1(unsigned int8[])                  93.54%              34.69%              
+3.  Utf8Utility.GetPointerToFirstInvalidByte(unsigned int8*,int32,int32&,i    12.94%              12.88%              
+4.  Thread.<PollGC>g__PollGCWorker|67_0()                                     6.09%               6.09%               
+5.  JsonTokenizer.ReadPropertyName(unsigned int8)                             3.93%               2.75%               
+6.  JsonTokenizer.ReadLiteral(value class System.ReadOnlySpan`1<unsigned i    2.43%               2.41%               
+7.  JsonTokenizer.ReadNumber()                                                2.26%               2.24%               
+8.  Utf8Utility.GetIndexOfFirstInvalidUtf8Sequence(value class System.Read    9.62%               0.36%               
+9.  JsonTokenizer.ReadValue(unsigned int8)                                    0.85%               0.35%               
+10. JsonTokenizer.ReadString()                                                1.23%               0.34%               
+11. IndexOfAnyAsciiSearcher.IndexOfAny(unsigned int8&,int32,value class As    0.69%               0.3%                
+12. IndexOfAnyAsciiSearcher.IndexOfAnyCore(unsigned int8&,int32,value clas    0.39%               0.24%               
+
+== soak-stj-twitter.json (dotnet-trace collect --profile dotnet-common,dotnet-sampled-thread-time, 20 s; report topN -n 12)
+Top 12 Functions (Exclusive)                                                  Inclusive           Exclusive           
+1.  Utf8JsonReader.ConsumeNextTokenOrRollback(unsigned int8)                  47.46%              45.91%              
+2.  Bench!Program.<<Main>$>g__CountStj|0_2(unsigned int8[])                   94.39%              26.19%              
+3.  Utf8JsonReader.ConsumeStringAndValidate(value class System.ReadOnlySpa    7.88%               7.8%                
+4.  Utf8JsonReader.ConsumeString()                                            7.08%               5.69%               
+5.  Thread.<PollGC>g__PollGCWorker|67_0()                                     5%                  5%                  
+6.  Utf8JsonReader.ConsumeNumber()                                            3.48%               3.3%                
+7.  Utf8JsonReader.ConsumeValue(unsigned int8)                                3.39%               2.77%               
+8.  IndexOfAnyAsciiSearcher.IndexOfAny(unsigned int8&,int32,value class As    1.23%               0.6%                
+9.  Utf8JsonReader.ConsumeNextToken(unsigned int8)                            1.67%               0.56%               
+10. IndexOfAnyAsciiSearcher.IndexOfAnyCore(unsigned int8&,int32,value clas    0.75%               0.49%               
+11. Byte].FirstIndex(!0&,!0&,value class System.Runtime.Intrinsics.Vector2    0.24%               0.24%               
+12. Utf8JsonReader.SkipWhiteSpace()                                           0.22%               0.22%               
+

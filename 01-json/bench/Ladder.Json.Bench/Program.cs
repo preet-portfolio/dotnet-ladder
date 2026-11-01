@@ -3,10 +3,12 @@ using BenchmarkDotNet.Running;
 using Ladder.Json;
 using Ladder.Json.Bench;
 
-// "soak <seconds>" tokenizes the corpus in a loop so dotnet-counters/dotnet-trace can attach; anything else runs BenchmarkDotNet.
-if (args is ["soak", var secondsText])
+// "soak <seconds> [file]" tokenizes the corpus (or one file) in a loop so dotnet-counters/dotnet-trace can attach;
+// "soak-stj <seconds> [file]" does the same with Utf8JsonReader, for side-by-side CPU profiles. Anything else runs BenchmarkDotNet.
+if (args is ["soak" or "soak-stj", var secondsText, ..])
 {
-    byte[][] docs = [.. Corpus.Files.Select(Corpus.Load)];
+    bool stj = args[0] == "soak-stj";
+    byte[][] docs = [.. Corpus.Files.Where(f => args.Length < 3 || f == args[2]).Select(Corpus.Load)];
     var stopwatch = Stopwatch.StartNew();
     long tokens = 0;
     long bytes = 0;
@@ -15,12 +17,7 @@ if (args is ["soak", var secondsText])
     {
         foreach (byte[] doc in docs)
         {
-            var tokenizer = new JsonTokenizer(doc);
-            while (tokenizer.Read())
-            {
-                tokens++;
-            }
-
+            tokens += stj ? CountStj(doc) : CountOurs(doc);
             bytes += doc.Length;
         }
     }
@@ -87,4 +84,28 @@ static void PrintCounts(string name, byte[] doc)
         }
     }
     Console.WriteLine(FormattableString.Invariant($"{name},{doc.Length},{tokens},{numbers},{strings},{properties},{literals},{containers},{whitespace},{stringBytes}"));
+}
+
+static long CountOurs(byte[] doc)
+{
+    long n = 0;
+    var tokenizer = new JsonTokenizer(doc);
+    while (tokenizer.Read())
+    {
+        n++;
+    }
+
+    return n;
+}
+
+static long CountStj(byte[] doc)
+{
+    long n = 0;
+    var reader = new System.Text.Json.Utf8JsonReader(doc);
+    while (reader.Read())
+    {
+        n++;
+    }
+
+    return n;
 }
