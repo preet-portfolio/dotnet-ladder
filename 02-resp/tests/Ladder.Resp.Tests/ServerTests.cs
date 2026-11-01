@@ -5,6 +5,15 @@ using Ladder.Resp.Server;
 
 namespace Ladder.Resp.Tests;
 
+/// <summary>
+/// The back-pressure test measures <see cref="GC.GetTotalAllocatedBytes(bool)"/>, which counts the whole process, so
+/// nothing else may run while it does. Without this, other test classes running in parallel pushed it over its 16 MB
+/// limit in Debug builds (18.6 MB measured), which is how Stryker's initial run found it.
+/// </summary>
+[CollectionDefinition(nameof(ProcessWideMeasurements), DisableParallelization = true)]
+public sealed class ProcessWideMeasurements;
+
+[Collection(nameof(ProcessWideMeasurements))]
 public class ServerTests
 {
     [Fact]
