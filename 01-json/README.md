@@ -21,6 +21,17 @@
 | 2 | JSONTestSuite: 100% of `y_` accepted, 100% of `n_` rejected, no crash | **Held.** 95/95 and 188/188, including `n_structure_100000_opening_arrays` |
 | 3 | Throughput within 2× of `Utf8JsonReader` | **Held, with margin.** 0.51–0.64× of its time (ours is faster) |
 
+### Why it is faster (claims written in `01-json/README.md` before the ablation code, measured on a Linux VM)
+
+The README's hypothesis was that `Utf8JsonReader` is slower because it does work we don't. These claims test it.
+
+| # | Claim | Result |
+|---|---|---|
+| 4 | The hypothesis explains **at least half** the gap: a benchmark-only copy of our tokenizer that also does `Utf8JsonReader`'s extra bookkeeping — line and byte-in-line tracking (4a), saving rollback state before each token for partial buffers (4b), and checking the comment and trailing-comma options (4c) — closes **≥ 50%** of the time gap to `Utf8JsonReader` on each corpus file | Pending |
+| 5 | Prediction, not a goal: line and position tracking alone (4a) closes **< 25%** of the gap on each file | Pending |
+| 6 | On synthetic documents made of one token kind each, a per-kind cost model (ns per token, ours and STJ) predicts each corpus file's measured gap within **±25%** | Pending |
+| 7 | Hardware counters show STJ retires **≥ 1.5×** our instructions per byte | Pending (needs a PMU) |
+
 ## Evidence
 
 - External judge: [`judge/results/jsontestsuite.txt`](judge/results/jsontestsuite.txt) (one line per file, ours vs System.Text.Json). Rerun with `judge/run-judge.sh`, which downloads JSONTestSuite @ `1ef36fa` and the corpus @ `478d572`.
