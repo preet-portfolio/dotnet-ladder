@@ -20,7 +20,14 @@ mkdir -p "$vendor" "$results"
 
 suite="$vendor/valkey-$VALKEY_SHA"
 if [ ! -d "$suite" ]; then
-  curl -fsSL "https://codeload.github.com/valkey-io/valkey/tar.gz/$VALKEY_SHA" | tar -xz -C "$vendor"
+  # Tarball first; some networks block codeload.github.com, so fall back to fetching the same commit with git.
+  if ! curl -fsSL "https://codeload.github.com/valkey-io/valkey/tar.gz/$VALKEY_SHA" | tar -xz -C "$vendor"; then
+    rm -rf "$suite"
+    git init -q "$suite"
+    git -C "$suite" fetch -q --depth 1 https://github.com/valkey-io/valkey.git "$VALKEY_SHA"
+    git -C "$suite" checkout -q FETCH_HEAD
+    rm -rf "$suite/.git"
+  fi
 fi
 bindir="$(dirname "$(command -v valkey-server)")"
 
