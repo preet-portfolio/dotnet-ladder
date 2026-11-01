@@ -1,0 +1,33 @@
+System.Text.Json 10.0.0.0, /opt/ext/dn14/shared/Microsoft.NETCore.App/10.0.14/System.Text.Json.dll
+
+input: 5B22FF225D  (Utf8.IsValid: False)
+  Utf8JsonReader reads every token: OK
+  JsonDocument.Parse:               OK
+  GetString():                      InvalidOperationException: Cannot transcode invalid UTF-8 JSON text to UTF-16 string.
+  ValueEquals("x"):                 False
+  GetRawText():                     InvalidOperationException: Cannot transcode invalid UTF-8 JSON text to UTF-16 string.
+  JsonSerializer.Deserialize<string[]>: JsonException: The JSON value could not be converted to System.String. Path: $[0] | LineNumber: 0 | BytePositionInLine: 4.
+
+input: 5B22C0AF225D  (Utf8.IsValid: False)
+  Utf8JsonReader reads every token: OK
+  JsonDocument.Parse:               OK
+  GetString():                      InvalidOperationException: Cannot transcode invalid UTF-8 JSON text to UTF-16 string.
+  ValueEquals("x"):                 False
+  GetRawText():                     InvalidOperationException: Cannot transcode invalid UTF-8 JSON text to UTF-16 string.
+  JsonSerializer.Deserialize<string[]>: JsonException: The JSON value could not be converted to System.String. Path: $[0] | LineNumber: 0 | BytePositionInLine: 5.
+
+input: 5B22EDA080225D  (Utf8.IsValid: False)
+  Utf8JsonReader reads every token: OK
+  JsonDocument.Parse:               OK
+  GetString():                      InvalidOperationException: Cannot transcode invalid UTF-8 JSON text to UTF-16 string.
+  ValueEquals("x"):                 False
+  GetRawText():                     InvalidOperationException: Cannot transcode invalid UTF-8 JSON text to UTF-16 string.
+  JsonSerializer.Deserialize<string[]>: JsonException: The JSON value could not be converted to System.String. Path: $[0] | LineNumber: 0 | BytePositionInLine: 6.
+
+input: 5B22E697225D  (Utf8.IsValid: False)
+  Utf8JsonReader reads every token: OK
+  JsonDocument.Parse:               OK
+  GetString():                      InvalidOperationException: Cannot transcode invalid UTF-8 JSON text to UTF-16 string.
+  ValueEquals("x"):                 False
+  GetRawText():                     InvalidOperationException: Cannot transcode invalid UTF-8 JSON text to UTF-16 string.
+  JsonSerializer.Deserialize<string[]>: JsonException: The JSON value could not be converted to System.String. Path: $[0] | LineNumber: 0 | BytePositionInLine: 5.

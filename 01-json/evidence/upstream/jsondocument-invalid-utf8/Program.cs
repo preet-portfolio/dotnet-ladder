@@ -16,8 +16,7 @@ foreach (byte[] json in inputs)
 {
     Console.WriteLine($"\ninput: {Convert.ToHexString(json)}  (Utf8.IsValid: {System.Text.Unicode.Utf8.IsValid(json)})");
 
-    var reader = new Utf8JsonReader(json);
-    Console.WriteLine($"  Utf8JsonReader reads every token: {Describe(() => { while (reader.Read()) { } return "OK"; })}");
+    Console.WriteLine($"  Utf8JsonReader reads every token: {Describe(() => ReadAll(json))}");
 
     JsonDocument? document = null;
     Console.WriteLine($"  JsonDocument.Parse:               {Describe(() => { document = JsonDocument.Parse(json); return "OK"; })}");
@@ -30,6 +29,16 @@ foreach (byte[] json in inputs)
     }
 
     Console.WriteLine($"  JsonSerializer.Deserialize<string[]>: {Describe(() => JsonSerializer.Deserialize<string[]>(json)![0])}");
+}
+
+static string ReadAll(byte[] json)
+{
+    var reader = new Utf8JsonReader(json);
+    while (reader.Read())
+    {
+    }
+
+    return "OK";
 }
 
 static string Describe(Func<string> action)

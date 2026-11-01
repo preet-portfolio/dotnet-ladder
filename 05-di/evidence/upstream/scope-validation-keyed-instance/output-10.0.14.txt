@@ -1,0 +1,3 @@
+fresh provider:           OK, Consumer
+after scoped IFoo:        InvalidOperationException: Cannot consume scoped service 'IFoo' from singleton 'Consumer'.
+ValidateOnBuild:          AggregateException: Some services are not able to be constructed (Error while validating the service descriptor 'ServiceType: Consumer Lifetime: Singleton ImplementationType: Consumer': Cannot consume scoped service 'IFoo' from singleton 'Consumer'.)
