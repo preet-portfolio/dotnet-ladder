@@ -53,10 +53,11 @@ Every test in the specification suite was read too, with its `Fakes/`.
 - **Differential testing:** [`evidence/differential.md`](evidence/differential.md) covers the generator, what is compared, the per-event coverage of the final run, and what the test found.
 - **Allocation and speed:** [`evidence/benchmarks.md`](evidence/benchmarks.md), with BenchmarkDotNet's noise statistics.
 - **Tests:** 26 test cases from 18 methods: the differential property, allocation tests, and lifecycle tests (disposal order, `IAsyncDisposable`, captive dependencies, `ValidateOnBuild`, cycle paths, use after dispose, concurrent first resolution in every engine, scope growth). Four methods run against both containers; three of those pin a Microsoft quirk.
-- **Mutation testing:** [`evidence/stryker.md`](evidence/stryker.md), pending.
+- **Mutation testing:** **84.79%** as Stryker reports it; **89.4%** after re-testing survivors in fresh processes and against the spec suite. All 47 survivors are classified: 25 equivalent, 11 performance-only, 5 unreachable and 6 open test gaps. The first run scored 68.08%; 33 new tests closed most of the gaps it found. See [`evidence/stryker.md`](evidence/stryker.md).
 
 ## What surprised us
 
+- **Passing all 143 spec tests left large gaps.** Of the first Stryker run's 143 surviving mutants, the specification suite killed only 24. Removing registration validation entirely, or never disposing factory-made transients, passed both our tests and Microsoft's conformance suite.
 - **A singleton, the simplest case, is the one we lose.** Scoped resolution is 2.4× faster than Microsoft's (an array slot instead of a dictionary per scope). But a warm singleton takes 8.5 ns against 6.7 ns, which is over the 1.25× bound. We expected the singleton to be a tie, because both sides return a captured value. The cause hasn't been profiled.
 
 - **The conformance suite passed on the first run, and the differential test failed on its first run.** 143/143 said the container was done. The first 10,000 random graphs disagreed with Microsoft's container within seconds. The suite tests each behaviour on its own; it never resolves the same service two different ways in one provider, and never combines keyed instances with scope validation.

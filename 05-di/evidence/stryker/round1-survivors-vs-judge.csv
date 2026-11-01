@@ -1,0 +1,144 @@
+id,file,line,stryker,mutator,replacement,judge,seconds
+0,Errors.cs,14,NoCoverage,String mutation,"$""""",SurvivesJudge,3
+5,Errors.cs,28,NoCoverage,String mutation,"""""",SurvivesJudge,4
+6,Errors.cs,31,NoCoverage,String mutation,"$""""",SurvivesJudge,4
+7,Errors.cs,34,NoCoverage,String mutation,"$""""",SurvivesJudge,3
+8,Errors.cs,37,NoCoverage,String mutation,"$""""",SurvivesJudge,3
+14,Errors.cs,57,NoCoverage,String mutation,"$""""",SurvivesJudge,3
+15,Errors.cs,61,NoCoverage,String mutation,"$""""",KilledByJudge,3
+16,Plan.cs,38,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,SurvivesJudge,3
+17,Plan.cs,63,Survived,Boolean mutation,false,SurvivesJudge,3
+20,Plan.cs,115,NoCoverage,Boolean mutation,true,SurvivesJudge,3
+28,Planner.cs,44,Survived,Statement mutation,;,SurvivesJudge,3
+37,Planner.cs,85,Survived,Arithmetic mutation,group.Length + 1,SurvivesJudge,3
+39,Planner.cs,95,NoCoverage,Statement mutation,;,SurvivesJudge,3
+40,Planner.cs,97,NoCoverage,Negate expression,!(type.IsGenericTypeDefinition),KilledByJudge,3
+42,Planner.cs,99,NoCoverage,Boolean mutation,true,KilledByJudge,3
+43,Planner.cs,102,NoCoverage,Logical mutation,_byId.ContainsKey(id) && (id.Key is not null && _byId.ContainsKey(new ServiceId(,KilledByJudge,4
+44,Planner.cs,102,NoCoverage,Negate expression,!(_byId.ContainsKey(id) || (id.Key is not null && _byId.ContainsKey(new ServiceI,KilledByJudge,4
+45,Planner.cs,102,NoCoverage,Logical mutation,"id.Key is not null || _byId.ContainsKey(new ServiceId(KeyedService.AnyKey, type)",KilledByJudge,3
+46,Planner.cs,102,NoCoverage,Equality mutation,id.Key is null,SurvivesJudge,3
+48,Planner.cs,104,NoCoverage,Boolean mutation,false,KilledByJudge,4
+49,Planner.cs,107,NoCoverage,Negate expression,!(type.IsConstructedGenericType),KilledByJudge,4
+51,Planner.cs,110,NoCoverage,Logical mutation,type.GetGenericTypeDefinition() == typeof(IEnumerable<>) && _byId.ContainsKey(id,KilledByJudge,4
+52,Planner.cs,110,NoCoverage,Equality mutation,type.GetGenericTypeDefinition() != typeof(IEnumerable<>),KilledByJudge,3
+53,Planner.cs,113,NoCoverage,Logical mutation,type == typeof(IServiceProvider) || type == typeof(IServiceScopeFactory)        ,KilledByJudge,3
+54,Planner.cs,113,NoCoverage,Logical mutation,type == typeof(IServiceProvider) || type == typeof(IServiceScopeFactory)        ,KilledByJudge,4
+55,Planner.cs,113,NoCoverage,Logical mutation,type == typeof(IServiceProvider) && type == typeof(IServiceScopeFactory),KilledByJudge,3
+56,Planner.cs,113,NoCoverage,Equality mutation,type != typeof(IServiceProvider),KilledByJudge,4
+57,Planner.cs,113,NoCoverage,Equality mutation,type != typeof(IServiceScopeFactory),KilledByJudge,3
+58,Planner.cs,114,NoCoverage,Equality mutation,type != typeof(IServiceProviderIsService),KilledByJudge,3
+59,Planner.cs,114,NoCoverage,Equality mutation,type != typeof(IServiceProviderIsKeyedService),KilledByJudge,3
+68,Planner.cs,127,Survived,Null coalescing mutation (left to right),"TryEnumerable(id, chain)?? TryOpenGeneric(id, chain)",SurvivesJudge,3
+98,Planner.cs,183,Survived,LogicalNotExpression to un-LogicalNotExpression mutation,anyKey,KilledByJudge,3
+102,Planner.cs,188,Survived,PreDecrementExpression to PreIncrementExpression mutation,++slot,KilledByJudge,3
+106,Planner.cs,196,Survived,Equality mutation,i > 0,KilledByJudge,3
+113,Planner.cs,203,Survived,Conditional (true) mutation,(true?ServiceId.Of(d) :itemId),SurvivesJudge,4
+119,Planner.cs,210,Survived,Equality mutation,i > 0,KilledByJudge,4
+144,Planner.cs,244,Survived,Arithmetic mutation,slot - 1,SurvivesJudge,4
+147,Planner.cs,248,Survived,PostIncrementExpression to PostDecrementExpression mutation,slot--,SurvivesJudge,4
+150,Planner.cs,262,Survived,Equality mutation,location is (CacheLocation.Root or CacheLocation.Scope),KilledByJudge,3
+151,Planner.cs,262,Survived,Logical mutation,CacheLocation.Root and CacheLocation.Scope,CompileError,2
+152,Planner.cs,263,Survived,Block removal mutation,{},SurvivesJudge,3
+155,Planner.cs,273,Survived,Statement mutation,;,SurvivesJudge,3
+187,Planner.cs,318,NoCoverage,Statement mutation,;,CompileError,2
+234,Planner.cs,416,Survived,Boolean mutation,false,SurvivesJudge,3
+241,Planner.cs,422,Survived,Block removal mutation,{},SurvivesJudge,4
+248,Planner.cs,431,Survived,Statement mutation,;,SurvivesJudge,3
+254,Planner.cs,448,Survived,Statement mutation,;,SurvivesJudge,3
+273,Planner.cs,490,Survived,Equality mutation,value is not null,SurvivesJudge,4
+274,Planner.cs,490,NoCoverage,Equality mutation,underlying is not null,SurvivesJudge,3
+275,Planner.cs,491,NoCoverage,Block removal mutation,{},SurvivesJudge,3
+278,Planner.cs,495,Survived,Equality mutation,value is null,CompileError,2
+280,Planner.cs,495,Survived,Boolean mutation,false,SurvivesJudge,3
+281,Planner.cs,496,NoCoverage,Block removal mutation,{},SurvivesJudge,3
+283,Planner.cs,503,Survived,Conditional (true) mutation,(true?Interlocked.Increment(ref _scopeSlots) - 1 :-1),SurvivesJudge,3
+286,Planner.cs,503,Survived,Arithmetic mutation,Interlocked.Increment(ref _scopeSlots) + 1,SurvivesJudge,3
+287,Planner.cs,503,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,SurvivesJudge,3
+295,Planner.cs,516,Survived,Logical mutation,implementation is null && !implementation.IsGenericTypeDefinition,CompileError,2
+300,Planner.cs,518,NoCoverage,Statement mutation,;,CompileError,2
+301,Planner.cs,521,Survived,Logical mutation,implementation.IsAbstract && implementation.IsInterface,SurvivesJudge,3
+304,Planner.cs,523,NoCoverage,Statement mutation,;,SurvivesJudge,3
+307,Planner.cs,528,NoCoverage,Statement mutation,;,SurvivesJudge,3
+311,Planner.cs,531,Survived,Logical mutation,implementation.IsGenericTypeDefinition || implementation.IsAbstract && implement,SurvivesJudge,3
+312,Planner.cs,531,Survived,Logical mutation,implementation.IsGenericTypeDefinition && implementation.IsAbstract,SurvivesJudge,3
+314,Planner.cs,533,NoCoverage,Statement mutation,;,SurvivesJudge,3
+325,ResolutionChain.cs,30,Survived,String mutation,"""""",SurvivesJudge,3
+351,ScopeValidator.cs,31,Survived,Conditional (true) mutation,(true?Errors.DirectScopedFromRoot(scoped) :Errors.ScopedFromRoot(plan.ServiceTyp,SurvivesJudge,3
+352,ScopeValidator.cs,31,Survived,Conditional (false) mutation,(false?Errors.DirectScopedFromRoot(scoped) :Errors.ScopedFromRoot(plan.ServiceTy,SurvivesJudge,3
+353,ScopeValidator.cs,31,Survived,Equality mutation,plan.ServiceType != scoped,SurvivesJudge,3
+369,Interpreter.cs,17,Survived,Conditional (true) mutation,"(true?scope.Capture(Create(plan, scope)) :Create(plan, scope))",SurvivesJudge,3
+384,Interpreter.cs,58,Survived,Conditional (false) mutation,(false?[] :new object?[argumentPlans.Length]),SurvivesJudge,3
+396,Interpreter.cs,77,NoCoverage,String mutation,"$""""",SurvivesJudge,3
+398,PlanCompiler.cs,28,Survived,String mutation,"""""",SurvivesJudge,3
+403,PlanCompiler.cs,46,Survived,Equality mutation,plan.CompiledBody is not null,SurvivesJudge,3
+404,PlanCompiler.cs,49,Survived,String mutation,"""""",SurvivesJudge,3
+409,PlanCompiler.cs,86,NoCoverage,String mutation,"$""""",SurvivesJudge,3
+410,PlanCompiler.cs,91,Survived,Null coalescing mutation (remove left),typeof(object),SurvivesJudge,4
+412,PlanCompiler.cs,95,Survived,Logical mutation,!expression.Type.IsValueType || !type.IsValueType,SurvivesJudge,3
+413,PlanCompiler.cs,95,Survived,LogicalNotExpression to un-LogicalNotExpression mutation,expression.Type.IsValueType,SurvivesJudge,3
+414,PlanCompiler.cs,95,Survived,LogicalNotExpression to un-LogicalNotExpression mutation,type.IsValueType,SurvivesJudge,3
+416,PlanCompiler.cs,96,Survived,Conditional (false) mutation,"(false?expression :Expression.Convert(expression, type))",SurvivesJudge,3
+417,PlanCompiler.cs,96,Survived,Logical mutation,expression.Type == type && (reference && type.IsAssignableFrom(expression.Type)),SurvivesJudge,3
+435,Scope.cs,76,Survived,Block removal mutation,{},SurvivesJudge,3
+441,Scope.cs,84,Survived,Block removal mutation,{},SurvivesJudge,3
+462,Scope.cs,103,Survived,Linq method mutation (Max() to Min()),Math.Min,SurvivesJudge,3
+463,Scope.cs,103,Survived,Arithmetic mutation,slot - 1,SurvivesJudge,3
+464,Scope.cs,103,Survived,Arithmetic mutation,slots.Length / 2,SurvivesJudge,3
+472,Scope.cs,120,Survived,Logical mutation,"service is null && ReferenceEquals(service, this)",SurvivesJudge,3
+485,Scope.cs,140,NoCoverage,Statement mutation,;,SurvivesJudge,3
+487,Scope.cs,144,NoCoverage,Statement mutation,;,SurvivesJudge,3
+488,Scope.cs,147,NoCoverage,Statement mutation,;,SurvivesJudge,3
+517,Scope.cs,187,Survived,Boolean mutation,true,SurvivesJudge,3
+530,ServiceContainer.cs,57,Survived,Statement mutation,;,SurvivesJudge,3
+531,ServiceContainer.cs,58,Survived,Statement mutation,;,SurvivesJudge,3
+537,ServiceContainer.cs,69,Survived,Statement mutation,;,KilledByJudge,3
+538,ServiceContainer.cs,70,Survived,Statement mutation,;,KilledByJudge,3
+556,ServiceContainer.cs,122,Survived,Block removal mutation,{},SurvivesJudge,3
+566,ServiceContainer.cs,135,NoCoverage,Statement mutation,;,SurvivesJudge,3
+572,ServiceContainer.cs,152,NoCoverage,Equality mutation,serviceKey is not null,CompileError,2
+574,ServiceContainer.cs,154,NoCoverage,Statement mutation,;,CompileError,2
+575,ServiceContainer.cs,157,NoCoverage,Statement mutation,;,CompileError,2
+588,ServiceContainer.cs,184,Survived,Block removal mutation,{},SurvivesJudge,3
+609,ServiceContainer.cs,222,Survived,String mutation,"""""",SurvivesJudge,3
+612,ServiceContainer.cs,247,Survived,Equality mutation,Interlocked.Increment(ref accessor._calls) != 2,SurvivesJudge,3
+614,ServiceId.cs,23,Survived,Logical mutation,Type == other.Type || (Key is null ? other.Key is null : other.Key is not null &,SurvivesJudge,3
+620,ServiceId.cs,23,Survived,Logical mutation,other.Key is not null || Key.Equals(other.Key),SurvivesJudge,3
+624,ServiceId.cs,27,Survived,Conditional (true) mutation,"(true?Type.GetHashCode() :HashCode.Combine(Type, Key))",SurvivesJudge,3
+625,ServiceId.cs,27,Survived,Conditional (false) mutation,"(false?Type.GetHashCode() :HashCode.Combine(Type, Key))",SurvivesJudge,3
+626,ServiceId.cs,27,Survived,Equality mutation,Key is not null,SurvivesJudge,3
+627,ServiceId.cs,29,NoCoverage,Conditional (true) mutation,"(true?Type.ToString() :$""({Key}, {Type})"")",SurvivesJudge,3
+628,ServiceId.cs,29,NoCoverage,Conditional (false) mutation,"(false?Type.ToString() :$""({Key}, {Type})"")",SurvivesJudge,3
+629,ServiceId.cs,29,NoCoverage,Equality mutation,Key is not null,SurvivesJudge,3
+630,ServiceId.cs,29,NoCoverage,String mutation,"$""""",SurvivesJudge,3
+631,TypeNames.cs,15,Survived,String mutation,"""""",SurvivesJudge,3
+632,TypeNames.cs,15,Survived,String mutation,"""""",SurvivesJudge,3
+633,TypeNames.cs,15,Survived,String mutation,"""""",SurvivesJudge,3
+634,TypeNames.cs,15,Survived,String mutation,"""""",SurvivesJudge,3
+635,TypeNames.cs,16,Survived,String mutation,"""""",SurvivesJudge,3
+636,TypeNames.cs,16,Survived,String mutation,"""""",SurvivesJudge,3
+637,TypeNames.cs,16,Survived,String mutation,"""""",SurvivesJudge,3
+638,TypeNames.cs,16,Survived,String mutation,"""""",SurvivesJudge,3
+639,TypeNames.cs,17,Survived,String mutation,"""""",SurvivesJudge,3
+640,TypeNames.cs,17,Survived,String mutation,"""""",SurvivesJudge,3
+641,TypeNames.cs,17,Survived,String mutation,"""""",SurvivesJudge,3
+642,TypeNames.cs,17,Survived,String mutation,"""""",SurvivesJudge,3
+643,TypeNames.cs,18,Survived,String mutation,"""""",SurvivesJudge,3
+644,TypeNames.cs,18,Survived,String mutation,"""""",SurvivesJudge,3
+645,TypeNames.cs,18,Survived,String mutation,"""""",SurvivesJudge,3
+646,TypeNames.cs,18,Survived,String mutation,"""""",SurvivesJudge,3
+652,TypeNames.cs,32,NoCoverage,Statement mutation,;,SurvivesJudge,3
+655,TypeNames.cs,39,NoCoverage,Negate expression,!(element.IsArray),SurvivesJudge,3
+657,TypeNames.cs,41,NoCoverage,Statement mutation,;,SurvivesJudge,3
+658,TypeNames.cs,45,NoCoverage,Statement mutation,;,SurvivesJudge,3
+660,TypeNames.cs,48,NoCoverage,Statement mutation,;,SurvivesJudge,3
+664,TypeNames.cs,48,NoCoverage,Arithmetic mutation,rank + 1,SurvivesJudge,3
+665,TypeNames.cs,51,NoCoverage,Statement mutation,;,SurvivesJudge,3
+668,TypeNames.cs,56,NoCoverage,Statement mutation,;,SurvivesJudge,3
+670,TypeNames.cs,57,NoCoverage,Statement mutation,;,SurvivesJudge,3
+680,TypeNames.cs,72,Survived,Conditional (false) mutation,(false?type.DeclaringType!.GetGenericArguments().Length :0),SurvivesJudge,3
+683,TypeNames.cs,75,NoCoverage,Statement mutation,;,SurvivesJudge,3
+684,TypeNames.cs,76,NoCoverage,Statement mutation,;,SurvivesJudge,3
+694,TypeNames.cs,84,Survived,Equality mutation,tick <= 0,SurvivesJudge,3
+697,TypeNames.cs,86,NoCoverage,Statement mutation,;,SurvivesJudge,3
+699,TypeNames.cs,87,NoCoverage,Statement mutation,;,SurvivesJudge,3

@@ -7,10 +7,10 @@ Live progress: https://dotnet-ladder.vercel.app
 | # | Project | Spec | External judge | Status |
 |---|---|---|---|---|
 | 01 | [JSON parser](01-json/) | RFC 8259 | JSONTestSuite + System.Text.Json | Done |
-| 02 | [Redis-compatible server](02-resp/) | RESP2 | Valkey test suite (251/259), `valkey-cli`, `valkey-benchmark` | Done (Stryker pending) |
+| 02 | [Redis-compatible server](02-resp/) | RESP2 | Valkey test suite (251/259), `valkey-cli`, `valkey-benchmark` | Done (Valkey 9.1.2 reruns pending) |
 | 03 | HTTP/1.1 server | RFC 9112 | curl + RFC edge cases; load test vs Kestrel | Planned |
 | 04 | WebSocket server | RFC 6455 | Autobahn TestSuite | Planned |
-| 05 | [DI container](05-di/) | M.E.DependencyInjection | `Specification.Tests` 143/143 + differential vs Microsoft's container | Done (benchmarks pending) |
+| 05 | [DI container](05-di/) | M.E.DependencyInjection | `Specification.Tests` 143/143 + differential vs Microsoft's container | Done |
 | 06 | Source-generated mapper | Roslyn | Verify snapshots + Native AOT | Planned |
 | 07 | Crash-safe KV store | WAL / log-structured | Power-loss simulation (LazyFS, dropping unsynced writes) + kill -9 harness | Planned |
 | 08 | Lox interpreter | Crafting Interpreters | Its test suite | Planned |

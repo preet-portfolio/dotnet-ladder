@@ -302,6 +302,17 @@ public class MutationGapTests
         Assert.Equal(Describe(Microsoft(Services())), Describe(Ours(Services())));
     }
 
+    [Fact]
+    public void Keyed_resolution_after_the_container_is_disposed_fails_like_Microsofts()
+    {
+        static IServiceCollection Services() => new ServiceCollection().AddKeyedTransient<IClosed, ClosedService>("k");
+        SameFailure(Services, p =>
+        {
+            ((IDisposable)p).Dispose();
+            p.GetKeyedService<IClosed>("k");
+        });
+    }
+
     public sealed class Tracker : IDisposable
     {
         public bool Disposed { get; private set; }
