@@ -37,6 +37,11 @@ start_server() { # $1 = name; prints the pid
   for _ in $(seq 100); do (exec 3<>/dev/tcp/127.0.0.1/"$port") 2>/dev/null && break; sleep 0.1; done
   echo "$pid"
 }
+stop_server() { # the server runs inside $(...), so it is not this shell's child: wait for it to exit by polling
+  kill "$1" 2>/dev/null || true
+  for _ in $(seq 200); do kill -0 "$1" 2>/dev/null || return 0; sleep 0.1; done
+  kill -9 "$1" 2>/dev/null || true
+}
 cpu_ticks() { awk '{print $14 + $15}' "/proc/$1/stat"; }   # utime + stime, in clock ticks
 clk_tck=$(getconf CLK_TCK)
 
@@ -52,7 +57,7 @@ for round in $(seq "$ROUNDS"); do
   pid=$(start_server valkey); gen load "$(port_of valkey)" "$KEYS" "$VALUE_BYTES" >/dev/null
   gen closed "$(port_of valkey)" "$CONNS" 3 "$KEYS" >/dev/null   # warm-up
   vmax=$(gen closed "$(port_of valkey)" "$CONNS" 10 "$KEYS" | awk '{print $(NF-1)}')
-  kill "$pid"; wait "$pid" 2>/dev/null || true
+  stop_server "$pid"
   echo "$round,valkey,$vmax" >> "$maxes"
   for server in valkey garnet ladder; do
     pid=$(start_server $server); port=$(port_of $server)
@@ -68,7 +73,7 @@ for round in $(seq "$ROUNDS"); do
       awk -v r="$round" -v s="$server" -v rate="$rate" -v n="$requests" -v b="$before" -v a="$after" -v t="$clk_tck" \
         'BEGIN{c=(a-b)/t; printf "%s,%s,%s,%d,%.2f,%.2f\n", r, s, rate, n, c, c*1e6/n}' >> "$cpu"
     done
-    kill "$pid"; wait "$pid" 2>/dev/null || true
+    stop_server "$pid"
   done
 done
 
@@ -77,7 +82,7 @@ done
   echo "kernel: $(uname -r)"
   echo "servers on CPUs $SERVER_CPUS, load generator on CPUs $CLIENT_CPUS"
   echo "valkey: $("$VALKEY_SERVER" --version)"
-  echo "garnet: $GARNET"
+  echo "garnet: $GARNET ($($GARNET --version 2>/dev/null | head -1 || true))"
   echo "dotnet: $(dotnet --version)"
   echo "load: $CONNS connections, $KEYS keys of $VALUE_BYTES bytes, uniform random GET, ${WARMUP}s warm-up + ${SECONDS_MEASURED}s measured per rate, $ROUNDS rounds"
   echo "loadavg at end: $(cat /proc/loadavg)"
