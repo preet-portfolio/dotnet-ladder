@@ -1,0 +1,3 @@
+<Project>
+  <!-- Stops MSBuild from importing the ladder's root props: each repro here is a standalone project anyone can copy out. -->
+</Project>

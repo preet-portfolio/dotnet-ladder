@@ -11,7 +11,14 @@ mkdir -p "$vendor/corpus"
 
 suite="$vendor/JSONTestSuite-$SUITE_SHA"
 if [ ! -d "$suite" ]; then
-  curl -fsSL "https://codeload.github.com/nst/JSONTestSuite/tar.gz/$SUITE_SHA" | tar -xz -C "$vendor"
+  # Tarball first; some networks block codeload.github.com, so fall back to fetching the same commit with git.
+  if ! curl -fsSL "https://codeload.github.com/nst/JSONTestSuite/tar.gz/$SUITE_SHA" | tar -xz -C "$vendor"; then
+    rm -rf "$suite"
+    git init -q "$suite"
+    git -C "$suite" fetch -q --depth 1 https://github.com/nst/JSONTestSuite.git "$SUITE_SHA"
+    git -C "$suite" checkout -q FETCH_HEAD
+    rm -rf "$suite/.git"
+  fi
 fi
 
 for f in twitter.json citm_catalog.json canada.json; do

@@ -12,6 +12,7 @@ namespace Ladder.DI.Bench;
 /// </summary>
 [MemoryDiagnoser]
 [CategoriesColumn]
+[MedianColumn, MinColumn, MaxColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 public class ResolutionBenchmarks
 {
