@@ -13,6 +13,17 @@
 | 3 | `valkey-benchmark -t set,get -n 1000000 -c 50 -P 16` reaches **≥ 50%** of valkey-server's requests/sec | **Held.** SET 94.5%, GET 81.6% (medians of 3 alternating rounds). **But it uses about 4× the CPU.** See below. |
 | 4 | After loading GeoNames `cities15000` into both servers with `valkey-cli --pipe`, full dumps are **byte-for-byte identical** | **Held.** 34,432 keys, identical |
 
+### Latency under fixed-rate load, and a real workload (committed before the load generator and the trace mapper were written)
+
+Closed-loop tools like `valkey-benchmark` send the next request only when a reply arrives, so a slow server is offered less load and its queueing delay never shows up. These claims use an open-loop generator: requests are scheduled at a fixed rate, and each one's latency is measured from when it was *scheduled*, not when it was sent.
+
+| # | Claim | Result |
+|---|---|---|
+| 5 | At fixed rates of 25%, 50% and 75% of Valkey's closed-loop `GET` maximum on the same machine (50 connections, no pipelining), ours' **p99 latency is within 2×** of Valkey's and its **p99.9 within 3×** | Pending |
+| 6 | At each of those rates ours uses **≤ 4× Valkey's CPU per request** (the closed-loop ratio in claim 3). Prediction, not a goal: the ratio is *worse* at the lowest rate, because waking three async loops per request costs the same however idle the server is | Pending |
+| 7 | Prediction: Garnet (Microsoft Research's C# RESP server) uses **less CPU per request than ours** at every rate, so the gap to Valkey is not simply "C# versus C" | Pending |
+| 8 | Replaying a real production cache trace (Twitter, Yang et al., OSDI 2020) through ours and Valkey, with trace operations mapped to RESP commands, **every reply is byte-for-byte identical** | Pending |
+
 ## Decision
 
 - **Three loops per connection, two pipes** (Kestrel's shape): receive, process and send.
