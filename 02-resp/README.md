@@ -24,6 +24,12 @@ Closed-loop tools like `valkey-benchmark` send the next request only when a repl
 | 7 | Prediction: Garnet (Microsoft Research's C# RESP server) uses **less CPU per request than ours** at every rate, so the gap to Valkey is not simply "C# versus C" | Pending |
 | 8 | Replaying a real production cache trace (Twitter, Yang et al., OSDI 2020) through ours and Valkey, with trace operations mapped to RESP commands, **every reply is byte-for-byte identical** | Pending |
 
+### Coverage-guided fuzzing (committed before the fuzz harness was written)
+
+| # | Claim | Result |
+|---|---|---|
+| 9 | SharpFuzz + AFL++ on `RespParser`, seeded with captured RESP traffic (the Valkey test suite's requests and the GeoNames load), for **≥ 4 CPU-hours**: no exception escapes, and every input parses to the same sequence of requests, statuses and errors whether it arrives in one segment, one byte per segment, or split at fuzzer-chosen points. Every crash becomes a regression test and a fix | Pending |
+
 ## Decision
 
 - **Three loops per connection, two pipes** (Kestrel's shape): receive, process and send.

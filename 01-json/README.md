@@ -32,6 +32,12 @@ The README's hypothesis was that `Utf8JsonReader` is slower because it does work
 | 6 | On synthetic documents made of one token kind each, a per-kind cost model (ns per token, ours and STJ) predicts each corpus file's measured gap within **±25%** | Pending |
 | 7 | Hardware counters show STJ retires **≥ 1.5×** our instructions per byte | Pending (needs a PMU) |
 
+### Coverage-guided fuzzing (committed before the fuzz harness was written)
+
+| # | Claim | Result |
+|---|---|---|
+| 8 | SharpFuzz + AFL++ on `JsonTokenizer` and `JsonDocumentParser`, seeded with all 318 JSONTestSuite files, for **≥ 4 CPU-hours**: no exception escapes, and on every input that is valid UTF-8 our validity verdict equals `Utf8JsonReader`'s (the CsCheck property's oracle). Every crash becomes a regression test and a fix | Pending |
+
 ## Evidence
 
 - External judge: [`judge/results/jsontestsuite.txt`](judge/results/jsontestsuite.txt) (one line per file, ours vs System.Text.Json). Rerun with `judge/run-judge.sh`, which downloads JSONTestSuite @ `1ef36fa` and the corpus @ `478d572`.
