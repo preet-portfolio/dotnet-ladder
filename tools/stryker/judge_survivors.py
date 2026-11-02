@@ -5,9 +5,13 @@ Stryker only runs test projects; a console judge (05's specification suite, 02's
 applies each mutant from Stryker's mutation-report.json to the source, one at a time, runs the judge command, and
 restores the file. A judge failure (non-zero exit) means the judge kills the mutant; a build failure is recorded
 separately. Output: one CSV row per mutant.
-Usage: judge_survivors.py <mutation-report.json> <out.csv> <timeout seconds> -- <judge command...>"""
+Usage: judge_survivors.py <mutation-report.json> <out.csv> <timeout seconds> -- <judge command...>
+Environment: SHARD=i/k judges every k-th mutant starting at i (0-based); ROOT_FROM/ROOT_TO rewrite source paths, so a
+shard can run in its own copy of the repo. The judge sees the mutant's Stryker status as STRYKER_STATUS. Rows are
+appended to the CSV as they finish, and mutants already in it are skipped, so a run can be resumed."""
 import csv
 import json
+import os
 import subprocess
 import sys
 import time
@@ -24,8 +28,18 @@ def offset(text, line, column):
 
 rows = []
 todo = [(path, m) for path, f in data["files"].items() for m in f["mutants"] if m["status"] in ("Survived", "NoCoverage")]
+shard, shards = map(int, os.environ.get("SHARD", "0/1").split("/"))
+todo = todo[shard::shards]
+fields = ["id", "file", "line", "stryker", "mutator", "replacement", "judge", "seconds", "detail"]
+done = set()
+if os.path.exists(out_csv):
+    done = {r["id"] for r in csv.DictReader(open(out_csv))}
+else:
+    csv.DictWriter(open(out_csv, "w", newline=""), fieldnames=fields).writeheader()
+todo = [(p, m) for p, m in todo if m["id"] not in done]
 print(f"{len(todo)} mutants to judge", flush=True)
 for n, (path, m) in enumerate(todo, 1):
+    path = path.replace(os.environ.get("ROOT_FROM", ""), os.environ.get("ROOT_TO", ""), 1) if os.environ.get("ROOT_FROM") else path
     original = open(path, encoding="utf-8").read()
     s, e = m["location"]["start"], m["location"]["end"]
     a, b = offset(original, s["line"], s["column"]), offset(original, e["line"], e["column"])
@@ -34,7 +48,8 @@ for n, (path, m) in enumerate(todo, 1):
     try:
         open(path, "w", encoding="utf-8").write(mutated)
         try:
-            p = subprocess.run(judge, capture_output=True, text=True, timeout=timeout)
+            p = subprocess.run(judge, capture_output=True, text=True, timeout=timeout,
+                               env={**os.environ, "STRYKER_STATUS": m["status"]})
             out = p.stdout + p.stderr
             if "error CS" in out or "Build FAILED" in out or "The build failed" in out:
                 verdict = "CompileError"
@@ -47,9 +62,6 @@ for n, (path, m) in enumerate(todo, 1):
     rows.append({"id": m["id"], "file": path.split("/")[-1], "line": s["line"], "stryker": m["status"],
                  "mutator": m["mutatorName"], "replacement": m["replacement"].replace("\n", " ")[:80],
                  "judge": verdict, "seconds": round(time.time() - started), "detail": (out.strip().splitlines() or [""])[-1][:60] if verdict != "JudgeTimeout" else ""})
+    with open(out_csv, "a", newline="") as f:
+        csv.DictWriter(f, fieldnames=fields).writerow(rows[-1])
     print(n, rows[-1]["file"], rows[-1]["line"], verdict, flush=True)
-
-with open(out_csv, "w", newline="") as f:
-    w = csv.DictWriter(f, fieldnames=list(rows[0]))
-    w.writeheader()
-    w.writerows(rows)
