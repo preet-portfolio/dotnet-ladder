@@ -48,16 +48,63 @@ public class ParserTests
     [InlineData("*2\r\n$3\r\nGET\r\n:1\r\n", "Protocol error: expected '$', got ':'")]
     [InlineData("*1\r\n$x\r\n", "Protocol error: invalid bulk length")]
     [InlineData("*1\r\n$-5\r\n", "Protocol error: invalid bulk length")]
-    [InlineData("*1\r\n$3\r\nGETxx", "Protocol error: invalid bulk length")]
     [InlineData("*1\r\n$536870913\r\n", "Protocol error: invalid bulk length")]
     [InlineData("*x\r\n", "Protocol error: invalid multibulk length")]
     [InlineData("*1048577\r\n", "Protocol error: invalid multibulk length")]
-    [InlineData("*1\n", "Protocol error: invalid multibulk length")]
+    // The cases below follow Valkey 9.1.2's networking.c (processMultibulkBuffer). Mutation testing showed that
+    // nothing checked them (02-resp/evidence/stryker.md, mutants 2584, 2607, 2613).
+    [InlineData("*\r\n", "Protocol error: invalid multibulk length")]                     // no digits
+    [InlineData("*-\r\n", "Protocol error: invalid multibulk length")]
+    [InlineData("*01\r\n", "Protocol error: invalid multibulk length")]                   // string2ll: no leading zeros
+    [InlineData("*-0\r\n", "Protocol error: invalid multibulk length")]
+    [InlineData("*+1\r\n", "Protocol error: invalid multibulk length")]
+    [InlineData("*1234567890123456789\r\n", "Protocol error: invalid multibulk length")]  // 19 digits: > 1M arguments
+    [InlineData("*99999999999999999999\r\n", "Protocol error: invalid multibulk length")] // overflows a long
+    [InlineData("*1\r\n$04\r\nPING\r\n", "Protocol error: invalid bulk length")]
+    [InlineData("*1\r\n$\r\n", "Protocol error: invalid bulk length")]
+    [InlineData("*1\r\n$1234567890123456789\r\nx", "Protocol error: invalid bulk length")]
+    [InlineData("*1\r\n$99999999999999999999\r\n", "Protocol error: invalid bulk length")]
+    [InlineData("*1\rX", "Protocol error: invalid CRLF in request")]                       // byte after \r is not \n
+    [InlineData("*1\r\n$4\rXPING\r\n", "Protocol error: invalid CRLF in request")]
+    [InlineData("*1\r\n$3\r\nGETxx", "Protocol error: invalid CRLF in request")]         // payload not followed by \r\n
+    [InlineData("*1\r\n\r\n", "Protocol error: expected '$', got '\r'")]
     public void Reports_protocol_errors(string text, string message)
     {
         Parse(text, out ParseStatus status, out _, out string? error);
         Assert.Equal(ParseStatus.ProtocolError, status);
         Assert.Equal(message, error);
+    }
+
+    [Theory]
+    [InlineData("*1\n")]          // Valkey looks for '\r', so a bare '\n' just means the line hasn't ended
+    [InlineData("*1\r")]          // the byte after '\r' hasn't arrived
+    [InlineData("*1\r\n$4\r")]
+    [InlineData("*1x")]            // Valkey reads the whole line before judging the number
+    public void Waits_for_the_rest_of_a_length_line(string text)
+    {
+        Parse(text, out ParseStatus status, out _, out _);
+        Assert.Equal(ParseStatus.Incomplete, status);
+    }
+
+    [Theory]
+    [InlineData('*', "Protocol error: too big mbulk count string")]
+    [InlineData('$', "Protocol error: too big bulk count string")]
+    public void Length_line_without_cr_is_rejected_past_64KB(char marker, string message)
+    {
+        string text = (marker == '*' ? "*" : "*1\r\n$") + new string('1', 64 * 1024);
+        Parse(text, out ParseStatus status, out _, out string? error);
+        Assert.Equal(ParseStatus.ProtocolError, status);
+        Assert.Equal(message, error);
+    }
+
+    [Theory]
+    [InlineData("*1\r\n$1\r\nx\r\n", 1)]
+    [InlineData("*-9223372036854775808\r\n", 0)] // the smallest long is a valid (empty) count, as in string2ll
+    public void Accepts_lengths_at_the_edges(string text, int args)
+    {
+        Parse(text, out ParseStatus status, out int consumed);
+        Assert.Equal(args == 0 ? ParseStatus.Empty : ParseStatus.Complete, status);
+        Assert.Equal(text.Length, consumed);
     }
 
     [Fact]

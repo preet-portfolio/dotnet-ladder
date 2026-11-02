@@ -36,19 +36,27 @@ public static class RespParser
         return first == (byte)'*' ? TryReadMultiBulk(ref reader, args, out error) : TryReadInline(ref reader, args, out error);
     }
 
+    // Follows processMultibulkBuffer in Valkey's networking.c (9.1.2), including the order of its checks, because
+    // that order decides which error a malformed request gets.
     private static ParseStatus TryReadMultiBulk(ref SequenceReader<byte> reader, CommandArgs args, out string? error)
     {
         error = null;
-        reader.Advance(1);
-        switch (TryReadLength(ref reader, out long count))
+        switch (TryReadLengthLine(ref reader, (byte)'*', out long count))
         {
             case LineStatus.Incomplete:
                 return ParseStatus.Incomplete;
+            case LineStatus.TooBig:
+                error = "Protocol error: too big mbulk count string";
+                return ParseStatus.ProtocolError;
+            case LineStatus.InvalidCrlf:
+                error = "Protocol error: invalid CRLF in request";
+                return ParseStatus.ProtocolError;
             case LineStatus.Invalid:
                 error = "Protocol error: invalid multibulk length";
                 return ParseStatus.ProtocolError;
         }
 
+        // Valkey accepts up to INT_MAX; we refuse above 1M arguments rather than preallocate for them.
         if (count > MaxArgs)
         {
             error = "Protocol error: invalid multibulk length";
@@ -62,21 +70,20 @@ public static class RespParser
 
         for (long i = 0; i < count; i++)
         {
-            if (!reader.TryRead(out byte marker))
-            {
-                return ParseStatus.Incomplete;
-            }
-
-            if (marker != (byte)'$')
-            {
-                error = $"Protocol error: expected '$', got '{(char)marker}'";
-                return ParseStatus.ProtocolError;
-            }
-
-            switch (TryReadLength(ref reader, out long length))
+            switch (TryReadLengthLine(ref reader, (byte)'$', out long length))
             {
                 case LineStatus.Incomplete:
                     return ParseStatus.Incomplete;
+                case LineStatus.TooBig:
+                    error = "Protocol error: too big bulk count string";
+                    return ParseStatus.ProtocolError;
+                case LineStatus.WrongMarker:
+                    reader.TryPeek(out byte got);
+                    error = $"Protocol error: expected '$', got '{(char)got}'";
+                    return ParseStatus.ProtocolError;
+                case LineStatus.InvalidCrlf:
+                    error = "Protocol error: invalid CRLF in request";
+                    return ParseStatus.ProtocolError;
                 case LineStatus.Invalid:
                     error = "Protocol error: invalid bulk length";
                     return ParseStatus.ProtocolError;
@@ -97,7 +104,7 @@ public static class RespParser
             reader.Advance(length);
             if (!reader.IsNext("\r\n"u8, advancePast: true))
             {
-                error = "Protocol error: invalid bulk length";
+                error = "Protocol error: invalid CRLF in request";
                 return ParseStatus.ProtocolError;
             }
         }
@@ -145,51 +152,102 @@ public static class RespParser
     {
         Ok,
         Incomplete,
+        TooBig,
+        WrongMarker,
+        InvalidCrlf,
         Invalid,
     }
 
-    /// <summary>Reads a decimal length terminated by \r\n without allocating, even when it spans segments.</summary>
-    private static LineStatus TryReadLength(ref SequenceReader<byte> reader, out long value)
+    /// <summary>
+    /// Reads a "*count\r\n" or "$length\r\n" line, with the reader at the marker. Valkey's checks, in its order:
+    /// <list type="number">
+    /// <item>no '\r' yet is Incomplete, or TooBig once more than 64 KB are waiting;</item>
+    /// <item>the byte after '\r' must have arrived;</item>
+    /// <item>the marker;</item>
+    /// <item>that byte must be '\n';</item>
+    /// <item>the number, with string2ll's rules.</item>
+    /// </list>
+    /// On WrongMarker the reader is left at the marker. Never allocates, even when the line spans segments.
+    /// </summary>
+    private static LineStatus TryReadLengthLine(ref SequenceReader<byte> reader, byte marker, out long value)
     {
         value = 0;
-        bool negative = false;
-        int digits = 0;
-        while (true)
+        SequenceReader<byte> start = reader;
+        if (!reader.TryReadTo(out ReadOnlySequence<byte> line, (byte)'\r', advancePastDelimiter: true))
         {
-            if (!reader.TryRead(out byte b))
-            {
-                return LineStatus.Incomplete;
-            }
-
-            if (b == (byte)'\r')
-            {
-                if (!reader.TryRead(out byte lf))
-                {
-                    return LineStatus.Incomplete;
-                }
-
-                if (lf != (byte)'\n' || digits == 0)
-                {
-                    return LineStatus.Invalid;
-                }
-
-                value = negative ? -value : value;
-                return LineStatus.Ok;
-            }
-
-            if (b == (byte)'-' && digits == 0 && !negative)
-            {
-                negative = true;
-                continue;
-            }
-
-            if ((uint)(b - '0') > 9 || digits >= 18)
-            {
-                return LineStatus.Invalid;
-            }
-
-            value = (value * 10) + (b - '0');
-            digits++;
+            return reader.Remaining > MaxInlineLength ? LineStatus.TooBig : LineStatus.Incomplete;
         }
+
+        if (!reader.TryRead(out byte lf))
+        {
+            return LineStatus.Incomplete;
+        }
+
+        // The line can be empty (the '\r' is where the marker should be), and its first segment can be empty too.
+        if (!start.TryPeek(out byte first) || line.IsEmpty || first != marker)
+        {
+            reader = start;
+            return LineStatus.WrongMarker;
+        }
+
+        if (lf != (byte)'\n')
+        {
+            return LineStatus.InvalidCrlf;
+        }
+
+        return TryParseLong(line.Slice(1), out value) ? LineStatus.Ok : LineStatus.Invalid;
+    }
+
+    /// <summary>
+    /// Valkey's string2ll: an optional '-', then "0" alone or a digit 1-9 followed by digits, at most 20 bytes, and in
+    /// range for a 64-bit integer. So "", "-", "01", "-0", "+1" and " 1" are all invalid.
+    /// </summary>
+    private static bool TryParseLong(ReadOnlySequence<byte> text, out long value)
+    {
+        value = 0;
+        if (text.IsEmpty || text.Length >= 21)
+        {
+            return false;
+        }
+
+        Span<byte> buffer = stackalloc byte[20];
+        text.CopyTo(buffer);
+        ReadOnlySpan<byte> s = buffer[..(int)text.Length];
+        if (s.Length == 1 && s[0] - '0' is >= 0 and <= 9)
+        {
+            value = s[0] - '0';
+            return true;
+        }
+
+        bool negative = s[0] == (byte)'-';
+        if (negative)
+        {
+            s = s[1..];
+        }
+
+        if (s.IsEmpty || s[0] - '1' is < 0 or > 8)
+        {
+            return false;
+        }
+
+        ulong v = 0;
+        foreach (byte b in s)
+        {
+            uint digit = (uint)(b - '0');
+            if (digit > 9 || v > (ulong.MaxValue - digit) / 10)
+            {
+                return false;
+            }
+
+            v = (v * 10) + digit;
+        }
+
+        if (negative ? v > (ulong)long.MaxValue + 1 : v > long.MaxValue)
+        {
+            return false;
+        }
+
+        value = negative ? (long)(0 - v) : (long)v;
+        return true;
     }
 }
