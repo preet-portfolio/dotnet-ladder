@@ -6,7 +6,7 @@ applies each mutant from Stryker's mutation-report.json to the source, one at a 
 restores the file. A judge failure (non-zero exit) means the judge kills the mutant; a build failure is recorded
 separately. Output: one CSV row per mutant.
 Usage: judge_survivors.py <mutation-report.json> <out.csv> <timeout seconds> -- <judge command...>
-Environment: SHARD=i/k judges every k-th mutant starting at i (0-based); ROOT_FROM/ROOT_TO rewrite source paths, so a
+Environment: ONLY_IDS=<file> restricts the run to those ids; SHARD=i/k judges every k-th mutant starting at i (0-based); ROOT_FROM/ROOT_TO rewrite source paths, so a
 shard can run in its own copy of the repo. The judge sees the mutant's Stryker status as STRYKER_STATUS. Rows are
 appended to the CSV as they finish, and mutants already in it are skipped, so a run can be resumed."""
 import csv
@@ -36,6 +36,10 @@ fields = ["id", "file", "line", "stryker", "mutator", "replacement", "judge", "s
 done = {r["id"] for f in glob.glob(os.environ.get("DONE_GLOB", out_csv)) for r in csv.DictReader(open(f))}
 if not os.path.exists(out_csv):
     csv.DictWriter(open(out_csv, "w", newline=""), fieldnames=fields).writeheader()
+# ONLY_IDS names a file of mutant ids (one per line): judge just those, e.g. to confirm kills that rest on 1-2 tests.
+if os.environ.get("ONLY_IDS"):
+    only = set(open(os.environ["ONLY_IDS"]).read().split())
+    todo = [(p, m) for p, m in todo if m["id"] in only]
 todo = [(p, m) for p, m in todo if m["id"] not in done][shard::shards]
 # REVERSE=1 walks the list from the end, so an idle worker can help a slow shard: run it with that shard's SHARD and
 # the DONE_GLOB the shard started with, plus LIVE_GLOB naming every CSV being written; before each mutant it skips ids
