@@ -28,7 +28,7 @@ Closed-loop tools like `valkey-benchmark` send the next request only when a repl
 
 | # | Claim | Result |
 |---|---|---|
-| 9 | SharpFuzz + AFL++ on `RespParser`, seeded with captured RESP traffic (the Valkey test suite's requests and the GeoNames load), for **≥ 4 CPU-hours**: no exception escapes, and every input parses to the same sequence of requests, statuses and errors whether it arrives in one segment, one byte per segment, or split at fuzzer-chosen points. Every crash becomes a regression test and a fix | Pending |
+| 9 | SharpFuzz + AFL++ on `RespParser`, seeded with captured RESP traffic (the Valkey test suite's requests and the GeoNames load), for **≥ 4 CPU-hours**: no exception escapes, and every input parses to the same sequence of requests, statuses and errors whether it arrives in one segment, one byte per segment, or split at fuzzer-chosen points. Every crash becomes a regression test and a fix | **Held**, with a change of seeds: the Valkey suite's requests were not captured, so the open-loop generator's traffic and two Twitter trace samples were used alongside GeoNames. 4.08 CPU-hours, 86M inputs, 0 crashes, 0 hangs. The final corpus covers 100% of `RespParser`'s lines and branches. See [`evidence/fuzzing.md`](evidence/fuzzing.md) |
 
 ## Decision
 
@@ -54,6 +54,7 @@ Closed-loop tools like `valkey-benchmark` send the next request only when a repl
   Socket tests cover byte-at-a-time pipelining, protocol errors, a 4 MB request, and output back-pressure under 2,000 unread replies.
 - **Open-loop comparison with Valkey 7.2.13 (stand-in) and Garnet 2.2.5:** [`evidence/openloop.md`](evidence/openloop.md).
 - **Twitter cache-trace replay:** [`evidence/trace-replay/summary.md`](evidence/trace-replay/summary.md). Rerun with `judge/run-trace-replay.sh`.
+- **Fuzzing:** [`evidence/fuzzing.md`](evidence/fuzzing.md).
 - **Mutation testing:** [`evidence/stryker.md`](evidence/stryker.md).
 
 ## What surprised us

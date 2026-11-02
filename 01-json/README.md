@@ -36,7 +36,7 @@ The README's hypothesis was that `Utf8JsonReader` is slower because it does work
 
 | # | Claim | Result |
 |---|---|---|
-| 8 | SharpFuzz + AFL++ on `JsonTokenizer` and `JsonDocumentParser`, seeded with all 318 JSONTestSuite files, for **≥ 4 CPU-hours**: no exception escapes, and on every input that is valid UTF-8 our validity verdict equals `Utf8JsonReader`'s (the CsCheck property's oracle). Every crash becomes a regression test and a fix | Pending |
+| 8 | SharpFuzz + AFL++ on `JsonTokenizer` and `JsonDocumentParser`, seeded with all 318 JSONTestSuite files, for **≥ 4 CPU-hours**: no exception escapes, and on every input that is valid UTF-8 our validity verdict equals `Utf8JsonReader`'s (the CsCheck property's oracle). Every crash becomes a regression test and a fix | **Held.** 4.08 CPU-hours, 469M inputs, 0 crashes, 0 hangs, 0 disagreements. The final corpus covers 94.9% of `JsonTokenizer`'s lines; the rest is misuse guards and one dead state. See [`evidence/fuzzing.md`](evidence/fuzzing.md) |
 
 ## Evidence
 
@@ -53,10 +53,12 @@ The README's hypothesis was that `Utf8JsonReader` is slower because it does work
 
 - Runtime capture: [`evidence/counters.md`](evidence/counters.md). 0 GCs and 0 pause time during a 30 s loop. The explanation of the non-zero allocation rate dotnet-counters reported is there too.
 - Tests: 101 xUnit tests. They include two CsCheck properties: 20,000 documents written by `Utf8JsonWriter` must parse back to the same values, and 50,000 randomly mutated documents must never throw and must agree with `Utf8JsonReader` on validity whenever the input is valid UTF-8.
+- Fuzzing: [`evidence/fuzzing.md`](evidence/fuzzing.md).
 - Mutation testing: **97.83%** (313 killed, 3 timeouts, 7 survivors, all equivalent). See [`evidence/stryker.md`](evidence/stryker.md).
 
 ## What surprised us
 
+- **Coverage of the fuzz corpus found dead code.** `JsonTokenizer.Read()` handles an `Expect.PropertyName` state that nothing ever enters. Neither 469 million fuzz inputs nor the tests could reveal that; the coverage report of the final corpus did.
 - **System.Text.Json accepts invalid UTF-8 at parse time.** On 20 of the 35 `i_` files, `JsonDocument.Parse` succeeds and the error only appears later, as an `InvalidOperationException` when a string is read. `Utf8JsonReader` checks strings only for quotes, backslashes and control bytes. Ours rejects these files when it reads them.
 - **UTF-8 validation is nearly free.** `Utf8.IsValid` over a whole file takes 40–64 µs, 2–7% of a tokenize pass. We expected the validation to be the reason we'd lose to STJ. It wasn't.
 - **The obvious explanation for our speed covers less than half of it.** We assumed STJ is slower because it does work we don't: line and position tracking, rollback state for partial buffers, and comment and trailing-comma options. Adding all three to a copy of our tokenizer closes only 11–44% of the gap (claim 4 failed). On citm the three cost more together than the sum of each alone. Most of the gap is still unexplained; [`evidence/why-faster.md`](evidence/why-faster.md) lists what would settle it.
