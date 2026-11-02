@@ -107,6 +107,41 @@ public class ParserTests
         Assert.Equal(text.Length, consumed);
     }
 
+    /// <summary>Claim 2 counts the parse: 16 pipelined requests, whole or split into 1-byte segments, allocate nothing.</summary>
+    [Fact]
+    public void Parsing_pipelined_requests_allocates_nothing()
+    {
+        byte[] one = "*2\r\n$3\r\nGET\r\n$10\r\nkey:000001\r\n*2\r\n$4\r\nINCR\r\n$7\r\ncounter\r\n"u8.ToArray();
+        byte[] pipeline = Enumerable.Repeat(one, 8).SelectMany(b => b).ToArray();
+        ReadOnlySequence<byte> whole = new(pipeline);
+        ReadOnlySequence<byte> split = Segment.Split(pipeline, Enumerable.Range(1, pipeline.Length - 1));
+        var args = new CommandArgs();
+
+        int ParseAll(ReadOnlySequence<byte> input)
+        {
+            var reader = new SequenceReader<byte>(input);
+            int n = 0;
+            while (RespParser.TryRead(ref reader, args, out _) == ParseStatus.Complete)
+            {
+                n++;
+            }
+
+            return n;
+        }
+
+        Assert.Equal(16, ParseAll(whole)); // also warms up the argument arena, which split arguments are copied into
+        Assert.Equal(16, ParseAll(split));
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        int total = 0;
+        for (int i = 0; i < 1000; i++)
+        {
+            total += ParseAll(whole) + ParseAll(split);
+        }
+
+        Assert.Equal(0, GC.GetAllocatedBytesForCurrentThread() - before);
+        Assert.Equal(32_000, total);
+    }
+
     [Fact]
     public void Inline_request_without_newline_is_rejected_past_64KB()
     {
