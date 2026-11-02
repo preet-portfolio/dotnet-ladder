@@ -25,7 +25,7 @@ out=$tmp/suite02.txt
 for f in "${FILES[@]}"; do
   (cd "$suite" && VALKEY_BIN_DIR="$(dirname "$(command -v valkey-server)")" timeout 600 ./runtest --host 127.0.0.1 --port $port --single "$f" "${TAGS[@]}" --durable --timeout 120 2>&1) >> $out || true
 done
-passed=$(grep -E '^\[ok\]: ' $out | sed -E 's/ \([0-9]+ ms\)$//' | sort -u)
+passed=$(grep -aE '^\[ok\]: ' $out | sed -E 's/ \([0-9]+ ms\)$//' | sort -u)
 if [ -n "${BASELINE:-}" ]; then echo "$passed" > "$BASE"; echo "baseline: $(wc -l < "$BASE") passing"; exit 0; fi
 lost=$(comm -23 "$BASE" <(echo "$passed"))
 if [ -n "$lost" ]; then echo "KILLED-BY: judge ($(echo "$lost" | wc -l) lost: $(echo "$lost" | head -1 | cut -c1-40))"; exit 1; fi
