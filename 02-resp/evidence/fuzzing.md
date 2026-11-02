@@ -63,8 +63,27 @@ The 6 uncovered lines in `CommandArgs` are code the parser never calls:
 The parser's own `Add(in ReadOnlySequence<byte>)` is fully covered. That includes growth of the argument array past 8
 and the copy into the arena for arguments split across segments.
 
+## After the parser fix (2026-11-02)
+
+Mutation testing later found gaps in the parser's tests ([`stryker.md`](stryker.md)). Closing them against Valkey
+9.1.2's source changed how `RespParser` reads length lines, so the 4-CPU-hour run above was of the **old** parser.
+After the fix:
+- **Corpus replay:** the old run's final corpus and seeds, 617 inputs, still pass the split oracle with no exception.
+- **New run:** 1 more CPU-hour on the new parser, seeded with the old corpus. It made 16.8M executions and found
+  **0 crashes and 0 hangs**. The corpus grew from 377 to 393 inputs and the edge count from 129 to 162, because the new
+  code has more branches. Raw stats:
+  [`fuzzing/fuzzer_stats-after-parser-fix.txt`](fuzzing/fuzzer_stats-after-parser-fix.txt).
+- **Coverage:** the new corpus covers **100% of the new `RespParser`**, 93/93 lines and 90/90 branches.
+
+So claim 9 holds for the old parser over 4.08 CPU-hours, and for the new parser over 1 CPU-hour plus a replay of the
+old corpus. The 4-hour bound has not been re-run on the new code.
+
 ## What surprised us
 
+- **100% coverage and a clean oracle did not mean a correct parser.** The split oracle checks consistency, not
+  correctness. The parser accepted leading zeros and `-0`, and reported the wrong error for a bad `\r\n`. The fuzzer
+  covered every one of those lines, and none of it could fail the oracle. Mutation testing, followed by tests taken from
+  Valkey's source, found them.
 - **The fuzzer stopped finding new paths after 1 h 37 min.** For the last 2 h 28 min it found nothing, while the 01
   fuzzer was still finding paths near its end. The parser's state is small. A one-line RESP header and a length-prefixed
   body give only 129 edges, and the corpus covers every line and branch of the parser. So the remaining CPU-hours checked the split
