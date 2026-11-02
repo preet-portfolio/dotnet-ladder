@@ -10,8 +10,10 @@ Environment: SHARD=i/k judges every k-th mutant starting at i (0-based); ROOT_FR
 shard can run in its own copy of the repo. The judge sees the mutant's Stryker status as STRYKER_STATUS. Rows are
 appended to the CSV as they finish, and mutants already in it are skipped, so a run can be resumed."""
 import csv
+import glob
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -29,14 +31,12 @@ def offset(text, line, column):
 rows = []
 todo = [(path, m) for path, f in data["files"].items() for m in f["mutants"] if m["status"] in ("Survived", "NoCoverage")]
 shard, shards = map(int, os.environ.get("SHARD", "0/1").split("/"))
-todo = todo[shard::shards]
 fields = ["id", "file", "line", "stryker", "mutator", "replacement", "judge", "seconds", "detail"]
-done = set()
-if os.path.exists(out_csv):
-    done = {r["id"] for r in csv.DictReader(open(out_csv))}
-else:
+# DONE_GLOB names the CSVs of earlier runs (any sharding), so the work can be re-split.
+done = {r["id"] for f in glob.glob(os.environ.get("DONE_GLOB", out_csv)) for r in csv.DictReader(open(f))}
+if not os.path.exists(out_csv):
     csv.DictWriter(open(out_csv, "w", newline=""), fieldnames=fields).writeheader()
-todo = [(p, m) for p, m in todo if m["id"] not in done]
+todo = [(p, m) for p, m in todo if m["id"] not in done][shard::shards]
 print(f"{len(todo)} mutants to judge", flush=True)
 for n, (path, m) in enumerate(todo, 1):
     path = path.replace(os.environ.get("ROOT_FROM", ""), os.environ.get("ROOT_TO", ""), 1) if os.environ.get("ROOT_FROM") else path
@@ -48,9 +48,16 @@ for n, (path, m) in enumerate(todo, 1):
     try:
         open(path, "w", encoding="utf-8").write(mutated)
         try:
-            p = subprocess.run(judge, capture_output=True, text=True, timeout=timeout,
-                               env={**os.environ, "STRYKER_STATUS": m["status"]})
-            out = p.stdout + p.stderr
+            # Own process group: on a timeout the judge's server and suite must die too, or the next mutant's
+            # suite would talk to this mutant's server.
+            p = subprocess.Popen(judge, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                                 env={**os.environ, "STRYKER_STATUS": m["status"]}, start_new_session=True)
+            try:
+                out, _ = p.communicate(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                os.killpg(p.pid, signal.SIGKILL)
+                p.communicate()
+                raise
             if "error CS" in out or "Build FAILED" in out or "The build failed" in out:
                 verdict = "CompileError"
             else:

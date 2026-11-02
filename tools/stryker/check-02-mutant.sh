@@ -16,6 +16,7 @@ dotnet build -c Release tests/Ladder.Resp.Tests -v q -nologo > $tmp/b02.log 2>&1
 dotnet build -c Release server/Ladder.Resp.Server -v q -nologo > $tmp/b02s.log 2>&1 || { cat $tmp/b02s.log; exit 3; }
 # A mutant Stryker reports as NoCoverage is not reached by any unit test, so only the suite can kill it.
 if [ -z "${BASELINE:-}" ] && [ "${STRYKER_STATUS:-}" != NoCoverage ] && ! dotnet tests/Ladder.Resp.Tests/bin/Release/net10.0/Ladder.Resp.Tests.dll > $tmp/u02.log 2>&1; then echo "KILLED-BY: unit"; exit 1; fi
+fuser -k -n tcp $port > /dev/null 2>&1 || true
 dotnet server/Ladder.Resp.Server/bin/Release/net10.0/Ladder.Resp.Server.dll $port > /dev/null 2>&1 &
 pid=$!
 trap 'kill $pid 2>/dev/null; wait $pid 2>/dev/null' EXIT
