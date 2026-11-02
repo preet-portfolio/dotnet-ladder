@@ -16,6 +16,6 @@
       "low": 75,
       "break": 0
     },
-    "coverage-analysis": "off"
+    "coverage-analysis": "perTest"
   }
 }
