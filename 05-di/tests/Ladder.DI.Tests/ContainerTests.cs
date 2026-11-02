@@ -270,4 +270,59 @@ public class ContainerTests
 
         Assert.Contains("Cannot consume scoped service", Assert.Throws<InvalidOperationException>(() => provider.GetService<IS<K3>>()).Message, StringComparison.Ordinal);
     }
+
+    /// <summary>
+    /// A Microsoft bug we do not copy (draft report: <c>evidence/upstream/DRAFT-anykey-scoped-duplicate-cache-key.md</c>).
+    /// IS&lt;K2&gt; under "k1" is answered by the closed AnyKey registration, KeyedDep. Its dependency is the "k1"
+    /// enumerable, which holds only the open generic, because AnyKey registrations are never enumerated. Microsoft
+    /// caches KeyedDep and that enumerable item under the same (service, key, slot 0). When both are scoped, resolving
+    /// KeyedDep first throws an internal ArgumentException ("An item with the same key has already been added"). Ours
+    /// returns KeyedDep. The differential test found this (seed 0ZnzaPbI20H1). If the enumerable is resolved first,
+    /// both containers then answer the open generic, the (service, slot) quirk that
+    /// <see cref="An_enumeration_can_decide_a_later_single_resolution"/> pins.
+    /// </summary>
+    [Theory]
+    [InlineData(ServiceLifetime.Scoped)]
+    [InlineData(ServiceLifetime.Singleton)]
+    [InlineData(ServiceLifetime.Transient)]
+    public void Scoped_AnyKey_service_that_depends_on_its_own_keyed_enumerable_does_not_throw(ServiceLifetime lifetime)
+    {
+        IServiceCollection Services()
+        {
+            IServiceCollection services = new ServiceCollection().AddSingleton(new RunLog());
+            services.Add(new ServiceDescriptor(typeof(IS<K2>), KeyedService.AnyKey, typeof(KeyedDep<K2, IEnumerable<IS<K2>>>), lifetime));
+            services.Add(new ServiceDescriptor(typeof(IS<>), "k1", typeof(Open<>), lifetime));
+            return services;
+        }
+
+        using (ServiceContainer ours = Services().BuildLadderServiceProvider())
+        using (IServiceScope scope = ours.CreateScope())
+        {
+            var service = Assert.IsType<KeyedDep<K2, IEnumerable<IS<K2>>>>(scope.ServiceProvider.GetRequiredKeyedService<IS<K2>>("k1"));
+            Assert.IsType<Open<K2>>(Assert.Single((IEnumerable<IS<K2>>)service.Parts[0]!));
+        }
+
+        // Microsoft's behaviour, pinned so that a fix upstream shows up here.
+        using (ServiceProvider microsoft = Services().BuildServiceProvider())
+        using (IServiceScope scope = microsoft.CreateScope())
+        {
+            if (lifetime == ServiceLifetime.Scoped)
+            {
+                Assert.Contains("ServiceCacheKey", Assert.Throws<ArgumentException>(() => scope.ServiceProvider.GetKeyedService<IS<K2>>("k1")).Message, StringComparison.Ordinal);
+            }
+            else
+            {
+                Assert.IsType<KeyedDep<K2, IEnumerable<IS<K2>>>>(scope.ServiceProvider.GetKeyedService<IS<K2>>("k1"));
+            }
+        }
+
+        // Enumerating first: both containers answer the open generic.
+        foreach (string container in new[] { "ours", "microsoft" })
+        {
+            using var root = (IDisposable)Build(container, Services());
+            using IServiceScope scope = ((IServiceProvider)root).CreateScope();
+            Assert.IsType<Open<K2>>(Assert.Single(scope.ServiceProvider.GetKeyedServices<IS<K2>>("k1")));
+            Assert.IsType<Open<K2>>(scope.ServiceProvider.GetKeyedService<IS<K2>>("k1"));
+        }
+    }
 }

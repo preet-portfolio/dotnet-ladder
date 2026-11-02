@@ -67,3 +67,21 @@ A third behaviour was checked rather than found: an `AnyKey` enumeration leaves 
 
 - Concurrency. Scenarios are single-threaded. Concurrent first resolution is tested separately (`Concurrent_first_resolutions_share_one_singleton_and_one_scoped_instance_per_scope`), against ours only.
 - Cycles through factories (see above), deep graphs (Microsoft moves call-site construction to a fresh thread when the stack runs low; ours does not, see the README), value-type services, and `ActivatorUtilities`, which belongs to the abstractions package and is exercised by the spec suite.
+
+## Later: a disagreement that is Microsoft's bug (2026-11-02)
+
+About 390,000 more graphs were run on 2026-11-02 while CI was rerun locally. Two runs failed. One printed seed
+`0ZnzaPbI20H1`, and that seed reproduces the failure deterministically.
+
+In that graph, a scoped `IS<K2>` registered under `AnyKey` takes `[FromKeyedServices("k1")] IEnumerable<IS<K2>>`, and an
+open generic `IS<>` is registered under `"k1"`. On `GetKeyed IS<K2> "k1"` in a scope:
+- Microsoft's container throws `ArgumentException`: "An item with the same key has already been added. Key: …ServiceCacheKey".
+- Ours returns `KeyedDep<K2,…>([OpenDisposable<K2>])`.
+
+Every other line of the two transcripts was identical.
+
+Reduced to two registrations, this is upstream draft (c) in [`upstream/README.md`](upstream/README.md). It still
+reproduces on 11.0.0-rc.3. We do not copy it. The test now skips any graph where Microsoft throws exactly this
+exception, counts it as `microsoft-bug`, and fails if there are more than 1 per 1,000 graphs. So the filter cannot
+quietly hide some other disagreement. `ContainerTests.Scoped_AnyKey_service_that_depends_on_its_own_keyed_enumerable_does_not_throw`
+pins both containers' behaviour.

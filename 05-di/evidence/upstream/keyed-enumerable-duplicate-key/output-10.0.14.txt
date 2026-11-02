@@ -1,0 +1,11 @@
+1. scoped AnyKey closed + scoped "k1" open generic: ArgumentException: An item with the same key has already been added. Key: Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceCacheKey
+2. same, transient: KeyedDep([Open<K>])
+3. same, singleton: KeyedDep([Open<K>])
+4. "k1" registration closed instead of open generic: Open<K>
+5. dependency is IS<K> "k1" (not IEnumerable): InvalidOperationException: A circular dependency was detected for the service of type 'IS<K>'.
+IS<K>(SingleDep<K>) -> IS<K>
+6. resolve IEnumerable<IS<K>> "k1" directly: Open<K>
+7. resolve with key "k2" (served only by AnyKey): KeyedDep([Open<K>])
+8. singleton: resolve the service, then the "k1" enumerable: KeyedDep([Open<K>]) then [Open<K>]
+9. scoped: resolve the "k1" enumerable, then the service: [Open<K>] then Open<K>
+10. singleton: resolve the "k1" enumerable, then the service: [Open<K>] then Open<K>

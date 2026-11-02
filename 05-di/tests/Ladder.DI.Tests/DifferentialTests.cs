@@ -52,6 +52,13 @@ public partial class DifferentialTests(ITestOutputHelper output)
             {
                 string expected = ScenarioRunner.Run(scenario, (services, s) =>
                     services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = s.ValidateScopes, ValidateOnBuild = s.ValidateOnBuild }));
+                if (expected.Contains(MicrosoftDuplicateCacheKey, StringComparison.Ordinal))
+                {
+                    // A Microsoft bug we don't copy: see ContainerTests.Scoped_AnyKey_service_that_depends_on_its_own_keyed_enumerable_does_not_throw.
+                    stats.AddMicrosoftBug(scenario.ToString());
+                    return;
+                }
+
                 string actual = ScenarioRunner.Run(scenario, (services, s) =>
                     services.BuildLadderServiceProvider(new ServiceContainerOptions { ValidateScopes = s.ValidateScopes, ValidateOnBuild = s.ValidateOnBuild, Mode = s.Mode }));
                 Assert.True(Describer.Comparable(expected) == Describer.Comparable(actual), $"Microsoft's container:\n{expected}\n\nours:\n{actual}");
@@ -63,7 +70,9 @@ public partial class DifferentialTests(ITestOutputHelper output)
         // The generator must actually reach the interesting regions, or agreement means little.
         output.WriteLine(stats.ToString());
         output.WriteLine(stats.Examples());
-        Assert.Equal(Graphs, stats.Count("graphs"));
+        // About 1 graph in 200,000 hits the Microsoft bug (2 of ~390,000 on 2026-11-02); more than a handful would mean the filter hides something else.
+        Assert.Equal(Graphs, stats.Count("graphs") + stats.Count("microsoft-bug"));
+        Assert.True(stats.Count("microsoft-bug") <= Math.Max(1, Graphs / 1_000), stats.ToString());
         (string What, int AtLeast)[] floors =
         [
             ("shared", 1_000), ("disposals>=3", 1_000), (":cycle", 100), (":ambiguous", 10), (":captive", 50), (":scoped-from-root", 50),
@@ -74,6 +83,9 @@ public partial class DifferentialTests(ITestOutputHelper output)
             Assert.True(stats.Count(what) >= Math.Max(1, (long)atLeast * Graphs / 10_000), $"only {stats.Count(what)} graphs with {what}\n{stats}");
         }
     }
+
+    /// <summary>Microsoft's internal cache-key collision (draft upstream report (c) in evidence/upstream).</summary>
+    private const string MicrosoftDuplicateCacheKey = "!ArgumentException {An item with the same key has already been added. Key: Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceCacheKey}";
 
     [GeneratedRegex(@"[(,\[] ?#\d+")]
     private static partial Regex SharedInstance();
@@ -113,6 +125,12 @@ public partial class DifferentialTests(ITestOutputHelper output)
                 Bump(marker);
                 _examples.TryAdd(marker, observations);
             }
+        }
+
+        public void AddMicrosoftBug(string scenario)
+        {
+            Bump("microsoft-bug");
+            _examples.TryAdd("microsoft-bug", scenario);
         }
 
         public string Examples() => string.Join("\n\n", _examples.OrderBy(e => e.Key, StringComparer.Ordinal).Select(e => $"--- first graph with {e.Key}:\n{e.Value}"));

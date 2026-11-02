@@ -56,3 +56,40 @@ runtime 10.0.14.
     that the same call stops throwing once `GetServices` has filled the call-site cache.
 - **Draft:** [`DRAFT-constrained-open-generic-order.md`](DRAFT-constrained-open-generic-order.md). It is written so that
   either answer is useful: "throw consistently" or "skip consistently".
+
+## (c) A scoped `AnyKey` service that depends on a keyed enumerable of its own type throws an internal `ArgumentException`
+
+- **Repro:** [`keyed-enumerable-duplicate-key/`](keyed-enumerable-duplicate-key/). It has 10 variants, each changing one
+  ingredient.
+- **Output:**
+  - on 10.0.14: [`keyed-enumerable-duplicate-key/output-10.0.14.txt`](keyed-enumerable-duplicate-key/output-10.0.14.txt);
+  - on 11.0.0-rc.3.26522.148, the newest prerelease on NuGet on 2026-11-02:
+    [`output-11.0.0-rc.3.txt`](keyed-enumerable-duplicate-key/output-11.0.0-rc.3.txt).
+
+  The two are identical.
+- **Registrations:**
+  - `IS<K>` under `AnyKey` → `KeyedDep<K>`, which takes `[FromKeyedServices("k1")] IEnumerable<IS<K>>`;
+  - `IS<>` under `"k1"` → `Open<>`.
+
+  Both are scoped.
+- **Result:** `GetKeyedService<IS<K>>("k1")` from a scope throws "An item with the same key has already been added.
+  Key: …ServiceCacheKey".
+  - Transient or singleton, it returns `KeyedDep([Open<K>])`.
+  - [Likely] cause: the outer service and the enumerable's single item share the cache key `(IS<K>, "k1", slot 0)`.
+    The single-dependency variant is reported as a cycle, which supports this.
+- **Found by** claim 2's differential test, on seed `0ZnzaPbI20H1`. It hit about 1 in 200,000 random graphs: 2 of about
+  390,000 graphs run on 2026-11-02.
+- **Search** (`is:issue repo:dotnet/runtime`, 2026-11-02, with "same key has already been added" ServiceCacheKey,
+  ServiceCacheKey, AnyKey open generic, AnyKey IEnumerable keyed, AnyKey "already been added", KeyedService.AnyKey
+  slot):
+  - Nothing matches.
+  - The nearest is [#87017](https://github.com/dotnet/runtime/issues/87017), "Microsoft DI resolves enumerables
+    incorrectly when a matching ServiceType has already been resolved". It was closed in 2023, is unkeyed, and has no
+    exception.
+- **Draft:** [`DRAFT-anykey-scoped-duplicate-cache-key.md`](DRAFT-anykey-scoped-duplicate-cache-key.md).
+- **What ours does:**
+  - It returns `KeyedDep([Open<K>])` for every lifetime.
+  - It copies the order-dependent part (enumerate first, then get the open generic), because that is the
+    (service, slot) sharing we match on purpose.
+  - It does not copy the exception.
+  - Both behaviours are pinned in `ContainerTests.Scoped_AnyKey_service_that_depends_on_its_own_keyed_enumerable_does_not_throw`.
