@@ -29,7 +29,12 @@ def enclosing(file, line):
     return "(file scope)"
 
 
-rows = [r for f in inputs for r in csv.DictReader(open(f))]
+# A mutant judged twice (two workers met in the middle) keeps its first row.
+first = {}
+for f in inputs:
+    for r in csv.DictReader(open(f)):
+        first.setdefault(r["id"], r)
+rows = list(first.values())
 for r in rows:
     r["member"] = f'{r["file"].removesuffix(".cs")}.{enclosing(r["file"], int(r["line"]))}'
 rows.sort(key=lambda r: (r["file"], int(r["line"]), int(r["id"])))

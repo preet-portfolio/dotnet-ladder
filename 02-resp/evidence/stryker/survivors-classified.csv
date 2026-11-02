@@ -1,0 +1,650 @@
+id,file,line,member,stryker,mutator,replacement,class,why
+2786,ByteKeyComparer.cs,16,ByteKeyComparer.Equals,Survived,Logical mutation,"ReferenceEquals(x, y) && (x is not null && y is not null && x.AsSpan().SequenceE",Equivalent [Likely],Differs only when both keys are null; the dictionaries never pass null keys
+2787,ByteKeyComparer.cs,16,ByteKeyComparer.Equals,NoCoverage,Logical mutation,x is not null && y is not null || x.AsSpan().SequenceEqual(y),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2788,ByteKeyComparer.cs,16,ByteKeyComparer.Equals,NoCoverage,Logical mutation,x is not null || y is not null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2789,ByteKeyComparer.cs,16,ByteKeyComparer.Equals,NoCoverage,Equality mutation,x is null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2790,ByteKeyComparer.cs,16,ByteKeyComparer.Equals,NoCoverage,Equality mutation,y is null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2792,ByteKeyComparer.cs,29,ByteKeyComparer.Hash,Survived,Statement mutation,;,Performance only,"Every key hashes the same: dictionaries stay correct, just slow"
+2793,ByteKeyComparer.cs,43,ByteKeyComparer.Equals,NoCoverage,Logical mutation,"x is not null && y is not null || System.Text.Ascii.EqualsIgnoreCase(x, y)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2794,ByteKeyComparer.cs,43,ByteKeyComparer.Equals,NoCoverage,Logical mutation,x is not null || y is not null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2795,ByteKeyComparer.cs,43,ByteKeyComparer.Equals,NoCoverage,Equality mutation,x is null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2796,ByteKeyComparer.cs,43,ByteKeyComparer.Equals,NoCoverage,Equality mutation,y is null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2806,Collections.cs,36,Collections.Clone,NoCoverage,Block removal mutation,{},Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2807,Collections.cs,49,Collections.Ordered,NoCoverage,Linq method mutation (ThenBy() to ThenByDescending()),Scores.OrderBy(kv => kv.Value).ThenByDescending,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2808,Collections.cs,49,Collections.Ordered,NoCoverage,Linq method mutation (OrderBy() to OrderByDescending()),Scores.OrderByDescending,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2810,Collections.cs,55,Collections.Clone,NoCoverage,Block removal mutation,{},Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+11,CommandArgs.cs,41,CommandArgs.Add,Survived,Remove checked expression,(int)value.Length,Equivalent,"Lengths are at most 512 MB (MaxBulkLength), so the int conversion never overflows"
+13,CommandArgs.cs,42,CommandArgs.Add,Survived,Equality mutation,_arenaUsed + length >= _arena.Length,Performance only,"Arena growth: a new arena is allocated one byte early, or with less spare room; Math.Max keeps it large enough"
+18,CommandArgs.cs,45,CommandArgs.Add,Survived,Arithmetic mutation,_arena.Length / 2,Performance only,"Arena growth: a new arena is allocated one byte early, or with less spare room; Math.Max keeps it large enough"
+25,CommandArgs.cs,59,CommandArgs.Add,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+26,CommandArgs.cs,59,CommandArgs.Add,NoCoverage,Arithmetic mutation,_args.Length / 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+33,CommandContext.cs,26,CommandContext.TransactionFailed,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Equivalent [Likely],Initial value of the per-command clock cache; BeginCommand resets it before any read
+35,CommandContext.cs,43,CommandContext.Now,Survived,Conditional (false) mutation,(false?_now :(_now = Keyspace.NowMs())),Equivalent [Likely],The clock is re-read inside one command instead of cached; it differs only if a command straddles a millisecond and compares the two reads
+37,CommandContext.cs,43,CommandContext.Now,Survived,Equality mutation,_now > 0,Equivalent [Likely],The clock is re-read inside one command instead of cached; it differs only if a command straddles a millisecond and compares the two reads
+69,CommandTable.cs,53,CommandTable.Execute,NoCoverage,Boolean mutation,false,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+81,CommandTable.cs,61,CommandTable.Execute,Survived,Equality mutation,spec.Arity <= 0,Equivalent,No command has arity 0
+104,CommandTable.cs,86,CommandTable.Execute,NoCoverage,Equality mutation,ex is OutOfMemoryException,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+106,CommandTable.cs,89,CommandTable.Execute,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+107,CommandTable.cs,89,CommandTable.Execute,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+108,CommandTable.cs,90,CommandTable.Execute,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+109,CommandTable.cs,90,CommandTable.Execute,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2647,Connection.cs,25,Connection.(file scope),Survived,Arithmetic mutation,512 / 1024,Performance only,"Pipe thresholds, zero-byte receive, batching boundary or ConfigureAwait (no synchronization context): changes buffering, not bytes on the wire"
+2648,Connection.cs,26,Connection.(file scope),Survived,Boolean mutation,true,Equivalent,ConfigureAwait/useSynchronizationContext: the server has no synchronization context
+2653,Connection.cs,48,Connection.RunAsync,Survived,Boolean mutation,true,Equivalent,ConfigureAwait/useSynchronizationContext: the server has no synchronization context
+2655,Connection.cs,53,Connection.RunAsync,Survived,Statement mutation,;,Test gap,"Connection teardown (socket dispose/close, pipe completion) removed: no test checks that a closed client is cleaned up"
+2660,Connection.cs,66,Connection.ReceiveAsync,Survived,Statement mutation,;,Performance only,"Pipe thresholds, zero-byte receive, batching boundary or ConfigureAwait (no synchronization context): changes buffering, not bytes on the wire"
+2661,Connection.cs,66,Connection.ReceiveAsync,Survived,Boolean mutation,true,Performance only,"Pipe thresholds, zero-byte receive, batching boundary or ConfigureAwait (no synchronization context): changes buffering, not bytes on the wire"
+2662,Connection.cs,68,Connection.ReceiveAsync,Survived,Boolean mutation,true,Performance only,"Pipe thresholds, zero-byte receive, batching boundary or ConfigureAwait (no synchronization context): changes buffering, not bytes on the wire"
+2667,Connection.cs,75,Connection.ReceiveAsync,Survived,Boolean mutation,true,Performance only,"Pipe thresholds, zero-byte receive, batching boundary or ConfigureAwait (no synchronization context): changes buffering, not bytes on the wire"
+2670,Connection.cs,78,Connection.ReceiveAsync,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2673,Connection.cs,91,Connection.ReceiveAsync,Survived,Statement mutation,;,Test gap,"Connection teardown (socket dispose/close, pipe completion) removed: no test checks that a closed client is cleaned up"
+2674,Connection.cs,91,Connection.ReceiveAsync,Survived,Boolean mutation,true,Equivalent,ConfigureAwait/useSynchronizationContext: the server has no synchronization context
+2705,Connection.cs,145,Connection.ProcessBuffer,Survived,Equality mutation,_output.Writer.UnflushedBytes > OutputBatchLimit,Performance only,"Pipe thresholds, zero-byte receive, batching boundary or ConfigureAwait (no synchronization context): changes buffering, not bytes on the wire"
+2713,Connection.cs,154,Connection.ProcessBuffer,Survived,Equality mutation,buffer.Slice(consumed).Length >= QueryBufferLimit,Test gap (edge),Query-buffer limit off by one byte at 1 GB: no test sends exactly the limit
+2716,Connection.cs,157,Connection.ProcessBuffer,NoCoverage,Boolean mutation,false,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2725,Connection.cs,174,Connection.ProcessBuffer,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2729,Connection.cs,180,Connection.ProcessBuffer,NoCoverage,Boolean mutation,false,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2730,Connection.cs,181,Connection.ProcessBuffer,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2735,Connection.cs,195,Connection.SendAsync,Survived,Boolean mutation,true,Performance only,"Pipe thresholds, zero-byte receive, batching boundary or ConfigureAwait (no synchronization context): changes buffering, not bytes on the wire"
+2742,Connection.cs,202,Connection.SendAsync,Survived,Boolean mutation,true,Performance only,"Pipe thresholds, zero-byte receive, batching boundary or ConfigureAwait (no synchronization context): changes buffering, not bytes on the wire"
+2750,Connection.cs,218,Connection.SendAsync,Survived,Statement mutation,;,Test gap,"Connection teardown (socket dispose/close, pipe completion) removed: no test checks that a closed client is cleaned up"
+2751,Connection.cs,218,Connection.SendAsync,Survived,Boolean mutation,true,Equivalent,ConfigureAwait/useSynchronizationContext: the server has no synchronization context
+2756,Connection.cs,227,Connection.SendAsync,Survived,Statement mutation,;,Test gap,"Connection teardown (socket dispose/close, pipe completion) removed: no test checks that a closed client is cleaned up"
+2820,Database.cs,46,Database.Lookup,Survived,Equality mutation,entry.ExpiresAt > 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+2825,Database.cs,49,Database.Lookup,Survived,Statement mutation,;,Test gap,expired_keys counter in INFO: untested
+2826,Database.cs,49,Database.Lookup,Survived,PostIncrementExpression to PostDecrementExpression mutation,ExpiredKeys--,Test gap,expired_keys counter in INFO: untested
+2828,Database.cs,60,Database.Lookup,NoCoverage,Equality mutation,entry is null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2829,Database.cs,61,Database.Lookup,NoCoverage,Block removal mutation,{},Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2835,Database.cs,76,Database.Upsert,Survived,Equality mutation,entry.ExpiresAt < 0,Test gap,"Upsert treats an expired entry as live, e.g. SET KEEPTTL / SET GET on an expired key"
+2836,Database.cs,76,Database.Upsert,Survived,Equality mutation,entry.ExpiresAt > 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+2838,Database.cs,76,Database.Upsert,Survived,Equality mutation,entry.ExpiresAt < now,Test gap (edge),1 ms boundary: expiry exactly at `now`
+2840,Database.cs,79,Database.Upsert,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2841,Database.cs,80,Database.Upsert,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2843,Database.cs,84,Database.Upsert,Survived,Equality mutation,expireAt > 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+2851,Database.cs,88,Database.Upsert,Survived,Equality mutation,entry.ExpiresAt > 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+2857,Database.cs,100,Database.Upsert,Survived,Equality mutation,expireAt > 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+2867,Database.cs,113,Database.SetExpire,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2869,Database.cs,117,Database.SetExpire,Survived,Boolean mutation,false,Test gap,SetExpire's result ignored by callers' replies in a path no test reaches
+2872,Database.cs,123,Database.Add,Survived,Equality mutation,entry.ExpiresAt < 0,Test gap,"Volatile-key index wrong: lazy expiry still hides keys, but active expiry and DBSIZE after expiry differ; untested"
+2873,Database.cs,123,Database.Add,Survived,Equality mutation,entry.ExpiresAt > 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+2874,Database.cs,123,Database.Add,Survived,Negate expression,!(entry.ExpiresAt >= 0),Test gap,"Volatile-key index wrong: lazy expiry still hides keys, but active expiry and DBSIZE after expiry differ; untested"
+2876,Database.cs,125,Database.Add,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2883,Database.cs,138,Database.Delete,Survived,Equality mutation,entry.ExpiresAt <= 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+2884,Database.cs,138,Database.Delete,NoCoverage,Equality mutation,entry.ExpiresAt < now,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2885,Database.cs,138,Database.Delete,NoCoverage,Equality mutation,entry.ExpiresAt >= now,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2887,Database.cs,140,Database.Delete,Survived,LogicalNotExpression to un-LogicalNotExpression mutation,live,Test gap,DEL/UNLINK count on an already-expired key: untested
+2889,Database.cs,142,Database.Delete,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2890,Database.cs,142,Database.Delete,NoCoverage,PostIncrementExpression to PostDecrementExpression mutation,ExpiredKeys--,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2899,Database.cs,161,Database.SetExpire,Survived,Equality mutation,at > 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+2908,Database.cs,175,Database.Clear,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2915,Database.cs,198,Database.ActiveExpireCycle,Survived,Equality mutation,_volatile.Count >= 0,Performance only [Likely],"Active-expiry sampling and time budget: changes how much memory expired keys hold, not what any command returns (lazy expiry hides them)"
+2919,Database.cs,200,Database.ActiveExpireCycle,Survived,Linq method mutation (Min() to Max()),Math.Max,Performance only [Likely],"Active-expiry sampling and time budget: changes how much memory expired keys hold, not what any command returns (lazy expiry hides them)"
+2923,Database.cs,202,Database.ActiveExpireCycle,Survived,Equality mutation,i <= sample,Performance only [Likely],"Active-expiry sampling and time budget: changes how much memory expired keys hold, not what any command returns (lazy expiry hides them)"
+2925,Database.cs,202,Database.ActiveExpireCycle,Survived,Equality mutation,_volatile.Count >= 0,Performance only [Likely],"Active-expiry sampling and time budget: changes how much memory expired keys hold, not what any command returns (lazy expiry hides them)"
+2931,Database.cs,206,Database.ActiveExpireCycle,Survived,Equality mutation,entry.ExpiresAt < now,Test gap (edge),1 ms boundary: expiry exactly at `now`
+2937,Database.cs,210,Database.ActiveExpireCycle,Survived,Statement mutation,;,Test gap,expired_keys counter in INFO: untested
+2938,Database.cs,210,Database.ActiveExpireCycle,Survived,PostIncrementExpression to PostDecrementExpression mutation,ExpiredKeys--,Test gap,expired_keys counter in INFO: untested
+2943,Database.cs,215,Database.ActiveExpireCycle,Survived,Equality mutation,expired * 4 < sample,Performance only [Likely],"Active-expiry sampling and time budget: changes how much memory expired keys hold, not what any command returns (lazy expiry hides them)"
+2946,Database.cs,215,Database.ActiveExpireCycle,Survived,Equality mutation,Environment.TickCount64 > deadlineTicks,Performance only [Likely],"Active-expiry sampling and time budget: changes how much memory expired keys hold, not what any command returns (lazy expiry hides them)"
+2950,Database.cs,230,Database.Scan,Survived,CoalesceAssignmentExpression to SimpleAssignmentExpression mutation,_scanOrder = BuildScanOrder(),Performance only,Scan order rebuilt on every SCAN call instead of cached
+2957,Database.cs,233,Database.Scan,Survived,Equality mutation,taken <= count,Test gap,SCAN cursor iteration: SCAN is not in the unit tests or the judged suite files
+2958,Database.cs,233,Database.Scan,Survived,Logical mutation,i > 0 || _scanOrder[i].Hash == _scanOrder[i - 1].Hash,Test gap,SCAN cursor iteration: SCAN is not in the unit tests or the judged suite files
+2959,Database.cs,233,Database.Scan,Survived,Equality mutation,i < 0,Test gap,SCAN cursor iteration: SCAN is not in the unit tests or the judged suite files
+2960,Database.cs,233,Database.Scan,Survived,Equality mutation,i >= 0,Test gap,SCAN cursor iteration: SCAN is not in the unit tests or the judged suite files
+2961,Database.cs,233,Database.Scan,Survived,Equality mutation,_scanOrder[i].Hash != _scanOrder[i - 1].Hash,Test gap,SCAN cursor iteration: SCAN is not in the unit tests or the judged suite files
+2965,Database.cs,236,Database.Scan,Survived,Statement mutation,;,Test gap,SCAN cursor iteration: SCAN is not in the unit tests or the judged suite files
+2966,Database.cs,236,Database.Scan,Survived,PostIncrementExpression to PostDecrementExpression mutation,taken--,Test gap,SCAN cursor iteration: SCAN is not in the unit tests or the judged suite files
+2976,Database.cs,246,Database.RandomKey,NoCoverage,Equality mutation,attempt <= 100,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2980,Database.cs,246,Database.RandomKey,NoCoverage,PostIncrementExpression to PostDecrementExpression mutation,attempt--,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2990,Database.cs,267,Database.RandomKey,Survived,Conditional (true) mutation,(true?a.Hash.CompareTo(b.Hash) :a.Key.AsSpan().SequenceCompareTo(b.Key)),Equivalent [Likely],RANDOMKEY's order tie-break for equal hashes of different keys; any order is valid
+2999,Database.cs,276,Database.LowerBound,Survived,Bitwise mutation,(lo + hi) >> 1,Equivalent,`>>>` vs `>>` on a non-negative int sum
+3012,Database.cs,299,Database.StableHash,Survived,Arithmetic mutation,(h >> 2) - 1,Equivalent [Likely],Stable hash used only to order SCAN/RANDOMKEY; any consistent hash satisfies their guarantees
+3013,Database.cs,299,Database.StableHash,Survived,Bitwise mutation,h << 2,Equivalent [Likely],Stable hash used only to order SCAN/RANDOMKEY; any consistent hash satisfies their guarantees
+3014,Database.cs,299,Database.StableHash,Survived,Bitwise mutation,h >>> 2,Equivalent [Likely],Stable hash used only to order SCAN/RANDOMKEY; any consistent hash satisfies their guarantees
+3036,GlobMatcher.cs,15,GlobMatcher.Match,Survived,Equality mutation,depth >= 1000,Test gap (edge),Glob recursion limit off by one at depth 1000
+3044,GlobMatcher.cs,25,GlobMatcher.Match,Survived,Equality mutation,p.Length < 1,Performance only,"Consecutive `*` no longer collapsed: same matches, more backtracking"
+3058,GlobMatcher.cs,58,GlobMatcher.Match,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3060,GlobMatcher.cs,66,GlobMatcher.Match,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3073,GlobMatcher.cs,79,GlobMatcher.Match,NoCoverage,Equality mutation,p.Length < 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3074,GlobMatcher.cs,79,GlobMatcher.Match,NoCoverage,Equality mutation,p.Length > 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3075,GlobMatcher.cs,82,GlobMatcher.Match,NoCoverage,OrAssignmentExpression to AndAssignmentExpression mutation,matched &= p[0] == s[0],Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3076,GlobMatcher.cs,82,GlobMatcher.Match,NoCoverage,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,matched ^= p[0] == s[0],Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3077,GlobMatcher.cs,82,GlobMatcher.Match,NoCoverage,Equality mutation,p[0] != s[0],Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3080,GlobMatcher.cs,84,GlobMatcher.Match,Survived,Equality mutation,p.Length < 3,Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+3081,GlobMatcher.cs,84,GlobMatcher.Match,Survived,Equality mutation,p.Length > 3,Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+3084,GlobMatcher.cs,87,GlobMatcher.Match,Survived,Equality mutation,start >= end,Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+3087,GlobMatcher.cs,92,GlobMatcher.Match,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,matched ^= s[0] >= start && s[0] <= end,Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+3088,GlobMatcher.cs,92,GlobMatcher.Match,Survived,Logical mutation,s[0] >= start || s[0] <= end,Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+3094,GlobMatcher.cs,97,GlobMatcher.Match,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,matched ^= p[0] == s[0],Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+3101,GlobMatcher.cs,115,GlobMatcher.Match,Survived,Equality mutation,p.Length > 2,Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+3112,GlobMatcher.cs,136,GlobMatcher.Match,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3120,GlobMatcher.cs,147,GlobMatcher.Match,Survived,Statement mutation,;,Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+3121,GlobMatcher.cs,151,GlobMatcher.Match,Survived,Logical mutation,p.IsEmpty || s.IsEmpty,Test gap,"Glob classes, ranges and escapes (`[a-z]`, `[^x]`, `\\`): KEYS patterns in the tests use only `*` and `?`"
+138,KeyCommands.cs,23,KeyCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+139,KeyCommands.cs,23,KeyCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+2,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+144,KeyCommands.cs,25,KeyCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+145,KeyCommands.cs,25,KeyCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+2,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+161,KeyCommands.cs,32,KeyCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+162,KeyCommands.cs,32,KeyCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+181,KeyCommands.cs,37,KeyCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+3,Test gap,EXPIREAT/PEXPIREAT with an NX/XX/GT/LT option: untested
+186,KeyCommands.cs,38,KeyCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+3,Test gap,EXPIREAT/PEXPIREAT with an NX/XX/GT/LT option: untested
+212,KeyCommands.cs,50,KeyCommands.Del,NoCoverage,Equality mutation,i <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+266,KeyCommands.cs,145,KeyCommands.Copy,NoCoverage,Logical mutation,"c.ArgIs(j, ""db"") || j + 1 < c.ArgCount",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+270,KeyCommands.cs,145,KeyCommands.Copy,NoCoverage,Equality mutation,j + 1 <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+271,KeyCommands.cs,145,KeyCommands.Copy,NoCoverage,Arithmetic mutation,j - 1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+278,KeyCommands.cs,156,KeyCommands.Copy,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+279,KeyCommands.cs,157,KeyCommands.Copy,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+282,KeyCommands.cs,161,KeyCommands.Copy,Survived,Equality mutation,targetIndex != c.Session.Db,Test gap,COPY onto itself in another database: untested
+284,KeyCommands.cs,163,KeyCommands.Copy,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+285,KeyCommands.cs,163,KeyCommands.Copy,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+286,KeyCommands.cs,164,KeyCommands.Copy,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+289,KeyCommands.cs,170,KeyCommands.Copy,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+305,KeyCommands.cs,202,KeyCommands.CloneString,NoCoverage,Conditional (true) mutation,(true?RString.FromRaw(bytes) :RString.FromComputed(bytes)),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+306,KeyCommands.cs,202,KeyCommands.CloneString,NoCoverage,Conditional (false) mutation,(false?RString.FromRaw(bytes) :RString.FromComputed(bytes)),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+307,KeyCommands.cs,202,KeyCommands.CloneString,NoCoverage,Equality mutation,s.Encoding != StringEncoding.Raw,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+309,KeyCommands.cs,207,KeyCommands.Move,Survived,Logical mutation,"!RString.TryParseStrict(c[2], out long index) || index < int.MinValue && index >",Test gap (edge),Database index range checks at int / database-count limits
+320,KeyCommands.cs,213,KeyCommands.Move,Survived,Logical mutation,index < 0 && index >= Keyspace.DatabaseCount,Test gap (edge),Database index range checks at int / database-count limits
+327,KeyCommands.cs,215,KeyCommands.Move,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+328,KeyCommands.cs,216,KeyCommands.Move,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+331,KeyCommands.cs,221,KeyCommands.Move,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+332,KeyCommands.cs,221,KeyCommands.Move,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+333,KeyCommands.cs,222,KeyCommands.Move,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+356,KeyCommands.cs,258,KeyCommands.Scan,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"ulong.TryParse(c[1], NumberStyles.None, CultureInfo.InvariantCulture, out ulong ",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+358,KeyCommands.cs,260,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+359,KeyCommands.cs,260,KeyCommands.Scan,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+360,KeyCommands.cs,261,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+361,KeyCommands.cs,265,KeyCommands.Scan,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+362,KeyCommands.cs,266,KeyCommands.Scan,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+363,KeyCommands.cs,267,KeyCommands.Scan,NoCoverage,Equality mutation,j > c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+364,KeyCommands.cs,267,KeyCommands.Scan,NoCoverage,Equality mutation,j <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+365,KeyCommands.cs,267,KeyCommands.Scan,NoCoverage,PostIncrementExpression to PostDecrementExpression mutation,j--,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+367,KeyCommands.cs,269,KeyCommands.Scan,NoCoverage,Equality mutation,j + 1 > c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+368,KeyCommands.cs,269,KeyCommands.Scan,NoCoverage,Equality mutation,j + 1 <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+369,KeyCommands.cs,269,KeyCommands.Scan,NoCoverage,Arithmetic mutation,j - 1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+370,KeyCommands.cs,270,KeyCommands.Scan,NoCoverage,Logical mutation,"c.ArgIs(j, ""count"") || hasNext",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+371,KeyCommands.cs,270,KeyCommands.Scan,NoCoverage,Negate expression,"!(c.ArgIs(j, ""count"") && hasNext)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+372,KeyCommands.cs,270,KeyCommands.Scan,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+374,KeyCommands.cs,272,KeyCommands.Scan,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"c.TryLong(++j, out long n)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+375,KeyCommands.cs,272,KeyCommands.Scan,NoCoverage,PreIncrementExpression to PreDecrementExpression mutation,--j,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+377,KeyCommands.cs,274,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+378,KeyCommands.cs,277,KeyCommands.Scan,NoCoverage,Equality mutation,n > 1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+379,KeyCommands.cs,277,KeyCommands.Scan,NoCoverage,Equality mutation,n <= 1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+380,KeyCommands.cs,277,KeyCommands.Scan,NoCoverage,Negate expression,!(n < 1),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+382,KeyCommands.cs,279,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+383,KeyCommands.cs,280,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+384,KeyCommands.cs,283,KeyCommands.Scan,NoCoverage,Linq method mutation (Min() to Max()),Math.Max,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+385,KeyCommands.cs,285,KeyCommands.Scan,NoCoverage,Logical mutation,"c.ArgIs(j, ""match"") || hasNext",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+386,KeyCommands.cs,285,KeyCommands.Scan,NoCoverage,Negate expression,"!(c.ArgIs(j, ""match"") && hasNext)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+387,KeyCommands.cs,285,KeyCommands.Scan,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+389,KeyCommands.cs,287,KeyCommands.Scan,NoCoverage,PreIncrementExpression to PreDecrementExpression mutation,--j,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+390,KeyCommands.cs,289,KeyCommands.Scan,NoCoverage,Logical mutation,"c.ArgIs(j, ""type"") || hasNext",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+391,KeyCommands.cs,289,KeyCommands.Scan,NoCoverage,Negate expression,"!(c.ArgIs(j, ""type"") && hasNext)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+392,KeyCommands.cs,289,KeyCommands.Scan,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+394,KeyCommands.cs,291,KeyCommands.Scan,NoCoverage,PreIncrementExpression to PreDecrementExpression mutation,--j,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+396,KeyCommands.cs,295,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+397,KeyCommands.cs,296,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+403,KeyCommands.cs,311,KeyCommands.Scan,NoCoverage,Logical mutation,"matchIdx >= 0 || !GlobMatcher.IsMatch(c[matchIdx], key)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+404,KeyCommands.cs,311,KeyCommands.Scan,NoCoverage,Negate expression,"!(matchIdx >= 0 && !GlobMatcher.IsMatch(c[matchIdx], key))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+405,KeyCommands.cs,311,KeyCommands.Scan,NoCoverage,Equality mutation,matchIdx < 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+406,KeyCommands.cs,311,KeyCommands.Scan,NoCoverage,Equality mutation,matchIdx > 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+407,KeyCommands.cs,311,KeyCommands.Scan,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"GlobMatcher.IsMatch(c[matchIdx], key)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+409,KeyCommands.cs,313,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+410,KeyCommands.cs,316,KeyCommands.Scan,NoCoverage,Logical mutation,"typeIdx >= 0 || !Ascii.EqualsIgnoreCase(TypeName(entry.Value), c[typeIdx])",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+411,KeyCommands.cs,316,KeyCommands.Scan,NoCoverage,Negate expression,"!(typeIdx >= 0 && !Ascii.EqualsIgnoreCase(TypeName(entry.Value), c[typeIdx]))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+412,KeyCommands.cs,316,KeyCommands.Scan,NoCoverage,Equality mutation,typeIdx < 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+413,KeyCommands.cs,316,KeyCommands.Scan,NoCoverage,Equality mutation,typeIdx > 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+414,KeyCommands.cs,316,KeyCommands.Scan,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"Ascii.EqualsIgnoreCase(TypeName(entry.Value), c[typeIdx])",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+416,KeyCommands.cs,318,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+417,KeyCommands.cs,321,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+418,KeyCommands.cs,324,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+419,KeyCommands.cs,325,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+420,KeyCommands.cs,326,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+423,KeyCommands.cs,329,KeyCommands.Scan,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+439,KeyCommands.cs,354,KeyCommands.Expire,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= ExpireFlags.NX,Test gap (edge),The same option given twice (e.g. `NX NX`) toggles it off: untested
+444,KeyCommands.cs,358,KeyCommands.Expire,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= ExpireFlags.XX,Test gap (edge),The same option given twice (e.g. `NX NX`) toggles it off: untested
+449,KeyCommands.cs,362,KeyCommands.Expire,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= ExpireFlags.GT,Test gap (edge),The same option given twice (e.g. `NX NX`) toggles it off: untested
+454,KeyCommands.cs,366,KeyCommands.Expire,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= ExpireFlags.LT,Test gap (edge),The same option given twice (e.g. `NX NX`) toggles it off: untested
+489,KeyCommands.cs,394,KeyCommands.Expire,Survived,Equality mutation,when >= long.MaxValue / 1000,Test gap (edge),Overflow bound off by one at the extreme value
+492,KeyCommands.cs,394,KeyCommands.Expire,Survived,Equality mutation,when <= long.MinValue / 1000,Test gap (edge),Overflow bound off by one at the extreme value
+502,KeyCommands.cs,405,KeyCommands.Expire,Survived,Equality mutation,when >= long.MaxValue - c.Now,Test gap (edge),Overflow bound off by one at the extreme value
+535,KeyCommands.cs,424,KeyCommands.Expire,Survived,Equality mutation,when < current,Test gap (edge),EXPIRE GT/LT with a time equal to the current one
+543,KeyCommands.cs,425,KeyCommands.Expire,Survived,Equality mutation,when > current,Test gap (edge),EXPIRE GT/LT with a time equal to the current one
+548,KeyCommands.cs,431,KeyCommands.Expire,Survived,Equality mutation,when < c.Now,Test gap (edge),1 ms boundary: expiry exactly at `now`
+562,KeyCommands.cs,452,KeyCommands.Ttl,Survived,Equality mutation,entry.ExpiresAt <= 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+582,KeyCommands.cs,465,KeyCommands.Persist,Survived,Equality mutation,entry.ExpiresAt <= 0,Equivalent [Likely],`>= 0` vs `> 0` on an expiry time: an expiry at Unix time 0 cannot be stored (a past EXPIREAT deletes the key)
+593,KeyCommands.cs,479,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+594,KeyCommands.cs,480,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+595,KeyCommands.cs,481,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+598,KeyCommands.cs,486,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+599,KeyCommands.cs,486,KeyCommands.ObjectCommand,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+600,KeyCommands.cs,487,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+603,KeyCommands.cs,493,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+609,KeyCommands.cs,501,KeyCommands.ObjectCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""refcount""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+610,KeyCommands.cs,501,KeyCommands.ObjectCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+612,KeyCommands.cs,503,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+613,KeyCommands.cs,505,KeyCommands.ObjectCommand,NoCoverage,Logical mutation,"c.ArgIs(1, ""idletime"") && c.ArgIs(1, ""freq"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+614,KeyCommands.cs,505,KeyCommands.ObjectCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""idletime"") || c.ArgIs(1, ""freq""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+615,KeyCommands.cs,505,KeyCommands.ObjectCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+616,KeyCommands.cs,505,KeyCommands.ObjectCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+618,KeyCommands.cs,507,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+620,KeyCommands.cs,511,KeyCommands.ObjectCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+621,KeyCommands.cs,511,KeyCommands.ObjectCommand,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+624,KeyCommands.cs,519,KeyCommands.EncodingName,Survived,String mutation,"""""",Test gap,OBJECT ENCODING after CONFIG SET set-max-listpack-entries: untested
+628,KeyCommands.cs,527,KeyCommands.EncodingName,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+633,KeyCommands.cs,530,KeyCommands.EncodingName,NoCoverage,Equality mutation,l.Items.Sum(i => i.Length + 11) < 8192,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+634,KeyCommands.cs,530,KeyCommands.EncodingName,NoCoverage,Linq method mutation (Sum() to Max()),l.Items.Max,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+638,KeyCommands.cs,531,KeyCommands.EncodingName,NoCoverage,Logical mutation,"s.Members.Count <= setInts || s.Members.All(m => RString.TryParseStrict(m, out _",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+640,KeyCommands.cs,531,KeyCommands.EncodingName,NoCoverage,Equality mutation,s.Members.Count < setInts,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+642,KeyCommands.cs,531,KeyCommands.EncodingName,NoCoverage,Linq method mutation (All() to Any()),s.Members.Any,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+643,KeyCommands.cs,531,KeyCommands.EncodingName,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+644,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,Conditional (true) mutation,"(true?""listpack"" :""hashtable"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+645,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,Conditional (false) mutation,"(false?""listpack"" :""hashtable"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+646,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,Logical mutation,s.Members.Count <= setEntries || s.Members.All(m => m.Length <= 64),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+648,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,Equality mutation,s.Members.Count < setEntries,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+650,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,Linq method mutation (All() to Any()),s.Members.Any,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+651,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,Equality mutation,m.Length > 64,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+652,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,Equality mutation,m.Length < 64,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+653,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+654,KeyCommands.cs,532,KeyCommands.EncodingName,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+657,KeyCommands.cs,533,KeyCommands.EncodingName,NoCoverage,Logical mutation,h.Fields.Count <= hashEntries || h.Fields.All(f => f.Key.Length <= 64 && f.Value,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+659,KeyCommands.cs,533,KeyCommands.EncodingName,NoCoverage,Equality mutation,h.Fields.Count < hashEntries,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+661,KeyCommands.cs,533,KeyCommands.EncodingName,NoCoverage,Linq method mutation (All() to Any()),h.Fields.Any,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+662,KeyCommands.cs,533,KeyCommands.EncodingName,NoCoverage,Logical mutation,f.Key.Length <= 64 || f.Value.Length <= 64,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+664,KeyCommands.cs,533,KeyCommands.EncodingName,NoCoverage,Equality mutation,f.Key.Length < 64,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+666,KeyCommands.cs,533,KeyCommands.EncodingName,NoCoverage,Equality mutation,f.Value.Length < 64,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+673,KeyCommands.cs,534,KeyCommands.EncodingName,NoCoverage,Equality mutation,z.Scores.Count < zsetEntries,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+675,KeyCommands.cs,534,KeyCommands.EncodingName,NoCoverage,Linq method mutation (All() to Any()),z.Scores.Keys.Any,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+677,KeyCommands.cs,534,KeyCommands.EncodingName,NoCoverage,Equality mutation,k.Length < 64,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+680,KeyCommands.cs,535,KeyCommands.EncodingName,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+682,KeyCommands.cs,542,KeyCommands.TryDbIndex,Survived,Logical mutation,"!RString.TryParseStrict(c[argIndex], out long n) || n < int.MinValue && n > int.",Test gap (edge),Database index range checks at int / database-count limits
+687,KeyCommands.cs,542,KeyCommands.TryDbIndex,Survived,Equality mutation,n <= int.MinValue,Test gap (edge),Database index range checks at int / database-count limits
+3127,Keyspace.cs,29,Keyspace.ExpiredKeys,NoCoverage,Linq method mutation (Sum() to Max()),_databases.Max,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+3135,Keyspace.cs,55,Keyspace.ActiveExpireCycle,Survived,Arithmetic mutation,Environment.TickCount64 - 25,Performance only [Likely],"Active-expiry sampling and time budget: changes how much memory expired keys hold, not what any command returns (lazy expiry hides them)"
+3137,Keyspace.cs,59,Keyspace.ActiveExpireCycle,Survived,AddAssignmentExpression to SubtractAssignmentExpression mutation,"deleted -= db.ActiveExpireCycle(now, Random, deadline)",Performance only [Likely],"Active-expiry sampling and time budget: changes how much memory expired keys hold, not what any command returns (lazy expiry hides them)"
+3145,RString.cs,37,RString.FromValue,Survived,Equality mutation,value.Length < 20,Test gap,OBJECT ENCODING boundary (int vs embstr vs raw): untested at the limits
+3154,RString.cs,56,RString.FromComputed,Survived,Conditional (true) mutation,(true?StringEncoding.Embstr :StringEncoding.Raw),Test gap,OBJECT ENCODING boundary (int vs embstr vs raw): untested at the limits
+3155,RString.cs,56,RString.FromComputed,Survived,Conditional (false) mutation,(false?StringEncoding.Embstr :StringEncoding.Raw),Test gap,OBJECT ENCODING boundary (int vs embstr vs raw): untested at the limits
+3156,RString.cs,56,RString.FromComputed,Survived,Equality mutation,value.Length > EmbstrLimit,Test gap,OBJECT ENCODING boundary (int vs embstr vs raw): untested at the limits
+3157,RString.cs,56,RString.FromComputed,Survived,Equality mutation,value.Length < EmbstrLimit,Test gap,OBJECT ENCODING boundary (int vs embstr vs raw): untested at the limits
+3180,RString.cs,121,RString.MakeRawWritable,Survived,Equality mutation,length >= _bytes.Length,Performance only,String buffer growth policy; Math.Max keeps the buffer at least `length`
+3184,RString.cs,123,RString.MakeRawWritable,Survived,Linq method mutation (Min() to Max()),Math.Max,Performance only,String buffer growth policy; Math.Max keeps the buffer at least `length`
+3185,RString.cs,123,RString.MakeRawWritable,Survived,Arithmetic mutation,_bytes.Length / 2,Performance only,String buffer growth policy; Math.Max keeps the buffer at least `length`
+3186,RString.cs,123,RString.MakeRawWritable,Survived,Arithmetic mutation,length - (1024 * 1024),Performance only,String buffer growth policy; Math.Max keeps the buffer at least `length`
+3187,RString.cs,123,RString.MakeRawWritable,Survived,Arithmetic mutation,1024 / 1024,Performance only,String buffer growth policy; Math.Max keeps the buffer at least `length`
+3190,RString.cs,128,RString.MakeRawWritable,Survived,Equality mutation,length >= _length,Equivalent,Clears zero bytes when length equals the current length
+3193,RString.cs,130,RString.MakeRawWritable,Survived,Statement mutation,;,Equivalent [Likely],The region past the logical length is already zero: buffers are freshly allocated and never shrink in place
+3229,RString.cs,166,RString.TryParseStrict,Survived,Equality mutation,v >= (ulong.MaxValue - 9) / 10,Test gap (edge),Overflow bound off by one at the extreme value
+2506,RespParser.cs,32,RespParser.TryRead,Survived,Block removal mutation,{},Equivalent [Likely],"Empty input falls through to the inline reader, which also reports Incomplete"
+2514,RespParser.cs,52,RespParser.TryReadMultiBulk,Survived,Equality mutation,count >= MaxArgs,Test gap (edge),"Parser limit off by one (1M arguments, 512 MB bulk, 64 KB inline): no test sends exactly the limit"
+2537,RespParser.cs,85,RespParser.TryReadMultiBulk,Survived,Equality mutation,length >= MaxBulkLength,Test gap (edge),"Parser limit off by one (1M arguments, 512 MB bulk, 64 KB inline): no test sends exactly the limit"
+2555,RespParser.cs,114,RespParser.TryReadInline,Survived,Equality mutation,reader.Remaining >= MaxInlineLength,Test gap (edge),"Parser limit off by one (1M arguments, 512 MB bulk, 64 KB inline): no test sends exactly the limit"
+2584,RespParser.cs,171,RespParser.TryReadLength,Survived,Logical mutation,lf != (byte)'\n' && digits == 0,Test gap,`*\r\n` (no digits) or a bad byte after `\r` is accepted as a length: a protocol error Valkey reports is missed. The fuzzer's split-consistency oracle cannot see it
+2588,RespParser.cs,172,RespParser.TryReadLength,NoCoverage,Block removal mutation,{},Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2607,RespParser.cs,186,RespParser.TryReadLength,Survived,Equality mutation,digits > 18,Test gap,"The 18-digit cap on lengths is weakened or removed, so a 19+ digit length overflows instead of being refused"
+2613,RespParser.cs,192,RespParser.TryReadLength,Survived,PostIncrementExpression to PostDecrementExpression mutation,digits--,Test gap,"The 18-digit cap on lengths is weakened or removed, so a 19+ digit length overflows instead of being refused"
+2758,RespServer.cs,24,RespServer.Start,Survived,Statement mutation,;,Equivalent [Likely],SO_REUSEADDR on the listener: affects only rebinding a port in TIME_WAIT
+2759,RespServer.cs,24,RespServer.Start,Survived,Boolean mutation,false,Equivalent [Likely],SO_REUSEADDR on the listener: affects only rebinding a port in TIME_WAIT
+2762,RespServer.cs,27,RespServer.Start,Survived,String mutation,"""""",Test gap,CONFIG GET port: untested
+2776,RespServer.cs,60,RespServer.ExpireLoopAsync,Survived,Boolean mutation,true,Equivalent,ConfigureAwait: no synchronization context
+2781,RespServer.cs,72,RespServer.DisposeAsync,Survived,Boolean mutation,true,Equivalent,ConfigureAwait: no synchronization context
+2782,RespServer.cs,73,RespServer.DisposeAsync,Survived,Statement mutation,;,Test gap,Server shutdown cleanup: no test checks the listener and background tasks stop
+2783,RespServer.cs,74,RespServer.DisposeAsync,Survived,Statement mutation,;,Test gap,Server shutdown cleanup: no test checks the listener and background tasks stop
+2784,RespServer.cs,74,RespServer.DisposeAsync,Survived,Boolean mutation,true,Equivalent,ConfigureAwait: no synchronization context
+2785,RespServer.cs,75,RespServer.DisposeAsync,Survived,Statement mutation,;,Test gap,Server shutdown cleanup: no test checks the listener and background tasks stop
+2641,RespWriter.cs,78,RespWriter.Raw,Survived,Linq method mutation (Min() to Max()),Math.Max,Performance only,Size hint for the output buffer; GetSpan may return more
+2642,RespWriter.cs,78,RespWriter.Raw,Survived,Arithmetic mutation,64 / 1024,Performance only,Size hint for the output buffer; GetSpan may return more
+705,ServerCommands.cs,28,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+706,ServerCommands.cs,28,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+707,ServerCommands.cs,29,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+708,ServerCommands.cs,29,ServerCommands.Config,Survived,String mutation,"""Stryker was here!""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+710,ServerCommands.cs,30,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+711,ServerCommands.cs,31,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+712,ServerCommands.cs,31,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+713,ServerCommands.cs,32,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+715,ServerCommands.cs,33,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+716,ServerCommands.cs,33,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+717,ServerCommands.cs,34,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+718,ServerCommands.cs,34,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+720,ServerCommands.cs,35,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+721,ServerCommands.cs,36,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+722,ServerCommands.cs,36,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+723,ServerCommands.cs,37,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+725,ServerCommands.cs,38,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+726,ServerCommands.cs,38,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+727,ServerCommands.cs,39,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+728,ServerCommands.cs,39,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+730,ServerCommands.cs,40,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+731,ServerCommands.cs,41,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+732,ServerCommands.cs,41,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+734,ServerCommands.cs,42,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+735,ServerCommands.cs,43,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+736,ServerCommands.cs,43,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+737,ServerCommands.cs,44,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+739,ServerCommands.cs,45,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+740,ServerCommands.cs,45,ServerCommands.Config,Survived,String mutation,"""""",Test gap,Default value of a CONFIG parameter: CONFIG GET of these keys is untested
+749,ServerCommands.cs,61,ServerCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+750,ServerCommands.cs,62,ServerCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+756,ServerCommands.cs,64,ServerCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+759,ServerCommands.cs,65,ServerCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+770,ServerCommands.cs,70,ServerCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+772,ServerCommands.cs,70,ServerCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+2,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+773,ServerCommands.cs,71,ServerCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+774,ServerCommands.cs,71,ServerCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+776,ServerCommands.cs,72,ServerCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+777,ServerCommands.cs,72,ServerCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+779,ServerCommands.cs,73,ServerCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+780,ServerCommands.cs,73,ServerCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+782,ServerCommands.cs,74,ServerCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+783,ServerCommands.cs,74,ServerCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+786,ServerCommands.cs,75,ServerCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+2,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+790,ServerCommands.cs,77,ServerCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+792,ServerCommands.cs,77,ServerCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+2,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+793,ServerCommands.cs,77,ServerCommands.Register,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+799,ServerCommands.cs,80,ServerCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+802,ServerCommands.cs,85,ServerCommands.Ping,NoCoverage,Equality mutation,c.ArgCount >= 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+805,ServerCommands.cs,87,ServerCommands.Ping,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+806,ServerCommands.cs,87,ServerCommands.Ping,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+809,ServerCommands.cs,91,ServerCommands.Ping,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+819,ServerCommands.cs,112,ServerCommands.FlushDb,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+825,ServerCommands.cs,123,ServerCommands.FlushAll,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+832,ServerCommands.cs,132,ServerCommands.TryFlushMode,NoCoverage,Logical mutation,"c.ArgCount == 2 || (c.ArgIs(1, ""sync"") || c.ArgIs(1, ""async""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+833,ServerCommands.cs,132,ServerCommands.TryFlushMode,NoCoverage,Equality mutation,c.ArgCount != 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+834,ServerCommands.cs,132,ServerCommands.TryFlushMode,NoCoverage,Logical mutation,"c.ArgIs(1, ""sync"") && c.ArgIs(1, ""async"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+835,ServerCommands.cs,132,ServerCommands.TryFlushMode,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+836,ServerCommands.cs,132,ServerCommands.TryFlushMode,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+839,ServerCommands.cs,137,ServerCommands.TryFlushMode,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+840,ServerCommands.cs,138,ServerCommands.TryFlushMode,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+842,ServerCommands.cs,143,ServerCommands.SwapDb,NoCoverage,Logical mutation,"!RString.TryParseStrict(c[1], out long a) || a < int.MinValue && a > int.MaxValu",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+847,ServerCommands.cs,143,ServerCommands.SwapDb,NoCoverage,Equality mutation,a <= int.MinValue,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+849,ServerCommands.cs,143,ServerCommands.SwapDb,NoCoverage,Equality mutation,a >= int.MaxValue,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+854,ServerCommands.cs,149,ServerCommands.SwapDb,NoCoverage,Logical mutation,"!RString.TryParseStrict(c[2], out long b) || b < int.MinValue && b > int.MaxValu",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+859,ServerCommands.cs,149,ServerCommands.SwapDb,NoCoverage,Equality mutation,b <= int.MinValue,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+861,ServerCommands.cs,149,ServerCommands.SwapDb,NoCoverage,Equality mutation,b >= int.MaxValue,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+866,ServerCommands.cs,155,ServerCommands.SwapDb,NoCoverage,Logical mutation,a < 0 || a >= Keyspace.DatabaseCount || b < 0 && b >= Keyspace.DatabaseCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+868,ServerCommands.cs,155,ServerCommands.SwapDb,NoCoverage,Logical mutation,a < 0 || a >= Keyspace.DatabaseCount && b < 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+869,ServerCommands.cs,155,ServerCommands.SwapDb,NoCoverage,Logical mutation,a < 0 && a >= Keyspace.DatabaseCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+870,ServerCommands.cs,155,ServerCommands.SwapDb,NoCoverage,Equality mutation,a > 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+873,ServerCommands.cs,155,ServerCommands.SwapDb,NoCoverage,Equality mutation,a > Keyspace.DatabaseCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+877,ServerCommands.cs,155,ServerCommands.SwapDb,NoCoverage,Equality mutation,b > Keyspace.DatabaseCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+892,ServerCommands.cs,176,ServerCommands.Info,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+894,ServerCommands.cs,176,ServerCommands.Info,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+895,ServerCommands.cs,177,ServerCommands.Info,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+899,ServerCommands.cs,178,ServerCommands.Info,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+902,ServerCommands.cs,178,ServerCommands.Info,NoCoverage,Arithmetic mutation,(Environment.TickCount64 - c.Server.StartedAt) * 1000,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+903,ServerCommands.cs,178,ServerCommands.Info,NoCoverage,Arithmetic mutation,Environment.TickCount64 + c.Server.StartedAt,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+908,ServerCommands.cs,180,ServerCommands.Info,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+911,ServerCommands.cs,180,ServerCommands.Info,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+912,ServerCommands.cs,181,ServerCommands.Info,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+914,ServerCommands.cs,181,ServerCommands.Info,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+918,ServerCommands.cs,183,ServerCommands.Info,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+920,ServerCommands.cs,183,ServerCommands.Info,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+942,ServerCommands.cs,201,ServerCommands.ConfigCommand,NoCoverage,Equality mutation,i > c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+943,ServerCommands.cs,201,ServerCommands.ConfigCommand,NoCoverage,Equality mutation,i <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+947,ServerCommands.cs,207,ServerCommands.ConfigCommand,NoCoverage,Logical mutation,"GlobMatcher.IsMatch(pattern, Encoding.ASCII.GetBytes(kv.Key)) || !pairs.Contains",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+948,ServerCommands.cs,207,ServerCommands.ConfigCommand,NoCoverage,Negate expression,"!(GlobMatcher.IsMatch(pattern, Encoding.ASCII.GetBytes(kv.Key)) && !pairs.Contai",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+949,ServerCommands.cs,207,ServerCommands.ConfigCommand,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,pairs.Contains(kv),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+951,ServerCommands.cs,209,ServerCommands.ConfigCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+960,ServerCommands.cs,221,ServerCommands.ConfigCommand,NoCoverage,Logical mutation,"c.ArgIs(1, ""set"") || c.ArgCount >= 4",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+968,ServerCommands.cs,223,ServerCommands.ConfigCommand,NoCoverage,Equality mutation,i <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+978,ServerCommands.cs,235,ServerCommands.ConfigCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""rewrite""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+979,ServerCommands.cs,235,ServerCommands.ConfigCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+981,ServerCommands.cs,237,ServerCommands.ConfigCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+983,ServerCommands.cs,241,ServerCommands.ConfigCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+984,ServerCommands.cs,241,ServerCommands.ConfigCommand,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+986,ServerCommands.cs,247,ServerCommands.ClientCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""id""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+987,ServerCommands.cs,247,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+989,ServerCommands.cs,249,ServerCommands.ClientCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+990,ServerCommands.cs,251,ServerCommands.ClientCommand,NoCoverage,Logical mutation,"c.ArgIs(1, ""setname"") || c.ArgCount == 3",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+991,ServerCommands.cs,251,ServerCommands.ClientCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""setname"") && c.ArgCount == 3)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+992,ServerCommands.cs,251,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+993,ServerCommands.cs,251,ServerCommands.ClientCommand,NoCoverage,Equality mutation,c.ArgCount != 3,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+995,ServerCommands.cs,253,ServerCommands.ClientCommand,NoCoverage,Conditional (true) mutation,(true?null :c[2].ToArray()),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+996,ServerCommands.cs,253,ServerCommands.ClientCommand,NoCoverage,Conditional (false) mutation,(false?null :c[2].ToArray()),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+997,ServerCommands.cs,254,ServerCommands.ClientCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+998,ServerCommands.cs,256,ServerCommands.ClientCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""getname""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+999,ServerCommands.cs,256,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1001,ServerCommands.cs,258,ServerCommands.ClientCommand,NoCoverage,Equality mutation,c.Session.Name is not null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1003,ServerCommands.cs,260,ServerCommands.ClientCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1005,ServerCommands.cs,264,ServerCommands.ClientCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1006,ServerCommands.cs,267,ServerCommands.ClientCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""info""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1007,ServerCommands.cs,267,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1009,ServerCommands.cs,269,ServerCommands.ClientCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1010,ServerCommands.cs,269,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1011,ServerCommands.cs,271,ServerCommands.ClientCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""list""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1012,ServerCommands.cs,271,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1014,ServerCommands.cs,274,ServerCommands.ClientCommand,NoCoverage,Linq method mutation (OrderBy() to OrderByDescending()),c.Server.Clients.Values.OrderByDescending,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1016,ServerCommands.cs,276,ServerCommands.ClientCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1019,ServerCommands.cs,279,ServerCommands.ClientCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1020,ServerCommands.cs,281,ServerCommands.ClientCommand,NoCoverage,Logical mutation,"c.ArgIs(1, ""setinfo"") || c.ArgIs(1, ""no-evict"") || c.ArgIs(1, ""no-touch"") && c.A",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1021,ServerCommands.cs,281,ServerCommands.ClientCommand,NoCoverage,Negate expression,"!(c.ArgIs(1, ""setinfo"") || c.ArgIs(1, ""no-evict"") || c.ArgIs(1, ""no-touch"") || c",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1022,ServerCommands.cs,281,ServerCommands.ClientCommand,NoCoverage,Logical mutation,"c.ArgIs(1, ""setinfo"") || c.ArgIs(1, ""no-evict"") && c.ArgIs(1, ""no-touch"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1023,ServerCommands.cs,281,ServerCommands.ClientCommand,NoCoverage,Logical mutation,"c.ArgIs(1, ""setinfo"") && c.ArgIs(1, ""no-evict"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1024,ServerCommands.cs,281,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1025,ServerCommands.cs,281,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1026,ServerCommands.cs,281,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1027,ServerCommands.cs,281,ServerCommands.ClientCommand,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1029,ServerCommands.cs,283,ServerCommands.ClientCommand,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1032,ServerCommands.cs,287,ServerCommands.ClientCommand,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1034,ServerCommands.cs,292,ServerCommands.ClientLine,NoCoverage,Conditional (true) mutation,(true?string.Empty :Encoding.UTF8.GetString(s.Name)),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1037,ServerCommands.cs,292,ServerCommands.ClientLine,NoCoverage,String mutation,"""Stryker was here!""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1039,ServerCommands.cs,296,ServerCommands.Hello,NoCoverage,Logical mutation,"c.ArgCount >= 2 || !c.ArgIs(1, ""2"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1040,ServerCommands.cs,296,ServerCommands.Hello,NoCoverage,Negate expression,"!(c.ArgCount >= 2 && !c.ArgIs(1, ""2""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1041,ServerCommands.cs,296,ServerCommands.Hello,NoCoverage,Equality mutation,c.ArgCount < 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1042,ServerCommands.cs,296,ServerCommands.Hello,NoCoverage,Equality mutation,c.ArgCount > 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1043,ServerCommands.cs,296,ServerCommands.Hello,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"c.ArgIs(1, ""2"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1044,ServerCommands.cs,296,ServerCommands.Hello,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1046,ServerCommands.cs,298,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1047,ServerCommands.cs,298,ServerCommands.Hello,NoCoverage,Conditional (true) mutation,"(true?""NOPROTO this server does not support RESP3"" :""NOPROTO unsupported protoco",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1048,ServerCommands.cs,298,ServerCommands.Hello,NoCoverage,Conditional (false) mutation,"(false?""NOPROTO this server does not support RESP3"" :""NOPROTO unsupported protoc",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1049,ServerCommands.cs,298,ServerCommands.Hello,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1050,ServerCommands.cs,298,ServerCommands.Hello,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1051,ServerCommands.cs,298,ServerCommands.Hello,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1052,ServerCommands.cs,299,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1053,ServerCommands.cs,302,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1054,ServerCommands.cs,303,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1055,ServerCommands.cs,304,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1056,ServerCommands.cs,305,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1057,ServerCommands.cs,306,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1058,ServerCommands.cs,307,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1059,ServerCommands.cs,308,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1060,ServerCommands.cs,309,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1061,ServerCommands.cs,310,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1062,ServerCommands.cs,311,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1063,ServerCommands.cs,312,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1064,ServerCommands.cs,313,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1065,ServerCommands.cs,314,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1066,ServerCommands.cs,315,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1067,ServerCommands.cs,316,ServerCommands.Hello,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1069,ServerCommands.cs,321,ServerCommands.Quit,NoCoverage,Boolean mutation,false,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1070,ServerCommands.cs,322,ServerCommands.Quit,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1072,ServerCommands.cs,330,ServerCommands.Reset,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1073,ServerCommands.cs,331,ServerCommands.Reset,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1075,ServerCommands.cs,336,ServerCommands.Command,NoCoverage,Logical mutation,"c.ArgCount == 2 || c.ArgIs(1, ""count"")",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1076,ServerCommands.cs,336,ServerCommands.Command,NoCoverage,Negate expression,"!(c.ArgCount == 2 && c.ArgIs(1, ""count""))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1077,ServerCommands.cs,336,ServerCommands.Command,NoCoverage,Equality mutation,c.ArgCount != 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1078,ServerCommands.cs,336,ServerCommands.Command,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1080,ServerCommands.cs,338,ServerCommands.Command,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1082,ServerCommands.cs,339,ServerCommands.Command,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1083,ServerCommands.cs,343,ServerCommands.Command,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1090,ServerCommands.cs,354,ServerCommands.Function,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1091,ServerCommands.cs,354,ServerCommands.Function,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1093,ServerCommands.cs,360,ServerCommands.Memory,NoCoverage,Logical mutation,"!c.ArgIs(1, ""usage"") && c.ArgCount < 3",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1097,ServerCommands.cs,360,ServerCommands.Memory,NoCoverage,Equality mutation,c.ArgCount > 3,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1100,ServerCommands.cs,362,ServerCommands.Memory,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1101,ServerCommands.cs,362,ServerCommands.Memory,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1102,ServerCommands.cs,363,ServerCommands.Memory,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1105,ServerCommands.cs,369,ServerCommands.Memory,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1114,ServerCommands.cs,381,ServerCommands.Multi,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1115,ServerCommands.cs,381,ServerCommands.Multi,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1116,ServerCommands.cs,382,ServerCommands.Multi,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1120,ServerCommands.cs,392,ServerCommands.Discard,NoCoverage,Equality mutation,c.Session.Queued is not null,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1122,ServerCommands.cs,394,ServerCommands.Discard,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1123,ServerCommands.cs,394,ServerCommands.Discard,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1124,ServerCommands.cs,395,ServerCommands.Discard,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1125,ServerCommands.cs,399,ServerCommands.Discard,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1209,StringCommands.cs,69,StringCommands.Get,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1221,StringCommands.cs,92,StringCommands.SetNx,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1222,StringCommands.cs,94,StringCommands.SetEx,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1224,StringCommands.cs,96,StringCommands.GetSet,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1230,StringCommands.cs,105,StringCommands.SetGeneric,Survived,Equality mutation,expireIdx > 0,Equivalent [Likely],expireIdx is never 0 (argument 0 is the command name)
+1256,StringCommands.cs,136,StringCommands.SetGeneric,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1282,StringCommands.cs,159,StringCommands.SetGeneric,Survived,Equality mutation,expireAt < c.Now,Test gap (edge),1 ms boundary: expiry exactly at `now`
+1313,StringCommands.cs,209,StringCommands.GetDel,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1324,StringCommands.cs,229,StringCommands.GetEx,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1328,StringCommands.cs,230,StringCommands.GetEx,NoCoverage,Equality mutation,expireIdx > 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1334,StringCommands.cs,237,StringCommands.GetEx,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1343,StringCommands.cs,247,StringCommands.GetEx,NoCoverage,Equality mutation,expireIdx > 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1345,StringCommands.cs,247,StringCommands.GetEx,NoCoverage,Equality mutation,expireAt < c.Now,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1347,StringCommands.cs,249,StringCommands.GetEx,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1349,StringCommands.cs,251,StringCommands.GetEx,NoCoverage,Equality mutation,expireIdx > 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1354,StringCommands.cs,255,StringCommands.GetEx,NoCoverage,Bitwise mutation,flags | Opt.Persist,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1400,StringCommands.cs,310,StringCommands.MSetNx,NoCoverage,Equality mutation,i <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1471,StringCommands.cs,370,StringCommands.Append,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1474,StringCommands.cs,376,StringCommands.Append,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1475,StringCommands.cs,376,StringCommands.Append,NoCoverage,Boolean mutation,false,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1476,StringCommands.cs,377,StringCommands.Append,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1483,StringCommands.cs,384,StringCommands.Append,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1484,StringCommands.cs,385,StringCommands.Append,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1495,StringCommands.cs,406,StringCommands.SetRange,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1513,StringCommands.cs,429,StringCommands.SetRange,Survived,Equality mutation,offset >= MaxStringLength - patch.Length,Test gap (edge),Overflow bound off by one at the extreme value
+1526,StringCommands.cs,446,StringCommands.SetRange,Survived,Equality mutation,offset >= MaxStringLength - patch.Length,Test gap (edge),Overflow bound off by one at the extreme value
+1619,StringCommands.cs,555,StringCommands.IncrBy,Survived,Equality mutation,by > 0,Test gap (edge),Overflow bound off by one at the extreme value
+1623,StringCommands.cs,555,StringCommands.IncrBy,NoCoverage,Equality mutation,by > long.MinValue - current,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1624,StringCommands.cs,555,StringCommands.IncrBy,NoCoverage,Equality mutation,by <= long.MinValue - current,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1625,StringCommands.cs,555,StringCommands.IncrBy,NoCoverage,Arithmetic mutation,long.MinValue + current,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1672,StringCommands.cs,613,StringCommands.IncrByFloat,Survived,Boolean mutation,false,Test gap,INCRBYFLOAT dropping the TTL: untested
+1695,StringCommands.cs,642,StringCommands.SetBit,Survived,Bitwise mutation,offset >>> 3,Equivalent,`>>>` vs `>>` on a non-negative offset
+1741,StringCommands.cs,672,StringCommands.DelIfEq,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1749,StringCommands.cs,681,StringCommands.DelIfEq,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1752,StringCommands.cs,690,StringCommands.Lcs,Survived,Logical mutation,(ea is not null && ea.Value is not RString) && (eb is not null && eb.Value is no,Test gap,"LCS options and tie-breaking (IDX/MINMATCHLEN/WITHMATCHLEN, wrong types, size limit) beyond what the string suite checks"
+1761,StringCommands.cs,692,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1762,StringCommands.cs,692,StringCommands.Lcs,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1763,StringCommands.cs,693,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1777,StringCommands.cs,702,StringCommands.Lcs,Survived,Arithmetic mutation,c.ArgCount + 1,Test gap,"LCS options and tie-breaking (IDX/MINMATCHLEN/WITHMATCHLEN, wrong types, size limit) beyond what the string suite checks"
+1790,StringCommands.cs,715,StringCommands.Lcs,NoCoverage,Logical mutation,"c.ArgIs(j, ""minmatchlen"") || moreArgs",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1797,StringCommands.cs,719,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1800,StringCommands.cs,726,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1801,StringCommands.cs,727,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1805,StringCommands.cs,733,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1806,StringCommands.cs,733,StringCommands.Lcs,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1807,StringCommands.cs,734,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1812,StringCommands.cs,738,StringCommands.Lcs,Survived,Arithmetic mutation,(long)(alen + 1) / (blen + 1),Test gap,"LCS options and tie-breaking (IDX/MINMATCHLEN/WITHMATCHLEN, wrong types, size limit) beyond what the string suite checks"
+1814,StringCommands.cs,738,StringCommands.Lcs,Survived,Arithmetic mutation,blen - 1,Test gap,"LCS options and tie-breaking (IDX/MINMATCHLEN/WITHMATCHLEN, wrong types, size limit) beyond what the string suite checks"
+1816,StringCommands.cs,740,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1817,StringCommands.cs,740,StringCommands.Lcs,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1818,StringCommands.cs,741,StringCommands.Lcs,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1874,StringCommands.cs,779,StringCommands.Lcs,Survived,Logical mutation,aStart == ia || bStart == ib,Test gap,"LCS options and tie-breaking (IDX/MINMATCHLEN/WITHMATCHLEN, wrong types, size limit) beyond what the string suite checks"
+1884,StringCommands.cs,786,StringCommands.Lcs,NoCoverage,Boolean mutation,false,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1899,StringCommands.cs,800,StringCommands.Lcs,Survived,Equality mutation,table[((ia - 1) * w) + ib] >= table[(ia * w) + ib - 1],Test gap,"LCS options and tie-breaking (IDX/MINMATCHLEN/WITHMATCHLEN, wrong types, size limit) beyond what the string suite checks"
+1905,StringCommands.cs,800,StringCommands.Lcs,Survived,Arithmetic mutation,(ia * w) - ib,Test gap,"LCS options and tie-breaking (IDX/MINMATCHLEN/WITHMATCHLEN, wrong types, size limit) beyond what the string suite checks"
+1922,StringCommands.cs,817,StringCommands.Lcs,NoCoverage,Equality mutation,aEnd - aStart + 1 > minMatchLen,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1923,StringCommands.cs,817,StringCommands.Lcs,NoCoverage,Arithmetic mutation,aEnd - aStart - 1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+1970,StringCommands.cs,870,StringCommands.TryParseOptions,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,Test gap (edge),SET option conflicts (IFEQ with NX/XX)
+1989,StringCommands.cs,878,StringCommands.TryParseOptions,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= Opt.NX,Test gap (edge),The same option given twice (e.g. `NX NX`) toggles it off: untested
+1999,StringCommands.cs,882,StringCommands.TryParseOptions,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= Opt.XX,Test gap (edge),The same option given twice (e.g. `NX NX`) toggles it off: untested
+2007,StringCommands.cs,884,StringCommands.TryParseOptions,Survived,Bitwise mutation,Opt.NX | Opt.XX & Opt.IfEq,Test gap (edge),SET option conflicts (IFEQ with NX/XX)
+2008,StringCommands.cs,884,StringCommands.TryParseOptions,Survived,Bitwise mutation,Opt.NX & Opt.XX,Test gap (edge),SET option conflicts (IFEQ with NX/XX)
+2012,StringCommands.cs,886,StringCommands.TryParseOptions,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= Opt.IfEq,Test gap (edge),The same option given twice (e.g. `NX NX`) toggles it off: untested
+2020,StringCommands.cs,891,StringCommands.TryParseOptions,Survived,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= Opt.Get,Test gap (edge),The same option given twice (e.g. `NX NX`) toggles it off: untested
+2030,StringCommands.cs,895,StringCommands.TryParseOptions,NoCoverage,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= Opt.KeepTtl,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2038,StringCommands.cs,897,StringCommands.TryParseOptions,NoCoverage,Bitwise mutation,anyExpire & Opt.KeepTtl,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2041,StringCommands.cs,899,StringCommands.TryParseOptions,NoCoverage,OrAssignmentExpression to ExclusiveOrAssignmentExpression mutation,flags ^= Opt.Persist,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2104,StringCommands.cs,956,StringCommands.TryExpireAt,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2105,StringCommands.cs,956,StringCommands.TryExpireAt,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2106,StringCommands.cs,957,StringCommands.TryExpireAt,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2152,StringCommands.cs,1000,StringCommands.TryParseFloat,NoCoverage,Conditional (true) mutation,(true?text :text[..e]),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2155,StringCommands.cs,1000,StringCommands.TryParseFloat,NoCoverage,Equality mutation,e <= 0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2157,StringCommands.cs,1001,StringCommands.TryParseFloat,NoCoverage,Equality mutation,"mantissa.IndexOfAnyInRange((byte)'1', (byte)'9') > 0",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2160,StringCommands.cs,1003,StringCommands.TryParseFloat,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2170,StringCommands.cs,1019,StringCommands.FormatHuman,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2178,TypeCommands.cs,16,TypeCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+3,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2179,TypeCommands.cs,16,TypeCommands.Register,Survived,Boolean mutation,true,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2180,TypeCommands.cs,17,TypeCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2182,TypeCommands.cs,17,TypeCommands.Register,NoCoverage,Boolean mutation,false,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2185,TypeCommands.cs,18,TypeCommands.Register,NoCoverage,Boolean mutation,true,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2186,TypeCommands.cs,19,TypeCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2189,TypeCommands.cs,19,TypeCommands.Register,NoCoverage,Negate expression,"!(c.TryGet(c[1], out RList? l))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2191,TypeCommands.cs,19,TypeCommands.Register,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2192,TypeCommands.cs,19,TypeCommands.Register,NoCoverage,Null coalescing mutation (remove left),0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2199,TypeCommands.cs,22,TypeCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2201,TypeCommands.cs,23,TypeCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2202,TypeCommands.cs,23,TypeCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2204,TypeCommands.cs,23,TypeCommands.Register,NoCoverage,Negate expression,"!(c.TryGet(c[1], out RSet? s))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2206,TypeCommands.cs,23,TypeCommands.Register,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2207,TypeCommands.cs,23,TypeCommands.Register,NoCoverage,Null coalescing mutation (remove left),0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2210,TypeCommands.cs,24,TypeCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2212,TypeCommands.cs,24,TypeCommands.Register,NoCoverage,Negate expression,"!(c.TryGet(c[1], out RSet? s))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2214,TypeCommands.cs,24,TypeCommands.Register,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2215,TypeCommands.cs,24,TypeCommands.Register,NoCoverage,Conditional (true) mutation,(true?1 :0),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2216,TypeCommands.cs,24,TypeCommands.Register,NoCoverage,Conditional (false) mutation,(false?1 :0),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2221,TypeCommands.cs,25,TypeCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+4,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2222,TypeCommands.cs,26,TypeCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2223,TypeCommands.cs,26,TypeCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2225,TypeCommands.cs,27,TypeCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2226,TypeCommands.cs,28,TypeCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2229,TypeCommands.cs,28,TypeCommands.Register,NoCoverage,Negate expression,"!(c.TryGet(c[1], out RHash? h))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2231,TypeCommands.cs,28,TypeCommands.Register,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2232,TypeCommands.cs,28,TypeCommands.Register,NoCoverage,Null coalescing mutation (remove left),0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2237,TypeCommands.cs,30,TypeCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2238,TypeCommands.cs,30,TypeCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2239,TypeCommands.cs,30,TypeCommands.Register,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+4,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2241,TypeCommands.cs,31,TypeCommands.Register,Survived,String mutation,"""""",Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2243,TypeCommands.cs,31,TypeCommands.Register,NoCoverage,Negate expression,"!(c.TryGet(c[1], out RZSet? z))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2245,TypeCommands.cs,31,TypeCommands.Register,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2246,TypeCommands.cs,31,TypeCommands.Register,NoCoverage,Null coalescing mutation (remove left),0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2248,TypeCommands.cs,32,TypeCommands.Register,Survived,Statement mutation,;,Test gap,"Command table entry (name, arity, registration) for a command or argument count that no test sends"
+2252,TypeCommands.cs,39,TypeCommands.GetOrCreate,NoCoverage,Block removal mutation,{},Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2274,TypeCommands.cs,79,TypeCommands.Pop,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2281,TypeCommands.cs,84,TypeCommands.Pop,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2283,TypeCommands.cs,88,TypeCommands.Pop,NoCoverage,Conditional (true) mutation,(true?0 :list.Items.Count - 1),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2284,TypeCommands.cs,88,TypeCommands.Pop,NoCoverage,Conditional (false) mutation,(false?0 :list.Items.Count - 1),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2287,TypeCommands.cs,90,TypeCommands.Pop,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2291,TypeCommands.cs,93,TypeCommands.Pop,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2340,TypeCommands.cs,131,TypeCommands.SAdd,NoCoverage,Equality mutation,i > c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2341,TypeCommands.cs,131,TypeCommands.SAdd,NoCoverage,Equality mutation,i <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2344,TypeCommands.cs,133,TypeCommands.SAdd,NoCoverage,Negate expression,!(set.Members.Add(c[i].ToArray())),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2346,TypeCommands.cs,135,TypeCommands.SAdd,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2347,TypeCommands.cs,135,TypeCommands.SAdd,NoCoverage,PostIncrementExpression to PostDecrementExpression mutation,added--,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2350,TypeCommands.cs,144,TypeCommands.SMembers,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"c.TryGet(c[1], out RSet? set)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2352,TypeCommands.cs,146,TypeCommands.SMembers,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2353,TypeCommands.cs,149,TypeCommands.SMembers,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2354,TypeCommands.cs,149,TypeCommands.SMembers,NoCoverage,Null coalescing mutation (remove left),0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2359,TypeCommands.cs,152,TypeCommands.SMembers,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2364,TypeCommands.cs,160,TypeCommands.HSet,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2365,TypeCommands.cs,160,TypeCommands.HSet,NoCoverage,String mutation,"$""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2366,TypeCommands.cs,161,TypeCommands.HSet,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2371,TypeCommands.cs,171,TypeCommands.HSet,NoCoverage,Equality mutation,i <= c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2374,TypeCommands.cs,173,TypeCommands.HSet,NoCoverage,Negate expression,"!(hash.Fields.TryAdd(c[i].ToArray(), c[i + 1].ToArray()))",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2375,TypeCommands.cs,173,TypeCommands.HSet,NoCoverage,Arithmetic mutation,i - 1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2377,TypeCommands.cs,175,TypeCommands.HSet,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2378,TypeCommands.cs,175,TypeCommands.HSet,NoCoverage,PostIncrementExpression to PostDecrementExpression mutation,added--,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2380,TypeCommands.cs,179,TypeCommands.HSet,NoCoverage,Arithmetic mutation,i - 1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2383,TypeCommands.cs,188,TypeCommands.HGet,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"c.TryGet(c[1], out RHash? hash)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2385,TypeCommands.cs,190,TypeCommands.HGet,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2390,TypeCommands.cs,195,TypeCommands.HGet,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2392,TypeCommands.cs,199,TypeCommands.HGet,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2394,TypeCommands.cs,205,TypeCommands.HGetAll,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"c.TryGet(c[1], out RHash? hash)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2396,TypeCommands.cs,207,TypeCommands.HGetAll,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2397,TypeCommands.cs,210,TypeCommands.HGetAll,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2398,TypeCommands.cs,210,TypeCommands.HGetAll,NoCoverage,Arithmetic mutation,(hash?.Fields.Count ?? 0) / 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2399,TypeCommands.cs,210,TypeCommands.HGetAll,NoCoverage,Null coalescing mutation (remove left),0,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2404,TypeCommands.cs,213,TypeCommands.HGetAll,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2405,TypeCommands.cs,214,TypeCommands.HGetAll,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2410,TypeCommands.cs,222,TypeCommands.ZAdd,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2411,TypeCommands.cs,223,TypeCommands.ZAdd,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2412,TypeCommands.cs,226,TypeCommands.ZAdd,NoCoverage,Arithmetic mutation,(c.ArgCount - 2) * 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2413,TypeCommands.cs,226,TypeCommands.ZAdd,NoCoverage,Arithmetic mutation,c.ArgCount + 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2414,TypeCommands.cs,227,TypeCommands.ZAdd,NoCoverage,Equality mutation,i > c.ArgCount,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2419,TypeCommands.cs,229,TypeCommands.ZAdd,NoCoverage,Arithmetic mutation,(i - 2) * 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2422,TypeCommands.cs,231,TypeCommands.ZAdd,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2423,TypeCommands.cs,232,TypeCommands.ZAdd,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2431,TypeCommands.cs,245,TypeCommands.ZAdd,NoCoverage,Arithmetic mutation,i - 1,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2432,TypeCommands.cs,246,TypeCommands.ZAdd,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,zset.Scores.ContainsKey(member),Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2434,TypeCommands.cs,248,TypeCommands.ZAdd,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2435,TypeCommands.cs,248,TypeCommands.ZAdd,NoCoverage,PostIncrementExpression to PostDecrementExpression mutation,added--,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2436,TypeCommands.cs,251,TypeCommands.ZAdd,NoCoverage,Arithmetic mutation,(i - 2) * 2,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2492,TypeCommands.cs,288,TypeCommands.ZScore,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"c.TryGet(c[1], out RZSet? zset)",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2494,TypeCommands.cs,290,TypeCommands.ZScore,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2499,TypeCommands.cs,295,TypeCommands.ZScore,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2500,TypeCommands.cs,295,TypeCommands.ZScore,NoCoverage,String mutation,"""""",Untested,No unit test executes this line; the 4 judged suite files don't detect the change
+2502,TypeCommands.cs,299,TypeCommands.ZScore,NoCoverage,Statement mutation,;,Untested,No unit test executes this line; the 4 judged suite files don't detect the change

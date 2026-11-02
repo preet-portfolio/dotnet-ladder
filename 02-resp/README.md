@@ -55,10 +55,11 @@ Closed-loop tools like `valkey-benchmark` send the next request only when a repl
 - **Open-loop comparison with Valkey 7.2.13 (stand-in) and Garnet 2.2.5:** [`evidence/openloop.md`](evidence/openloop.md).
 - **Twitter cache-trace replay:** [`evidence/trace-replay/summary.md`](evidence/trace-replay/summary.md). Rerun with `judge/run-trace-replay.sh`.
 - **Fuzzing:** [`evidence/fuzzing.md`](evidence/fuzzing.md).
-- **Mutation testing:** [`evidence/stryker.md`](evidence/stryker.md).
+- **Mutation testing:** Stryker scores **51.37%**; counting what the Valkey suite kills, **72.2%**. 649 mutants survive everything, and each is classified: 429 are on lines no unit test runs, 157 are test gaps, 35 are equivalent and 28 change only performance. Most are in commands that exist only to support the suite (`CLIENT`, `HELLO`, `CONFIG`, `OBJECT`, `SCAN`). Closing the parser's gaps found and fixed five parser bugs on malformed input. See [`evidence/stryker.md`](evidence/stryker.md).
 
 ## What surprised us
 
+- **The fully fuzzed parser was wrong in five places.** The fuzz corpus executes every line and branch of `RespParser`. Yet mutation testing showed that nothing would notice if the parser started accepting a length with no digits (`*\r\n`) or a 19-digit length. The fuzzer's oracle checks that splitting the input doesn't change the parse; it cannot check that the parse is right. We closed the gap with tests taken from Valkey 9.1.2's `networking.c`, and the existing parser failed them in five places. It accepted leading zeros and `-0`, gave the wrong error after a bad `\r`, and refused `*1\n` where Valkey waits for more input. Two of our own earlier tests had encoded the wrong answers. The Valkey 7.2.13 stand-in would not have caught the CRLF cases: it skips whatever byte follows `\r`. Details: [`evidence/stryker.md`](evidence/stryker.md).
 - **Garnet costs as much CPU per request as ours.** We predicted that Microsoft Research's server would be clearly cheaper (claim 7). Under the same open-loop load, the two are within 5% of each other at every rate, and both cost 2–3× what Valkey does. Whatever drives this cost, both C# servers pay it; Garnet's engineering does not avoid it.
 - **The judge found two real bugs before it found any missing features.**
   - A `KEYS` pattern of 50,000 `*?` pairs made the glob matcher backtrack exponentially while holding the keyspace lock. That froze the whole server, so every later test timed out (`unit/expire` scored 0/65 on that run). Porting Valkey's "skip longer matches" cut-off fixed it.
