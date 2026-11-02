@@ -41,9 +41,9 @@ dotnet dotnet-stryker -f stryker-config.json --concurrency 2    # coverage-analy
   30 min for 1,156 mutants.
 - **Is the judge stable under load?** We checked this two ways:
   - 53 mutants were judged twice, because two workers overlapped, and every pair agreed.
-  - The 187 kills that rest on only 1 or 2 lost suite tests are being judged again with 3 workers instead of 4.
-    Several of the lost tests sleep for EXPIRE, so they are the likeliest to be flaky. **Pending:** so far every
-    re-judged mutant has been killed again.
+  - The 187 kills that rest on only 1 or 2 lost suite tests were judged again with 3 workers instead of 4. Several of
+    the lost tests sleep for EXPIRE, so they were the likeliest to be flaky. **All 187 were killed again**
+    ([`stryker/kills-reconfirmed.csv`](stryker/kills-reconfirmed.csv)).
 - **Raw data:**
   - [`stryker/stryker-report.md`](stryker/stryker-report.md): Stryker's own table.
   - [`stryker/judged-mutants.csv`](stryker/judged-mutants.csv): every one of the 1,156 mutants, with its verdict and

@@ -1,0 +1,188 @@
+id,file,line,stryker,mutator,replacement,judge,seconds,detail
+4,CommandArgs.cs,32,NoCoverage,Statement mutation,;,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: MSETEX with NX and EX option
+5,CommandArgs.cs,32,NoCoverage,Arithmetic mutation,_args.Length / 2,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: MSETEX with NX and EX option
+80,CommandTable.cs,61,Survived,Equality mutation,spec.Arity > 0,KilledByJudge,19,KILLED-BY: judge (2 lost: [ok]: GETEX no arguments)
+142,KeyCommands.cs,24,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+2,KilledByJudge,20,KILLED-BY: judge (1 lost: [ok]: MSETEX with XX option - only
+177,KeyCommands.cs,36,NoCoverage,Boolean mutation,true,KilledByJudge,22,KILLED-BY: judge (1 lost: [ok]: PEXPIRE can set sub-second e
+178,KeyCommands.cs,36,NoCoverage,Boolean mutation,false,KilledByJudge,21,KILLED-BY: judge (2 lost: [ok]: PEXPIRE can set sub-second e
+179,KeyCommands.cs,37,Survived,Statement mutation,;,KilledByJudge,20,KILLED-BY: judge (2 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+180,KeyCommands.cs,37,Survived,String mutation,"""""",KilledByJudge,19,KILLED-BY: judge (2 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+182,KeyCommands.cs,37,NoCoverage,Boolean mutation,false,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: EXPIREAT - Check for EXPIRE 
+183,KeyCommands.cs,37,NoCoverage,Boolean mutation,true,KilledByJudge,18,KILLED-BY: judge (2 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+199,KeyCommands.cs,41,NoCoverage,Boolean mutation,true,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: EXPIRETIME returns absolute 
+200,KeyCommands.cs,41,NoCoverage,Boolean mutation,false,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: EXPIRETIME returns absolute 
+203,KeyCommands.cs,42,NoCoverage,Boolean mutation,false,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: PEXPIRETIME returns absolute
+204,KeyCommands.cs,42,NoCoverage,Boolean mutation,false,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: PEXPIRETIME returns absolute
+215,KeyCommands.cs,52,NoCoverage,Negate expression,"!(c.Db.Delete(c[i], c.Now))",KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Untagged multi-key commands)
+217,KeyCommands.cs,54,NoCoverage,Statement mutation,;,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Untagged multi-key commands)
+218,KeyCommands.cs,54,NoCoverage,PostIncrementExpression to PostDecrementExpression mutation,deleted--,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Untagged multi-key commands)
+227,KeyCommands.cs,68,NoCoverage,Statement mutation,;,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: EXISTS)
+228,KeyCommands.cs,68,NoCoverage,PostIncrementExpression to PostDecrementExpression mutation,found--,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: EXISTS)
+237,KeyCommands.cs,99,NoCoverage,Negate expression,!(nx),KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: RENAME where source and dest
+249,KeyCommands.cs,119,NoCoverage,Statement mutation,;,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: RENAME against already exist
+257,KeyCommands.cs,138,Survived,Boolean mutation,true,KilledByJudge,20,KILLED-BY: judge (1 lost: [ok]: COPY for string does not rep
+265,KeyCommands.cs,143,NoCoverage,Boolean mutation,false,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY can copy key expire met
+293,KeyCommands.cs,176,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,replace,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: COPY can copy key expire met
+297,KeyCommands.cs,182,NoCoverage,Statement mutation,;,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY does not create an expi
+311,KeyCommands.cs,207,Survived,Logical mutation,"!RString.TryParseStrict(c[2], out long index) && index < int.MinValue",KilledByJudge,20,KILLED-BY: judge (1 lost: [ok]: MOVE against non-integer DB 
+425,KeyCommands.cs,336,NoCoverage,Equality mutation,key is not null,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: RANDOMKEY)
+479,KeyCommands.cs,383,NoCoverage,String mutation,"""""",KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: EXPIRE with conflicting opti
+496,KeyCommands.cs,396,NoCoverage,String mutation,"$""""",KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: EXPIRE with big integer over
+507,KeyCommands.cs,407,NoCoverage,String mutation,"$""""",KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: EXPIRE with big integer over
+512,KeyCommands.cs,417,NoCoverage,Statement mutation,;,KilledByJudge,136,KILLED-BY: judge (2 lost: [ok]: EXPIRE with non-existed key)
+533,KeyCommands.cs,424,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,KilledByJudge,20,KILLED-BY: judge (1 lost: [ok]: EXPIRE with GT option on a k
+541,KeyCommands.cs,425,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,KilledByJudge,20,KILLED-BY: judge (2 lost: [ok]: EXPIRE with LT option on a k
+630,KeyCommands.cs,530,NoCoverage,Conditional (true) mutation,"(true?""listpack"" :""quicklist"")",KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for list - 
+631,KeyCommands.cs,530,NoCoverage,Conditional (false) mutation,"(false?""listpack"" :""quicklist"")",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for list - 
+632,KeyCommands.cs,530,NoCoverage,Equality mutation,l.Items.Sum(i => i.Length + 11) > 8192,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for list - 
+635,KeyCommands.cs,530,NoCoverage,Arithmetic mutation,i.Length - 11,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for list - 
+636,KeyCommands.cs,530,NoCoverage,String mutation,"""""",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for list - 
+637,KeyCommands.cs,530,NoCoverage,String mutation,"""""",KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for list - 
+655,KeyCommands.cs,533,NoCoverage,Conditional (true) mutation,"(true?""listpack"" :""hashtable"")",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for hashtab
+656,KeyCommands.cs,533,NoCoverage,Conditional (false) mutation,"(false?""listpack"" :""hashtable"")",KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for listpac
+663,KeyCommands.cs,533,NoCoverage,Equality mutation,f.Key.Length > 64,KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for listpac
+665,KeyCommands.cs,533,NoCoverage,Equality mutation,f.Value.Length > 64,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for listpac
+667,KeyCommands.cs,533,NoCoverage,String mutation,"""""",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for listpac
+668,KeyCommands.cs,533,NoCoverage,String mutation,"""""",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for hashtab
+669,KeyCommands.cs,534,NoCoverage,Conditional (true) mutation,"(true?""listpack"" :""skiplist"")",KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for skiplis
+670,KeyCommands.cs,534,NoCoverage,Conditional (false) mutation,"(false?""listpack"" :""skiplist"")",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for listpac
+671,KeyCommands.cs,534,NoCoverage,Logical mutation,z.Scores.Count <= zsetEntries || z.Scores.Keys.All(k => k.Length <= 64),KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for skiplis
+676,KeyCommands.cs,534,NoCoverage,Equality mutation,k.Length > 64,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for listpac
+678,KeyCommands.cs,534,NoCoverage,String mutation,"""""",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for listpac
+679,KeyCommands.cs,534,NoCoverage,String mutation,"""""",KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for skiplis
+742,ServerCommands.cs,51,NoCoverage,String mutation,"""""",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for skiplis
+747,ServerCommands.cs,61,Survived,Statement mutation,;,KilledByJudge,19,KILLED-BY: judge (1 lost: [ok]: Commands pipelining)
+760,ServerCommands.cs,66,Survived,Statement mutation,;,KilledByJudge,19,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+761,ServerCommands.cs,66,Survived,String mutation,"""""",KilledByJudge,20,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+763,ServerCommands.cs,67,Survived,String mutation,"""""",KilledByJudge,20,KILLED-BY: judge (1 lost: [ok]: PEXPIREAT can set sub-second
+766,ServerCommands.cs,68,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,KilledByJudge,19,KILLED-BY: judge (1 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+787,ServerCommands.cs,76,Survived,Statement mutation,;,KilledByJudge,19,KILLED-BY: judge (1 lost: [ok]: memoryusage of string)
+789,ServerCommands.cs,76,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+2,KilledByJudge,19,KILLED-BY: judge (1 lost: [ok]: memoryusage of string)
+801,ServerCommands.cs,85,NoCoverage,Equality mutation,c.ArgCount < 2,KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: Commands pipelining)
+803,ServerCommands.cs,85,NoCoverage,Negate expression,!(c.ArgCount > 2),KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: Commands pipelining)
+807,ServerCommands.cs,89,NoCoverage,Equality mutation,c.ArgCount != 2,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Commands pipelining)
+843,ServerCommands.cs,143,NoCoverage,Negate expression,"!(!RString.TryParseStrict(c[1], out long a) || a < int.MinValue || a > int.MaxVa",KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+844,ServerCommands.cs,143,NoCoverage,Logical mutation,"!RString.TryParseStrict(c[1], out long a) && a < int.MinValue",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: basic SWAPDB test 
+845,ServerCommands.cs,143,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"RString.TryParseStrict(c[1], out long a)",KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+846,ServerCommands.cs,143,NoCoverage,Equality mutation,a > int.MinValue,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+848,ServerCommands.cs,143,NoCoverage,Equality mutation,a < int.MaxValue,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+852,ServerCommands.cs,145,NoCoverage,String mutation,"""""",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: basic SWAPDB test 
+855,ServerCommands.cs,149,NoCoverage,Negate expression,"!(!RString.TryParseStrict(c[2], out long b) || b < int.MinValue || b > int.MaxVa",KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+856,ServerCommands.cs,149,NoCoverage,Logical mutation,"!RString.TryParseStrict(c[2], out long b) && b < int.MinValue",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: basic SWAPDB test 
+857,ServerCommands.cs,149,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"RString.TryParseStrict(c[2], out long b)",KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+858,ServerCommands.cs,149,NoCoverage,Equality mutation,b > int.MinValue,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+860,ServerCommands.cs,149,NoCoverage,Equality mutation,b < int.MaxValue,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+864,ServerCommands.cs,151,NoCoverage,String mutation,"""""",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: basic SWAPDB test 
+867,ServerCommands.cs,155,NoCoverage,Negate expression,!(a < 0 || a >= Keyspace.DatabaseCount || b < 0 || b >= Keyspace.DatabaseCount),KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+871,ServerCommands.cs,155,NoCoverage,Equality mutation,a <= 0,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+872,ServerCommands.cs,155,NoCoverage,Equality mutation,a < Keyspace.DatabaseCount,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+874,ServerCommands.cs,155,NoCoverage,Equality mutation,b > 0,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+875,ServerCommands.cs,155,NoCoverage,Equality mutation,b <= 0,KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: Coverage: basic SWAPDB test 
+876,ServerCommands.cs,155,NoCoverage,Equality mutation,b < Keyspace.DatabaseCount,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+881,ServerCommands.cs,161,NoCoverage,Statement mutation,;,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+884,ServerCommands.cs,167,NoCoverage,Arithmetic mutation,(DateTime.UtcNow - DateTime.UnixEpoch).Ticks * 10,KilledByJudge,25,KILLED-BY: judge (1 lost: [ok]: PEXPIREAT can set sub-second
+888,ServerCommands.cs,169,NoCoverage,Arithmetic mutation,micros * 1_000_000,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: PEXPIREAT can set sub-second
+890,ServerCommands.cs,170,NoCoverage,Arithmetic mutation,micros * 1_000_000,KilledByJudge,25,KILLED-BY: judge (1 lost: [ok]: PEXPIREAT can set sub-second
+915,ServerCommands.cs,182,NoCoverage,Statement mutation,;,KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+921,ServerCommands.cs,184,NoCoverage,Equality mutation,i > Keyspace.DatabaseCount,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+925,ServerCommands.cs,187,NoCoverage,Equality mutation,db.Count < 0,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+926,ServerCommands.cs,187,NoCoverage,Equality mutation,db.Count >= 0,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+927,ServerCommands.cs,187,NoCoverage,Negate expression,!(db.Count > 0),KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+929,ServerCommands.cs,188,NoCoverage,Block removal mutation,{},KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: Coverage: SWAPDB and FLUSHDB
+936,ServerCommands.cs,198,NoCoverage,Logical mutation,"c.ArgIs(1, ""get"") || c.ArgCount >= 3",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for skiplis
+958,ServerCommands.cs,221,NoCoverage,Logical mutation,"c.ArgIs(1, ""set"") && c.ArgCount >= 4 || c.ArgCount % 2 == 0",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+967,ServerCommands.cs,223,NoCoverage,Equality mutation,i > c.ArgCount,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for skiplis
+971,ServerCommands.cs,225,NoCoverage,Arithmetic mutation,i - 1,KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for skiplis
+973,ServerCommands.cs,230,NoCoverage,Negate expression,"!(c.ArgIs(1, ""resetstat""))",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+974,ServerCommands.cs,230,NoCoverage,String mutation,"""""",KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+976,ServerCommands.cs,232,NoCoverage,Statement mutation,;,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+1031,ServerCommands.cs,287,NoCoverage,Statement mutation,;,KilledByJudge,137,KILLED-BY: judge (1 lost: [ok]: replicaKeysWithExpire memory
+1094,ServerCommands.cs,360,NoCoverage,Negate expression,"!(!c.ArgIs(1, ""usage"") || c.ArgCount < 3)",KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: memoryusage of string)
+1095,ServerCommands.cs,360,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"c.ArgIs(1, ""usage"")",KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: memoryusage of string)
+1096,ServerCommands.cs,360,NoCoverage,String mutation,"""""",KilledByJudge,18,KILLED-BY: judge (1 lost: [ok]: memoryusage of string)
+1098,ServerCommands.cs,360,NoCoverage,Equality mutation,c.ArgCount <= 3,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: memoryusage of string)
+1155,StringCommands.cs,41,Survived,Statement mutation,;,KilledByJudge,21,KILLED-BY: judge (2 lost: [ok]: PSETEX can set sub-second ex
+1156,StringCommands.cs,41,Survived,String mutation,"""""",KilledByJudge,20,KILLED-BY: judge (2 lost: [ok]: PSETEX can set sub-second ex
+1158,StringCommands.cs,42,Survived,String mutation,"""""",KilledByJudge,19,KILLED-BY: judge (2 lost: [ok]: GETSET (replace old value))
+1159,StringCommands.cs,43,Survived,Statement mutation,;,KilledByJudge,23,KILLED-BY: judge (1 lost: [ok]: GETDEL command)
+1160,StringCommands.cs,43,Survived,String mutation,"""""",KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: GETDEL command)
+1184,StringCommands.cs,53,Survived,Statement mutation,;,KilledByJudge,19,KILLED-BY: judge (1 lost: [ok]: Coverage: SUBSTR)
+1185,StringCommands.cs,53,Survived,String mutation,"""""",KilledByJudge,22,KILLED-BY: judge (1 lost: [ok]: Coverage: SUBSTR)
+1223,StringCommands.cs,96,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: GETSET (replace old value))
+1319,StringCommands.cs,219,NoCoverage,Statement mutation,;,KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: GETDEL command)
+1353,StringCommands.cs,255,NoCoverage,Equality mutation,(flags & Opt.Persist) == 0,KilledByJudge,18,KILLED-BY: judge (2 lost: [ok]: GETEX PERSIST option)
+1356,StringCommands.cs,257,NoCoverage,Statement mutation,;,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: GETEX PERSIST option)
+1357,StringCommands.cs,257,NoCoverage,UnaryMinusExpression to UnaryPlusExpression mutation,+1,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: GETEX PERSIST option)
+1389,StringCommands.cs,297,NoCoverage,String mutation,"$""""",KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: MSET/MSETNX wrong number of 
+1442,StringCommands.cs,346,NoCoverage,Equality mutation,j > optionsStart,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: MSETEX with NX option - only
+1443,StringCommands.cs,346,NoCoverage,Equality mutation,j <= optionsStart,KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: MSETEX with XX and PX option
+1447,StringCommands.cs,349,NoCoverage,Logical mutation,((flags & Opt.NX) != 0 && exists) && ((flags & Opt.XX) != 0 && !exists),KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: MSETEX with NX option - only
+1451,StringCommands.cs,349,NoCoverage,Bitwise mutation,flags | Opt.NX,KilledByJudge,18,KILLED-BY: judge (2 lost: [ok]: MSETEX with XX and PX option
+1454,StringCommands.cs,349,NoCoverage,Bitwise mutation,flags | Opt.XX,KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: MSETEX with NX and EX option
+1455,StringCommands.cs,349,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,exists,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: MSETEX with XX and PX option
+1501,StringCommands.cs,411,NoCoverage,String mutation,"""""",KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: SETRANGE with out of range o
+1515,StringCommands.cs,429,Survived,Arithmetic mutation,MaxStringLength + patch.Length,KilledByJudge,20,KILLED-BY: judge (1 lost: [ok]: SETRANGE with out of range o
+1528,StringCommands.cs,446,Survived,Arithmetic mutation,MaxStringLength + patch.Length,KilledByJudge,22,KILLED-BY: judge (1 lost: [ok]: SETRANGE with out of range o
+1703,StringCommands.cs,645,Survived,Conditional (false) mutation,(false?1 :0),KilledByJudge,20,KILLED-BY: judge (2 lost: [ok]: SETBIT against integer-encod
+1745,StringCommands.cs,675,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,value.GetBytes(stackalloc byte[20]).SequenceEqual(c[2]),KilledByJudge,16,"KILLED-BY: judge (2 lost: [ok]: DELIFEQ existing key, matchi"
+1770,StringCommands.cs,698,Survived,Boolean mutation,true,KilledByJudge,20,KILLED-BY: judge (1 lost: [ok]: LCS indexes)
+1775,StringCommands.cs,702,Survived,Equality mutation,j > c.ArgCount - 1,KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: LCS indexes with match len a
+1791,StringCommands.cs,715,NoCoverage,Negate expression,"!(c.ArgIs(j, ""minmatchlen"") && moreArgs)",KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: LCS indexes with match len a
+1792,StringCommands.cs,715,NoCoverage,String mutation,"""""",KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: LCS indexes with match len a
+1795,StringCommands.cs,717,NoCoverage,PreIncrementExpression to PreDecrementExpression mutation,--j,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: LCS indexes with match len a
+1798,StringCommands.cs,722,NoCoverage,Linq method mutation (Max() to Min()),Math.Min,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: LCS indexes with match len a
+1921,StringCommands.cs,817,NoCoverage,Equality mutation,aEnd - aStart + 1 < minMatchLen,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: LCS indexes with match len a
+1924,StringCommands.cs,817,NoCoverage,Arithmetic mutation,aEnd + aStart,KilledByJudge,18,KILLED-BY: judge (1 lost: [ok]: LCS indexes with match len a
+1978,StringCommands.cs,875,Survived,Equality mutation,j <= end - 1,KilledByJudge,22,KILLED-BY: judge (1 lost: [ok]: MSETEX with illegal argument
+1979,StringCommands.cs,875,Survived,Arithmetic mutation,end + 1,KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: MSETEX with illegal argument
+1986,StringCommands.cs,876,Survived,Bitwise mutation,Opt.XX & Opt.IfEq,KilledByJudge,22,KILLED-BY: judge (2 lost: [ok]: MSETEX with illegal argument
+2024,StringCommands.cs,893,Survived,String mutation,"""""",KilledByJudge,20,KILLED-BY: judge (2 lost: [ok]: MSETEX with KEEPTTL option -
+2026,StringCommands.cs,893,NoCoverage,Bitwise mutation,flags | (Opt.Persist | anyExpire),KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: MSETEX with KEEPTTL option -
+2027,StringCommands.cs,893,NoCoverage,Bitwise mutation,Opt.Persist & anyExpire,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: MSETEX with illegal argument
+2034,StringCommands.cs,897,Survived,String mutation,"""""",KilledByJudge,20,KILLED-BY: judge (2 lost: [ok]: GETEX PERSIST option)
+2035,StringCommands.cs,897,NoCoverage,Equality mutation,kind != OptKind.GetEx,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: GETEX PERSIST option)
+2036,StringCommands.cs,897,NoCoverage,Equality mutation,(flags & (anyExpire | Opt.KeepTtl)) != 0,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: GETEX PERSIST option)
+2037,StringCommands.cs,897,NoCoverage,Bitwise mutation,flags | (anyExpire | Opt.KeepTtl),KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: GETEX PERSIST option)
+2040,StringCommands.cs,899,NoCoverage,OrAssignmentExpression to AndAssignmentExpression mutation,flags &= Opt.Persist,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: GETEX PERSIST option)
+2153,StringCommands.cs,1000,NoCoverage,Conditional (false) mutation,(false?text :text[..e]),KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for skiplis
+2154,StringCommands.cs,1000,NoCoverage,Equality mutation,e > 0,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for skiplis
+2156,StringCommands.cs,1001,NoCoverage,Equality mutation,"mantissa.IndexOfAnyInRange((byte)'1', (byte)'9') < 0",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: INCRBYFLOAT does not allow N
+2158,StringCommands.cs,1001,NoCoverage,Negate expression,"!(mantissa.IndexOfAnyInRange((byte)'1', (byte)'9') >= 0)",KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for skiplis
+2174,TypeCommands.cs,15,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+3,KilledByJudge,21,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for list - 
+2175,TypeCommands.cs,15,NoCoverage,Boolean mutation,false,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: EXPIRE - write on expire sho
+2183,TypeCommands.cs,18,Survived,Statement mutation,;,KilledByJudge,22,KILLED-BY: judge (2 lost: [ok]: Extended SET GET with incorr
+2184,TypeCommands.cs,18,Survived,String mutation,"""""",KilledByJudge,21,KILLED-BY: judge (2 lost: [ok]: Extended SET GET with incorr
+2194,TypeCommands.cs,20,Survived,Statement mutation,;,KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: EXPIRE - write on expire sho
+2195,TypeCommands.cs,20,Survived,String mutation,"""""",KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: EXPIRE - write on expire sho
+2198,TypeCommands.cs,21,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+3,KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for $type s
+2234,TypeCommands.cs,29,Survived,Statement mutation,;,KilledByJudge,21,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2235,TypeCommands.cs,29,Survived,String mutation,"""""",KilledByJudge,21,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2261,TypeCommands.cs,60,Survived,Equality mutation,i <= c.ArgCount,KilledByJudge,22,KILLED-BY: judge (2 lost: [ok]: EXPIRE - write on expire sho
+2264,TypeCommands.cs,62,Survived,Negate expression,!(left),KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: EXPIRE - write on expire sho
+2266,TypeCommands.cs,64,NoCoverage,Statement mutation,;,KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for list - 
+2268,TypeCommands.cs,68,Survived,Statement mutation,;,KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: Extended SET GET with incorr
+2370,TypeCommands.cs,171,NoCoverage,Equality mutation,i > c.ArgCount,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for hashtab
+2407,TypeCommands.cs,220,NoCoverage,Equality mutation,c.ArgCount % 2 == 0,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2408,TypeCommands.cs,220,NoCoverage,Arithmetic mutation,c.ArgCount * 2,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2415,TypeCommands.cs,227,NoCoverage,Equality mutation,i <= c.ArgCount,KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2416,TypeCommands.cs,227,NoCoverage,AddAssignmentExpression to SubtractAssignmentExpression mutation,i -= 2,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2418,TypeCommands.cs,229,NoCoverage,LogicalNotExpression to un-LogicalNotExpression mutation,"StringCommands.TryParseFloat(c[i], out scores[(i - 2) / 2])",KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2420,TypeCommands.cs,229,NoCoverage,Arithmetic mutation,i + 2,KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2427,TypeCommands.cs,243,NoCoverage,Equality mutation,i > c.ArgCount,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: COPY basic usage for skiplis
+2428,TypeCommands.cs,243,NoCoverage,Equality mutation,i <= c.ArgCount,KilledByJudge,17,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2429,TypeCommands.cs,243,NoCoverage,AddAssignmentExpression to SubtractAssignmentExpression mutation,i -= 2,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2437,TypeCommands.cs,251,NoCoverage,Arithmetic mutation,i + 2,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: COPY basic usage for listpac
+2775,RespServer.cs,60,Survived,Negate expression,!(await timer.WaitForNextTickAsync(_stop.Token).ConfigureAwait(false)),KilledByJudge,23,KILLED-BY: judge (1 lost: [ok]: Server should actively expir
+2778,RespServer.cs,62,Survived,Statement mutation,;,KilledByJudge,21,KILLED-BY: judge (1 lost: [ok]: Server should actively expir
+2880,Database.cs,135,NoCoverage,Boolean mutation,true,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: Untagged multi-key commands)
+2881,Database.cs,138,Survived,Logical mutation,entry.ExpiresAt < 0 && entry.ExpiresAt > now,KilledByJudge,20,KILLED-BY: judge (2 lost: [ok]: Untagged multi-key commands)
+2882,Database.cs,138,Survived,Equality mutation,entry.ExpiresAt > 0,KilledByJudge,19,KILLED-BY: judge (2 lost: [ok]: Untagged multi-key commands)
+2895,Database.cs,154,Survived,Statement mutation,;,KilledByJudge,20,KILLED-BY: judge (1 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+2896,Database.cs,154,Survived,PostIncrementExpression to PostDecrementExpression mutation,ExpiredKeys--,KilledByJudge,19,KILLED-BY: judge (1 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
+2907,Database.cs,174,NoCoverage,Statement mutation,;,KilledByJudge,17,KILLED-BY: judge (1 lost: [ok]: Server should actively expir
+2974,Database.cs,246,NoCoverage,Logical mutation,attempt < 100 || _map.Count > 0,KilledByJudge,16,KILLED-BY: judge (2 lost: [ok]: RANDOMKEY against empty DB)
+2975,Database.cs,246,NoCoverage,Equality mutation,attempt > 100,KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: RANDOMKEY)
+2978,Database.cs,246,NoCoverage,Equality mutation,_map.Count >= 0,KilledByJudge,15,KILLED-BY: judge (2 lost: [ok]: RANDOMKEY against empty DB)
+2983,Database.cs,249,NoCoverage,Equality mutation,"Lookup(key, now) is null",KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: RANDOMKEY)
+2984,Database.cs,250,NoCoverage,Block removal mutation,{},KilledByJudge,16,KILLED-BY: judge (1 lost: [ok]: RANDOMKEY)
+3129,Keyspace.cs,34,NoCoverage,Block removal mutation,{},KilledByJudge,15,KILLED-BY: judge (1 lost: [ok]: EXPIRE / EXPIREAT / PEXPIRE 
