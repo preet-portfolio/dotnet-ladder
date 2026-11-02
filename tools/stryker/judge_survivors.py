@@ -37,8 +37,15 @@ done = {r["id"] for f in glob.glob(os.environ.get("DONE_GLOB", out_csv)) for r i
 if not os.path.exists(out_csv):
     csv.DictWriter(open(out_csv, "w", newline=""), fieldnames=fields).writeheader()
 todo = [(p, m) for p, m in todo if m["id"] not in done][shard::shards]
+# REVERSE=1 walks the list from the end, so an idle worker can help a slow shard: run it with that shard's SHARD and
+# the DONE_GLOB the shard started with, plus LIVE_GLOB naming every CSV being written; before each mutant it skips ids
+# already judged there, so the two stop where they meet.
+if os.environ.get("REVERSE"):
+    todo.reverse()
 print(f"{len(todo)} mutants to judge", flush=True)
 for n, (path, m) in enumerate(todo, 1):
+    if os.environ.get("LIVE_GLOB") and m["id"] in {r["id"] for f in glob.glob(os.environ["LIVE_GLOB"]) for r in csv.DictReader(open(f))}:
+        break
     path = path.replace(os.environ.get("ROOT_FROM", ""), os.environ.get("ROOT_TO", ""), 1) if os.environ.get("ROOT_FROM") else path
     original = open(path, encoding="utf-8").read()
     s, e = m["location"]["start"], m["location"]["end"]
