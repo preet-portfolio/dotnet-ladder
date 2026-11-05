@@ -3,6 +3,7 @@
     "project": "Ladder.DI.csproj",
     "test-projects": ["tests/Ladder.DI.Tests/Ladder.DI.Tests.csproj"],
     "test-runner": "mtp",
+    "coverage-analysis": "off",
     "reporters": ["html", "markdown", "json", "progress"],
     "thresholds": { "high": 90, "low": 75, "break": 0 }
   }

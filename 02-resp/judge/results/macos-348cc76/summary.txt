@@ -1,0 +1,29 @@
+Valkey 9.1.2 test suite, external mode, tags -needs:debug -needs:repl -needs:reset
+Reference (real valkey-server) passing tests: 259
+ladder-resp passes 251/259 = 96.9%
+
+unit/type/incr: 31/31 passed (100.0%), 0 failed, 0 not run
+unit/type/string: 103/104 passed (99.0%), 1 failed, 0 not run
+    FAIL     MSETEX keyspace notifications
+             n command 'psubscribe', with args beginning with: '__keyspace@*' '__keyevent@*'
+unit/keyspace: 56/59 passed (94.9%), 3 failed, 0 not run
+    FAIL     COPY basic usage for stream
+             n command 'XADD', with args beginning with: 'mystream{t}' '*' 'item' '2' 'value' 'b'
+    FAIL     COPY basic usage for stream-cgroups
+             n command 'XADD', with args beginning with: 'x{t}' '100' 'a' '1'
+    FAIL     MOVE basic usage
+             Expected '0 0 foobar 1' to equal or match '0 9 foobar 1'
+unit/expire: 61/65 passed (93.8%), 4 failed, 0 not run
+    FAIL     import-source can be closed when import-mode is off
+             Expected 'ERR unknown subcommand or wrong number of arguments for 'import-source'. Try CLIENT HELP.' to match 'ERR Server is not in import mode' (context: type source line 93 file /Users/preet/Desktop
+    FAIL     Import mode should forbid active expiration
+             n subcommand or wrong number of arguments for 'import-source'. Try CLIENT HELP.
+    FAIL     Client can visit expired key in import-source state
+             Expected '0' to be equal to '1' (context: type source line 942 file /Users/preet/Desktop/Projects/DotNet/02-resp/judge/vendor/valkey-7f1dffedff6de73058b2c2a389422b6ecd56c8fb/tests/unit/expire.tcl cmd 
+    FAIL     Negative ttl will not cause server to crash when import mode is on
+             Expected '0' to be equal to '2' (context: type source line 971 file /Users/preet/Desktop/Projects/DotNet/02-resp/judge/vendor/valkey-7f1dffedff6de73058b2c2a389422b6ecd56c8fb/tests/unit/expire.tcl cmd 
+
+GeoNames differential: reference 34432 keys, ours 34432 keys, IDENTICAL
+
+Claim 1 (>= 90% overall and 100% of unit/type/incr): HELD
+Claim 4 (GeoNames dumps byte-for-byte identical): HELD

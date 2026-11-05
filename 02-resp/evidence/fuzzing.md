@@ -73,7 +73,7 @@ After the fix:
   **0 crashes and 0 hangs**. The corpus grew from 377 to 393 inputs and the edge count from 129 to 162, because the new
   code has more branches. Raw stats:
   [`fuzzing/fuzzer_stats-after-parser-fix.txt`](fuzzing/fuzzer_stats-after-parser-fix.txt).
-- **Coverage:** the new corpus covers **100% of the new `RespParser`**, 93/93 lines and 90/90 branches.
+- **Coverage:** the new corpus covers **100% of the new `RespParser`**, 93/93 lines and 90/90 branches. Neither that coverage report nor the corpus was kept, so this figure can't be re-derived.
 
 So claim 9 holds for the old parser over 4.08 CPU-hours, and for the new parser over 1 CPU-hour plus a replay of the
 old corpus. The 4-hour bound has not been re-run on the new code.

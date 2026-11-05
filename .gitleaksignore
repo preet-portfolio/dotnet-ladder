@@ -1,0 +1,2 @@
+# A pinned public Valkey commit hash (VALKEY_SHA), not a secret.
+30ecfef1340a12bc2d34bb108b4c8a05b31e097b:02-resp/judge/run-judge.sh:generic-api-key:8

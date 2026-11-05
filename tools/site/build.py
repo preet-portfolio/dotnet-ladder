@@ -8,10 +8,23 @@ import json
 import os
 import re
 import shutil
+import subprocess
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT = os.path.join(ROOT, "site")
 STATUS_LABEL = {"done": "Done", "in-progress": "In progress", "planned": "Planned"}
+REPO = "https://github.com/preet-portfolio/dotnet-ladder"
+
+
+def git(*args):
+    return subprocess.run(["git", "-C", ROOT, *args], capture_output=True, text=True, check=True).stdout.strip()
+
+
+# The page names the commit it was built from. The date is that commit's time, not the build's, so a rebuild at the
+# same commit is byte-identical to the deployed page (SOURCE_DATE_EPOCH overrides it, as in reproducible builds).
+SHA = git("rev-parse", "HEAD")
+DIRTY = bool(git("status", "--porcelain", "--untracked-files=no"))
+STAMP = datetime.datetime.fromtimestamp(int(os.environ.get("SOURCE_DATE_EPOCH") or git("log", "-1", "--format=%ct")), datetime.timezone.utc)
 
 
 def read(path):
@@ -44,10 +57,14 @@ def micros(text):
 
 
 def benchmarks(project):
-    paths = glob.glob(os.path.join(ROOT, project, "bench", "*", "BenchmarkDotNet.Artifacts", "results", "*-report.csv"))
-    if not paths:
+    """The first BenchmarkDotNet table in the committed evidence/benchmarks.md (the final run)."""
+    text = read(os.path.join(ROOT, project, "evidence", "benchmarks.md"))
+    m = re.search(r"^(\|\s*Method\s*\|.*\n)\|[-: |]+\|\n((?:\|.*\|\n)+)", text or "", re.M)
+    if not m:
         return None
-    rows = list(csv.DictReader(open(paths[0], encoding="utf-8")))
+    head = [c.strip() for c in m.group(1).strip().strip("|").split("|")]
+    rows = [dict(zip(head, (c.strip() for c in line.strip().strip("|").split("|")))) for line in m.group(2).splitlines()]
+    rows = [r for r in rows if r.get("Method")]  # BenchmarkDotNet leaves an empty row between files
     files = {}
     for r in rows:
         files.setdefault(r["File"], []).append({
@@ -60,13 +77,16 @@ def benchmarks(project):
 
 
 def stryker(project):
-    reports = sorted(glob.glob(os.path.join(ROOT, project, "StrykerOutput", "*", "reports", "mutation-report.md")))
+    """Stryker's own markdown report, as committed under evidence/stryker/ (a mutation-report*.md re-run first)."""
+    reports = [p for p in sorted(glob.glob(os.path.join(ROOT, project, "evidence", "stryker", "*.md")))
+               if "# Mutation Testing Summary" in (read(p) or "")[:200]]
+    reports.sort(key=lambda p: not os.path.basename(p).startswith("mutation-report"))
     if not reports:
         return None
-    text = read(reports[-1])
+    text = read(reports[0])
     m = re.search(r"final mutation score is\s*(\d+(?:\.\d+)?)\s*%", text)
     counts = {k: int(v) for k, v in re.findall(r"\|\s*([A-Za-z ]+?)\s*\|\s*(\d+)\s*\|", text)}
-    return {"score": float(m.group(1)) if m else None, "path": reports[-1], "counts": counts}
+    return {"score": float(m.group(1)) if m else None, "path": os.path.relpath(reports[0], os.path.join(ROOT, project)), "counts": counts}
 
 
 def readme_section(project, heading):
@@ -79,11 +99,21 @@ def readme_section(project, heading):
     return [line[2:].strip() for line in m.group(1).splitlines() if line.startswith("- ")]
 
 
-def inline_md(text):
-    """Escapes text, then renders `code` and **bold** spans, which is all the README bullets use."""
+def link(project, target):
+    """A README link: absolute URLs as they are, repo paths to GitHub at the commit the page was built from."""
+    if re.match(r"[a-z]+:", target) or target.startswith("#"):
+        return target
+    path = os.path.normpath(os.path.join(project, target)).replace(os.sep, "/")
+    return f"{REPO}/{'tree' if target.endswith('/') else 'blob'}/{SHA}/{path}"
+
+
+def inline_md(text, project=""):
+    """Escapes text, then renders the spans the READMEs use: `code`, **bold**, *italic* and [links](target)."""
     out = html.escape(text)
+    out = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", lambda m: f'<a href="{html.escape(link(project, html.unescape(m.group(2))))}">{m.group(1)}</a>', out)
     out = re.sub(r"`([^`]+)`", r"<code>\1</code>", out)
-    return re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", out)
+    out = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", out)
+    return re.sub(r"(?<![*\w])\*([^*\s][^*]*?)\*(?![*\w])", r"<em>\1</em>", out)
 
 
 def copy_raw(project):
@@ -109,16 +139,23 @@ def copy_raw(project):
     return links
 
 
+def claims_heading(project):
+    """The README's own claims heading, which says when the claims were committed."""
+    m = re.search(r"^## (Claims.*)$", read(os.path.join(ROOT, project, "README.md")) or "", re.M)
+    return m.group(1).strip() if m else "Claims"
+
+
 def readme_claims(project):
-    """Rows of the README's claims table: (number, claim, result markdown, state)."""
+    """Rows of the README's claims tables: (number, claim, result markdown, state). 05's tables add a Judge column."""
     text = read(os.path.join(ROOT, project, "README.md")) or ""
     m = re.search(r"^## Claims.*?\n(.*?)(?=^## |\Z)", text, re.S | re.M)
     rows = []
     for line in (m.group(1).splitlines() if m else []):
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) == 3 and cells[0].isdigit():
-            state = "held" if cells[2].startswith("**Held") else "failed" if cells[2].startswith("**Failed") else "info"
-            rows.append((cells[0], cells[1], cells[2], state))
+        if len(cells) in (3, 4) and cells[0].isdigit():
+            result = cells[-1]
+            state = "held" if result.startswith("**Held") else "failed" if result.startswith("**Failed") else "info"
+            rows.append((cells[0], cells[1], result, state))
     return rows
 
 
@@ -183,15 +220,20 @@ def resp_blocks(project):
         for f, ok, n in re.findall(r"^(unit/\S+): (\d+)/(\d+) passed", summary, re.M):
             items.append((f, f"{ok}/{n}", "held" if ok == n else "info"))
         total = re.search(r"passes (\d+)/(\d+) = ([\d.]+)%", summary)
+        version = re.match(r"(Valkey [\d.]+ test suite)", summary)
         geo = re.search(r"GeoNames differential: reference (\d+) keys.*?(IDENTICAL|\d+ differing lines)", summary)
         if total:
-            items.insert(0, ("All 259 tests Valkey passes", f"{total.group(3)}%", "held" if float(total.group(3)) >= 90 else "failed"))
+            items.insert(0, (f"All {total.group(2)} tests Valkey passes", f"{total.group(3)}%", "held" if float(total.group(3)) >= 90 else "failed"))
         if geo:
             items.append((f"GeoNames dump, {int(geo.group(1)):,} keys", "identical" if geo.group(2) == "IDENTICAL" else geo.group(2), "held" if geo.group(2) == "IDENTICAL" else "failed"))
         fails = re.findall(r"^    FAIL     (.*)$", summary, re.M)
-        fail_list = "".join(f"<li>{html.escape(x)}</li>" for x in fails)
-        blocks.append('<section><h3>External judge: Valkey 9.1.2 test suite, run against both servers</h3>' + tiles(items)
-                      + (f'<details><summary>{len(fails)} failing tests</summary><ul class="fails">{fail_list}</ul></details>' if fails else "") + "</section>")
+        not_run = re.findall(r"^    NOT RUN  (.*)$", summary, re.M)
+        fail_list = "".join(f"<li>{html.escape(x)}</li>" for x in fails) + "".join(f"<li>{html.escape(x)} (not run against ours)</li>" for x in not_run)
+        title = version.group(1) if version else "Valkey test suite"
+        source = (read(os.path.join(ROOT, project, "judge", "results", "SOURCE.txt")) or "").strip()
+        blocks.append(f'<section><h3>External judge: {html.escape(title)}, run against both servers</h3>'
+                      + (f'<p class="muted">{inline_md(source, project)}</p>' if source else "") + tiles(items)
+                      + (f'<details><summary>{len(fails)} failing tests' + (f", {len(not_run)} not run" if not_run else "") + f'</summary><ul class="fails">{fail_list}</ul></details>' if fails or not_run else "") + "</section>")
     raw = os.path.join(ROOT, project, "evidence", "throughput-raw.csv")
     cpu = os.path.join(ROOT, project, "evidence", "throughput-cpu.csv")
     if os.path.exists(raw):
@@ -212,34 +254,49 @@ def resp_blocks(project):
             cpu_note = tiles([("valkey-server CPU seconds / 2M requests", f"{vc:.2f}", "info"),
                               ("Our CPU seconds / 2M requests", f"{oc:.2f}", "failed" if oc > 2 * vc else "info"),
                               ("CPU cost relative to Valkey", f"{oc / vc:.1f}×", "failed" if oc > 2 * vc else "info")])
-        blocks.append('<section><h3>Throughput (valkey-benchmark, 50 clients, pipeline 16) and CPU</h3><figure class="bench">'
+        when = git("log", "-1", "--format=%h", "--", os.path.relpath(raw, ROOT))
+        blocks.append(f'<section><h3>Throughput (valkey-benchmark, 50 clients, pipeline 16) and CPU (raw data from {when})</h3><figure class="bench">'
                       '<div class="bar-head"><span></span><span>Median requests/sec of 3 alternating rounds</span><span>Rate</span><span>vs Valkey</span><span></span></div>'
                       + "".join(bars) + "</figure>" + cpu_note + "</section>")
     return blocks
 
 
-PROJECT_BLOCKS = {"01-json": json_blocks, "02-resp": resp_blocks}
+def di_blocks(project):
+    summary = read(os.path.join(ROOT, project, "judge", "results", "summary.txt"))
+    rows = re.findall(r"^\| (\w+) \| (\d+) \| (\d+) \| (\d+) \| (\d+) \|$", summary or "", re.M)
+    if not rows:
+        return []
+    names = {"Reference": "Microsoft's ServiceProvider", "Ours": "Ours, compiled on second call",
+             "OursCompiledOnFirstCall": "Ours, compiled on first call", "OursInterpreted": "Ours, interpreted"}
+    return ['<section><h3>External judge: Microsoft.Extensions.DependencyInjection.Specification.Tests 10.0.13</h3>' + tiles([
+        (names.get(s, s), f"{p}/{n}", "held" if p == n else "failed") for s, p, _, _, n in rows]) + "</section>"]
+
+
+PROJECT_BLOCKS = {"01-json": json_blocks, "02-resp": resp_blocks, "05-di": di_blocks}
 
 
 def project_detail(project):
     sections = []
     claim_rows = readme_claims(project)
     if claim_rows:
-        sections.append('<section><h3>Claims, written before the code</h3><ul class="claims">' + "".join(
+        sections.append(f'<section><h3>{inline_md(claims_heading(project), project)}</h3><ul class="claims">' + "".join(
             f'<li class="claim">{pill(state, {"held": "Held", "failed": "Failed"}.get(state, "Open"))}'
-            f'<div><strong>{inline_md(claim)}</strong><p>{inline_md(result)}</p></div></li>'
+            f'<div><strong>{inline_md(claim, project)}</strong><p>{inline_md(result, project)}</p></div></li>'
             for _, claim, result, state in claim_rows) + "</ul></section>")
     sections += PROJECT_BLOCKS.get(project, lambda _: [])(project)
     strk = stryker(project)
     if strk and strk["score"] is not None:
-        score = f"{strk['score']:.1f}%"
-        sections.append(f'<section><h3>Mutation testing: Stryker.NET</h3>{tiles([("mutation score", score, "info")])}</section>')
+        score = f"{strk['score']:.2f}%"
+        note = next((x for x in readme_section(project, "Evidence") if re.match(r"(\*\*)?Mutation testing", x)), "")
+        sections.append(f'<section><h3>Mutation testing: Stryker.NET</h3>{tiles([(f"Stryker\'s own score ({strk['path']})", score, "info")])}'
+                        + (f'<p class="muted">{inline_md(note, project)}</p>' if note else "") + "</section>")
     surprises = readme_section(project, "What surprised us")
     if surprises:
-        sections.append('<section><h3>What surprised us</h3><ul class="notes">' + "".join(f"<li>{inline_md(x)}</li>" for x in surprises) + "</ul></section>")
+        sections.append('<section><h3>What surprised us</h3><ul class="notes">' + "".join(f"<li>{inline_md(x, project)}</li>" for x in surprises) + "</ul></section>")
     links = copy_raw(project)
     if links:
-        sections.append('<section><h3>Raw evidence</h3><ul class="links">' + "".join(
+        tree = f"{REPO}/tree/{SHA}/{project}"
+        sections.append(f'<section><h3>Raw evidence</h3><p class="muted">Every raw file, including subfolders: <a href="{tree}">{project} at {SHA[:7]}</a></p><ul class="links">' + "".join(
             f'<li><a href="{html.escape(href)}">{html.escape(label)}</a></li>' for label, href in links) + "</ul></section>")
     return "".join(sections)
 
@@ -256,18 +313,20 @@ def build():
     with open(os.path.join(OUT, ".vercelignore"), "w", encoding="utf-8") as f:
         f.write(".env*\n.gitignore\nartifact.html\n")
     rungs = []
-    active = [p for p in ladder if p["status"] != "planned"]
+    published = lambda p: p["status"] != "planned" and os.path.isfile(os.path.join(ROOT, p["id"], "README.md"))
+    active = [p for p in ladder if published(p)]
     # The project being worked on comes first; finished ones follow, newest first.
     active.sort(key=lambda p: (p["status"] != "in-progress", -ladder.index(p)))
     for i, p in enumerate(ladder, 1):
         cls = "rung " + p["status"] + (" current" if p["status"] == "in-progress" else "")
         name = html.escape(p["name"])
-        if p["status"] != "planned":
+        if published(p):
             name = f'<a href="#{p["id"]}">{name}</a>'
+        note = " · nothing published yet" if p["status"] == "in-progress" and not published(p) else ""
         rungs.append(
             f'<li class="{cls}"><span class="rung-no">{i:02d}</span><div class="rung-body">'
             f'<span class="rung-name">{name}</span>'
-            f'<span class="rung-judge">Judge: {html.escape(p["judge"])}</span></div>'
+            f'<span class="rung-judge">Judge: {html.escape(p["judge"])}{note}</span></div>'
             f'{pill(p["status"], STATUS_LABEL[p["status"]])}</li>')
     projects = []
     for p in active:
@@ -278,8 +337,9 @@ def build():
             f'<h2>{html.escape(p["name"])}</h2><p>{html.escape(p["concept"])}</p></div>'
             f'{project_detail(p["id"])}</article>')
     done = sum(p["status"] == "done" for p in ladder)
-    stamp = datetime.datetime.now().astimezone().strftime("%d %b %Y, %H:%M %Z")
-    page = TEMPLATE.format(rungs="".join(rungs), done=done, total=len(ladder), projects="".join(projects), stamp=html.escape(stamp))
+    source = (f'Built by tools/site/build.py from the committed evidence at <a href="{REPO}/commit/{SHA}">{SHA[:7]}</a>'
+              f'{" plus uncommitted changes" if DIRTY else ""}, committed {STAMP.strftime("%d %b %Y, %H:%M UTC")}')
+    page = TEMPLATE.format(rungs="".join(rungs), done=done, total=len(ladder), projects="".join(projects), source=source)
     with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
         f.write(DOCUMENT_HEAD + page + DOCUMENT_TAIL)
     with open(os.path.join(OUT, "artifact.html"), "w", encoding="utf-8") as f:
@@ -391,7 +451,7 @@ footer {{ font-size: 12.5px; color: var(--muted); }}
   <header>
     <div>
       <h1>Infrastructure Ladder</h1>
-      <p class="sub">Ten pieces of infrastructure rebuilt in .NET 10 from their specs. An outside test suite or reference implementation judges each one; nothing here is graded by its author. Source: <a href="https://github.com/preet-portfolio/dotnet-ladder">github.com/preet-portfolio/dotnet-ladder</a>.</p>
+      <p class="sub">Rebuilding ten pieces of infrastructure in .NET 10 from their specs; three are done. An outside test suite or reference implementation judges each one, and failed claims stay on the page. Source: <a href="https://github.com/preet-portfolio/dotnet-ladder">github.com/preet-portfolio/dotnet-ladder</a>.</p>
     </div>
     <div class="meta"><strong>{done}/{total}</strong>rungs complete</div>
   </header>
@@ -401,7 +461,7 @@ footer {{ font-size: 12.5px; color: var(--muted); }}
       {projects}
     </main>
   </div>
-  <footer>Generated by tools/site/build.py from the repo's evidence files · {stamp}</footer>
+  <footer>{source}</footer>
 </div>
 """
 

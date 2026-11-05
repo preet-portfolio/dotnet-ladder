@@ -1,0 +1,23 @@
+Microsoft.Extensions.DependencyInjection.Specification.Tests 10.0.13+4099f83977f4d29604a9aeb971fb0a7bc1d5f699, run by xunit.runner.utility (xUnit v2) in-process, not parallel.
+
+| Subject | Passed | Failed | Skipped | Total |
+|---|---:|---:|---:|---:|
+| Reference | 143 | 0 | 0 | 143 |
+| Ours | 142 | 1 | 0 | 143 |
+| OursCompiledOnFirstCall | 142 | 1 | 0 | 143 |
+| OursInterpreted | 142 | 1 | 0 | 143 |
+
+## Ours vs Reference
+Tests the reference passes: 143; of those, Ours passes 142.
+Differences: 1
+- Specification.DisposesInReverseOrderOfCreation: reference PASS, Ours FAIL
+
+## OursCompiledOnFirstCall vs Reference
+Tests the reference passes: 143; of those, OursCompiledOnFirstCall passes 142.
+Differences: 1
+- Specification.DisposesInReverseOrderOfCreation: reference PASS, OursCompiledOnFirstCall FAIL
+
+## OursInterpreted vs Reference
+Tests the reference passes: 143; of those, OursInterpreted passes 142.
+Differences: 1
+- Specification.DisposesInReverseOrderOfCreation: reference PASS, OursInterpreted FAIL

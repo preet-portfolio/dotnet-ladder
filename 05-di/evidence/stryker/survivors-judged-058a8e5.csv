@@ -1,0 +1,68 @@
+id,file,line,stryker,mutator,replacement,judge,seconds,detail
+5,Errors.cs,28,Survived,String mutation,"""""",SurvivesJudge,9,
+16,Plan.cs,38,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,SurvivesJudge,7,
+20,Plan.cs,115,Survived,Boolean mutation,true,SurvivesJudge,8,
+113,Planner.cs,203,Survived,Conditional (true) mutation,(true?ServiceId.Of(d) :itemId),SurvivesJudge,8,
+119,Planner.cs,210,Survived,Equality mutation,i > 0,KilledByJudge,8,KILLED-BY: judge
+150,Planner.cs,262,Survived,Equality mutation,location is (CacheLocation.Root or CacheLocation.Scope),KilledByJudge,7,KILLED-BY: unit
+151,Planner.cs,262,Survived,Logical mutation,CacheLocation.Root and CacheLocation.Scope,CompileError,1,Time Elapsed 00:00:00.67
+152,Planner.cs,263,Survived,Block removal mutation,{},SurvivesJudge,8,
+155,Planner.cs,273,Survived,Statement mutation,;,SurvivesJudge,7,
+187,Planner.cs,318,Survived,Statement mutation,;,CompileError,1,Time Elapsed 00:00:00.74
+234,Planner.cs,416,Survived,Boolean mutation,false,SurvivesJudge,7,
+241,Planner.cs,422,Survived,Block removal mutation,{},SurvivesJudge,9,
+248,Planner.cs,431,Survived,Statement mutation,;,SurvivesJudge,8,
+254,Planner.cs,448,Survived,Statement mutation,;,SurvivesJudge,7,
+274,Planner.cs,490,Survived,Equality mutation,underlying is not null,SurvivesJudge,7,
+275,Planner.cs,491,Survived,Block removal mutation,{},SurvivesJudge,7,
+283,Planner.cs,503,Survived,Conditional (true) mutation,(true?Interlocked.Increment(ref _scopeSlots) - 1 :-1),SurvivesJudge,7,
+286,Planner.cs,503,Survived,Arithmetic mutation,Interlocked.Increment(ref _scopeSlots) + 1,SurvivesJudge,8,
+287,Planner.cs,503,Survived,UnaryMinusExpression to UnaryPlusExpression mutation,+1,SurvivesJudge,7,
+369,Interpreter.cs,17,Survived,Conditional (true) mutation,"(true?scope.Capture(Create(plan, scope)) :Create(plan, scope))",SurvivesJudge,8,
+384,Interpreter.cs,58,Survived,Conditional (false) mutation,(false?[] :new object?[argumentPlans.Length]),SurvivesJudge,7,
+396,Interpreter.cs,77,Survived,String mutation,"$""""",SurvivesJudge,8,
+398,PlanCompiler.cs,28,Survived,String mutation,"""""",SurvivesJudge,7,
+403,PlanCompiler.cs,46,Survived,Equality mutation,plan.CompiledBody is not null,SurvivesJudge,8,
+404,PlanCompiler.cs,49,Survived,String mutation,"""""",SurvivesJudge,8,
+409,PlanCompiler.cs,86,Survived,String mutation,"$""""",SurvivesJudge,7,
+410,PlanCompiler.cs,91,Survived,Null coalescing mutation (remove left),typeof(object),SurvivesJudge,7,
+412,PlanCompiler.cs,95,Survived,Logical mutation,!expression.Type.IsValueType || !type.IsValueType,SurvivesJudge,7,
+413,PlanCompiler.cs,95,Survived,LogicalNotExpression to un-LogicalNotExpression mutation,expression.Type.IsValueType,SurvivesJudge,9,
+414,PlanCompiler.cs,95,Survived,LogicalNotExpression to un-LogicalNotExpression mutation,type.IsValueType,SurvivesJudge,7,
+416,PlanCompiler.cs,96,Survived,Conditional (false) mutation,"(false?expression :Expression.Convert(expression, type))",SurvivesJudge,9,
+417,PlanCompiler.cs,96,Survived,Logical mutation,expression.Type == type && (reference && type.IsAssignableFrom(expression.Type)),SurvivesJudge,7,
+435,Scope.cs,76,Survived,Block removal mutation,{},SurvivesJudge,8,
+441,Scope.cs,84,Survived,Block removal mutation,{},SurvivesJudge,9,
+450,Scope.cs,92,Survived,Block removal mutation,{},KilledByJudge,7,KILLED-BY: unit
+462,Scope.cs,103,Survived,Linq method mutation (Max() to Min()),Math.Min,SurvivesJudge,8,
+463,Scope.cs,103,Survived,Arithmetic mutation,slot - 1,SurvivesJudge,8,
+464,Scope.cs,103,Survived,Arithmetic mutation,slots.Length / 2,SurvivesJudge,7,
+472,Scope.cs,120,Survived,Logical mutation,"service is null && ReferenceEquals(service, this)",SurvivesJudge,8,
+485,Scope.cs,140,Survived,Statement mutation,;,SurvivesJudge,8,
+487,Scope.cs,144,Survived,Statement mutation,;,SurvivesJudge,9,
+488,Scope.cs,147,Survived,Statement mutation,;,SurvivesJudge,7,
+517,Scope.cs,187,Survived,Boolean mutation,true,SurvivesJudge,9,
+556,ServiceContainer.cs,122,Survived,Block removal mutation,{},SurvivesJudge,7,
+588,ServiceContainer.cs,184,Survived,Block removal mutation,{},SurvivesJudge,8,
+612,ServiceContainer.cs,247,Survived,Equality mutation,Interlocked.Increment(ref accessor._calls) != 2,SurvivesJudge,7,
+624,ServiceId.cs,27,Survived,Conditional (true) mutation,"(true?Type.GetHashCode() :HashCode.Combine(Type, Key))",SurvivesJudge,8,
+625,ServiceId.cs,27,Survived,Conditional (false) mutation,"(false?Type.GetHashCode() :HashCode.Combine(Type, Key))",SurvivesJudge,7,
+626,ServiceId.cs,27,Survived,Equality mutation,Key is not null,SurvivesJudge,8,
+631,TypeNames.cs,15,Survived,String mutation,"""""",SurvivesJudge,7,
+632,TypeNames.cs,15,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+633,TypeNames.cs,15,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+634,TypeNames.cs,15,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+635,TypeNames.cs,16,Survived,String mutation,"""""",KilledByJudge,7,KILLED-BY: unit
+636,TypeNames.cs,16,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+637,TypeNames.cs,16,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+638,TypeNames.cs,16,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+639,TypeNames.cs,17,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+640,TypeNames.cs,17,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+641,TypeNames.cs,17,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+642,TypeNames.cs,17,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+643,TypeNames.cs,18,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+644,TypeNames.cs,18,Survived,String mutation,"""""",KilledByJudge,7,KILLED-BY: unit
+645,TypeNames.cs,18,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+646,TypeNames.cs,18,Survived,String mutation,"""""",KilledByJudge,6,KILLED-BY: unit
+652,TypeNames.cs,32,Survived,Statement mutation,;,SurvivesJudge,7,
+694,TypeNames.cs,84,Survived,Equality mutation,tick <= 0,SurvivesJudge,8,

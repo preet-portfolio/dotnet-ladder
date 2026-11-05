@@ -1,11 +1,12 @@
 Valkey 9.1.2 test suite, external mode, tags -needs:debug -needs:repl -needs:reset
-Reference (real valkey-server) passing tests: 259
-ladder-resp passes 251/259 = 96.9%
+Reference (real valkey-server) passing tests: 260
+ladder-resp passes 251/260 = 96.5%
 
 unit/type/incr: 31/31 passed (100.0%), 0 failed, 0 not run
-unit/type/string: 103/104 passed (99.0%), 1 failed, 0 not run
+unit/type/string: 103/105 passed (98.1%), 1 failed, 1 not run
     FAIL     MSETEX keyspace notifications
              n command 'psubscribe', with args beginning with: '__keyspace@*' '__keyevent@*'
+    NOT RUN  trim on SET with big value
 unit/keyspace: 56/59 passed (94.9%), 3 failed, 0 not run
     FAIL     COPY basic usage for stream
              n command 'XADD', with args beginning with: 'mystream{t}' '*' 'item' '2' 'value' 'b'
@@ -15,15 +16,15 @@ unit/keyspace: 56/59 passed (94.9%), 3 failed, 0 not run
              Expected '0 0 foobar 1' to equal or match '0 9 foobar 1'
 unit/expire: 61/65 passed (93.8%), 4 failed, 0 not run
     FAIL     import-source can be closed when import-mode is off
-             Expected 'ERR unknown subcommand or wrong number of arguments for 'import-source'. Try CLIENT HELP.' to match 'ERR Server is not in import mode' (context: type source line 93 file /Users/preet/Desktop
+             Expected 'ERR unknown subcommand or wrong number of arguments for 'import-source'. Try CLIENT HELP.' to match 'ERR Server is not in import mode' (context: type source line 93 file /home/runner/work/do
     FAIL     Import mode should forbid active expiration
              n subcommand or wrong number of arguments for 'import-source'. Try CLIENT HELP.
     FAIL     Client can visit expired key in import-source state
-             Expected '0' to be equal to '1' (context: type source line 942 file /Users/preet/Desktop/Projects/DotNet/02-resp/judge/vendor/valkey-7f1dffedff6de73058b2c2a389422b6ecd56c8fb/tests/unit/expire.tcl cmd 
+             Expected '0' to be equal to '1' (context: type eval line 12 cmd {assert_equal [r dbsize] 1} proc ::test)
     FAIL     Negative ttl will not cause server to crash when import mode is on
-             Expected '0' to be equal to '2' (context: type source line 971 file /Users/preet/Desktop/Projects/DotNet/02-resp/judge/vendor/valkey-7f1dffedff6de73058b2c2a389422b6ecd56c8fb/tests/unit/expire.tcl cmd 
+             Expected '0' to be equal to '2' (context: type eval line 8 cmd {assert_equal [r dbsize] 2} proc ::test)
 
-GeoNames differential: reference 34432 keys, ours 34432 keys, IDENTICAL
+GeoNames differential: reference 34440 keys, ours 34440 keys, IDENTICAL
 
 Claim 1 (>= 90% overall and 100% of unit/type/incr): HELD
 Claim 4 (GeoNames dumps byte-for-byte identical): HELD

@@ -4,6 +4,12 @@
 survive. Each one is classified below: 36 are equivalent or only affect performance, 5 cannot be reached through the
 public API, and 6 are real test gaps that are still open.**
 
+**Re-run at `058a8e5`** (no source change since round 3; one more test since): Stryker with `coverage-analysis: off`
+scores **85.01%** (380/447), and the same re-test kills 17 more in fresh processes and 1 with the spec suite; 2 don't
+compile. That is 398/445 = **89.4%**, and the 47 survivors are exactly the ones classified below. Raw output:
+[`stryker/mutation-report-058a8e5.md`](stryker/mutation-report-058a8e5.md), [`.json`](stryker/mutation-report-058a8e5.json)
+and [`stryker/survivors-judged-058a8e5.csv`](stryker/survivors-judged-058a8e5.csv). The round-3 figures below are kept as they were.
+
 This took three rounds. The first Stryker run scored **68.08%**. Re-testing its 143 survivors against the external judge
 killed only 24. The rest were gaps in the tests, not equivalent mutants. Two rounds of new tests,
 [`MutationGapTests.cs`](../tests/Ladder.DI.Tests/MutationGapTests.cs), raised the score to 84.79%. Most of the new tests
